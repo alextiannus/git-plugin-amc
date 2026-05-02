@@ -181,7 +181,7 @@ Tomorrow's schedule: [N] posts queued and ready to publish."
 | Day/Time | Job | Output |
 |---|---|---|
 | Monday 08:00 | Self-improvement report | Send weekly feedback summary to team (see feedback-loop.md Step 4) |
-| Monday 09:00 | Plugin version check | Run `openclaw plugins check fb-content-engine`; if update available → notify team via Lark (Tier 3) |
+| Monday 09:00 | Plugin version check | Check latest version; if update available → send Lark prompt; apply on team reply "更新插件" |
 | Monday 09:00 | Pending platform reminder | For each platform in pending_platforms: notify team "[Platform] 尚未连接账号，连接后即可开始自动运营" |
 | Monday 09:00 | Allergen pending check | Scan allergen-gate.md for [?PENDING] entries; if any found → Lark alert: "[菜品名] 过敏原信息未确认，涉及该菜品的帖子将暂停发布直到补全" |
 | Monday 10:00 | Weekly report generation | report/weekly/YYYY-Www.md + Lark notification to team |

@@ -61,6 +61,51 @@ When the agent starts (gateway start or reload):
 
 ---
 
+## post_update
+
+Runs automatically after plugin update completes (via `openclaw plugins update` or `./update.sh`).
+
+```
+1. Read new version from plugin.yaml
+2. Send Lark confirmation to team:
+   "✅ 插件已更新至 v{NEW_VERSION}
+    更新内容：技能文件、合规规则、平台策略、调度逻辑
+    品牌定制文件未变动：brand-voice / allergen-gate / bilingual-gate
+    ✅ Plugin updated to v{NEW_VERSION}
+    Updated: skill files, compliance rules, platform policies, schedule
+    Unchanged: brand-voice / allergen-gate / bilingual-gate"
+3. Log update event to ownerreview.md:
+   "[YYYY-MM-DD] Plugin updated: {OLD_VERSION} → {NEW_VERSION}"
+4. Resume normal operations — no restart of Bootstrap required
+```
+
+---
+
+## on_lark_update_command
+
+Triggered when any team member sends one of these Lark messages:
+`更新插件` / `update plugin` / `/update`
+
+```
+1. Check latest available version:
+   openclaw plugins check fb-content-engine
+   → or: git ls-remote --tags origin | tail -1
+
+2. If already on latest version:
+   → Reply: "已经是最新版本 v{CURRENT_VERSION} 了 ✅
+             Already on the latest version v{CURRENT_VERSION} ✅"
+
+3. If update available:
+   → Reply: "发现新版本 v{NEW_VERSION}（当前 v{CURRENT_VERSION}）
+             更新内容：[changelog summary if available]
+             保护文件不会被覆盖（brand-voice / allergen-gate / bilingual-gate）
+             正在更新... / Updating now..."
+   → Run: cd ~/.openclaw/extensions/git-plugin-amc && ./update.sh
+   → post_update hook fires automatically on completion
+```
+
+---
+
 ## on_message
 
 When a Lark message is received:
