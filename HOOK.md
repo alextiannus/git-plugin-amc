@@ -1,5 +1,5 @@
 # HOOK.md — F&B Content Engine
-# Plugin Hook Design Reference · v0.5.4
+# Plugin Hook Design Reference · v0.5.5
 # ─────────────────────────────────────────
 #
 # ⚠️  THIS FILE IS DESIGN DOCUMENTATION ONLY.
@@ -16,7 +16,7 @@
 ```yaml
 name:    git-plugin-amc
 slug:    git-plugin-amc
-version: 0.5.4
+version: 0.5.5
 author:  12eat AI Lab
 ```
 
