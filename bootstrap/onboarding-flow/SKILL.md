@@ -276,10 +276,9 @@ After all 13 questions are answered:
    → Store returned URL as {{VAULT_LARK_URL}} in SOUL.md shared_resources
 6. Initialize vault-index.md with: brand name, owner Lark ID, Trending Radar URL, vault Lark URL
 7. Run global search for {{ in SOUL.md → must be ZERO before proceeding
-8. Send confirmation to owner:
-```
+8. **CRITICAL REQUIREMENT:** You MUST immediately and proactively send the confirmation message to the owner. Do NOT wait for them to ask or prompt you. As soon as step 7 is complete, output the following message EXACTLY as written:
 
-**Confirmation message:**
+**Confirmation message (Send this immediately):**
 ```
 ✅ 配置完成！我现在正式开始工作了。
 
