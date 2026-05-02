@@ -37,20 +37,29 @@ openclaw skills list           # 应显示 22 个技能模块
 
 ---
 
-### Step 3 · 加载 SOUL.md → 进入 Bootstrap Mode
+### Step 3 · 配置 SOUL.md → 启动网关
 
 ```bash
 # 复制模板（每个品牌一次）
 cp ~/.openclaw/extensions/git-plugin-amc/SOUL.md.template ./SOUL.md
 
-# 启动实例
-openclaw start --soul ./SOUL.md
+# 如果你的 OpenClaw 实例已有 SOUL.md（有其他配置），手动合并：
+# 将 SOUL.md.template 中的 "PLUGIN · fb-content-engine" 整块追加到你的 SOUL.md 末尾
+
+# 重载配置（Lark Bot 正在运行时）
+openclaw reload
+
+# 或重启网关（冷启动）
+openclaw gateway stop
+openclaw gateway start
 ```
 
-Agent 启动后检测到 `{{PLACEHOLDER}}`，自动进入 Bootstrap Mode，等待第一条 Lark 消息。
+Agent 启动后读取 SOUL.md，检测到 `{{PLACEHOLDER}}`，自动进入 Bootstrap Mode，等待第一条 Lark 消息。
 
-> The agent detects unfilled `{{PLACEHOLDER}}` values and automatically enters  
-> Bootstrap Mode — it interviews the brand team via Lark to complete configuration.
+> **注意**：OpenClaw 没有 `openclaw start --soul` 命令。启动命令是 `openclaw gateway start`（或 `openclaw reload` 热重载）。
+
+> The agent reads SOUL.md on startup. If any `{{PLACEHOLDER}}` is found,  
+> it enters Bootstrap Mode and waits for the first Lark message to begin the interview.
 
 ---
 

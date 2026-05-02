@@ -20,14 +20,19 @@ When the agent starts:
 ```
 1. Load all skills from ./skills/ into agent context
 2. Read SOUL.md → plugins.fb-content-engine section
-3. If any {{PLACEHOLDER}} found:
-   → Activate Bootstrap Mode
-   → Load bootstrap/onboarding-flow.md
-   → Wait for first Lark message to begin onboarding
+3. If any {{PLACEHOLDER}} found in that section:
+   → Enter Bootstrap Mode (driven by SOUL.md STARTUP BEHAVIOR instruction)
+   → Load bootstrap/onboarding-flow.md as active script
+   → Do NOT start cron jobs or any content operations
+   → Wait silently for first Lark message; then send Opening Message
 4. If no {{PLACEHOLDER}}:
-   → Load brand config from SOUL.md
-   → Start cron schedule (skills/operations/cron-jobs.md)
-   → Ready for normal operations
+   → Load brand config (brand_name, brand_slug, active_platforms, etc.)
+   → Start cron schedule per skills/operations/cron-jobs.md
+   → Send "✅ 在线，开始今日运营" to Lark
+```
+
+> NOTE: The STARTUP BEHAVIOR block in SOUL.md.template is the primary driver
+> of Bootstrap Mode logic. This HOOK.md entry is a reference description.
 ```
 
 ---
