@@ -1,8 +1,8 @@
 # SKILL.md — F&B Content Engine Skills Index
-# OpenClaw skill discovery manifest · v0.5.2
+# OpenClaw skill discovery manifest · v0.5.4
 # ─────────────────────────────────────────────
 
-This file is a human-readable index of all 22 skills in the F&B Content Engine plugin.
+This file is a human-readable index of all 23 skills in the F&B Content Engine plugin.
 OpenClaw discovers skills automatically via the `skills` directories declared in `openclaw.plugin.json`.
 Each skill lives in its own subdirectory with a `SKILL.md` file containing YAML frontmatter.
 

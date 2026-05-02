@@ -25,7 +25,7 @@
 
 1. 检查本 SOUL.md 中 `plugins.fb-content-engine` 部分是否包含任何 `{{PLACEHOLDER}}` 字符串
 2. **如果存在 `{{PLACEHOLDER}}`：立即进入 Bootstrap Mode**
-   - 加载并严格遵循 `./bootstrap/onboarding-flow.md` 中的访谈脚本
+   - 加载并严格遵循 `bootstrap/onboarding-flow/SKILL.md` 中的访谈脚本
    - **主动通过 `mcp.lark.message` 发送 Opening Message** — 不要等待用户先发消息
    - 紧接 Opening Message 发送 Q1，立即开始访谈
    - 访谈完成并写回所有配置之前，**不得**启动正常运营（cron jobs、内容发布等）
@@ -84,7 +84,7 @@ plugins:
     bootstrap:
       enabled: true
       trigger: "any {{PLACEHOLDER}} present in plugins.fb-content-engine"
-      interview_script: "./bootstrap/onboarding-flow.md"
+      interview_script: "bootstrap/onboarding-flow/SKILL.md"
       scope: "plugins.fb-content-engine"   # ONLY writes to this section, never touches the rest of SOUL.md
       on_complete:
         - fill_placeholders:      "write all collected values into plugins.fb-content-engine"
