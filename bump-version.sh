@@ -30,10 +30,13 @@ sed -i.bak "s/\"version\": \"${OLD}\"/\"version\": \"${NEW}\"/" \
 sed -i.bak "s/^version: \"${OLD}\"/version: \"${NEW}\"/" \
   plugin.yaml
 
-# ── Markdown / text files ────────────────────────────────────
+# ── Markdown / text files (v-prefixed) ───────────────────────
 for f in HOOK.md README.md SKILL.md; do
   sed -i.bak "s/v${OLD}/v${NEW}/g" "$f"
 done
+
+# ── HOOK.md Plugin Identity block (no v-prefix) ──────────────
+sed -i.bak "s/^version: ${OLD}$/version: ${NEW}/" HOOK.md
 
 # ── Clean up .bak files created by sed -i on macOS ───────────
 find . -maxdepth 1 -name "*.bak" -delete

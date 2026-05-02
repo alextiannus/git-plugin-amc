@@ -6,7 +6,7 @@
 name: git-plugin-amc
 slug: git-plugin-amc          # matches GitHub repo name and openclaw extensions folder
 display_name: "F&B Content Engine"
-version: "0.5.5"
+version: "0.6.0"
 description: >
   A complete social media operations plugin for F&B brands.
   Manages content from idea to publish across 7 platforms,
@@ -72,6 +72,14 @@ skills_path:
   - "skills/platforms/"
   - "skills/operations/"
   - "bootstrap/"
+
+# ── Skill Packs ──────────────────────────────────────────────
+# Optional extension packs loaded on top of core skills.
+# community/ and verified/ are open source (this repo).
+# premium/ is delivered via @12eat-ai/skill-packs-premium (npm private).
+skill_packs_path:
+  - "skill-packs/community/"
+  - "skill-packs/verified/"
 
 # ── Agent Template ───────────────────────────────────────────
 # When user runs `openclaw plugins install` or `openclaw new-agent --plugin git-plugin-amc`,
