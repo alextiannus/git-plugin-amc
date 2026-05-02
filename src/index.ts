@@ -14,13 +14,18 @@
 
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 import { readFileSync, writeFileSync, existsSync, appendFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
 // ── Constants ──────────────────────────────────────────────────
 const PLUGIN_ID = "git-plugin-amc";
 const SOUL_TEMPLATE_FILE = "SOUL.md.template";
 const ONBOARDING_FLOW_FILE = "bootstrap/onboarding-flow/SKILL.md";
 const PLACEHOLDER_REGEX = /\{\{[A-Z_]+\}\}/g;
+
+// Plugin root = one level above dist/ where this file compiles to
+// e.g. ~/.openclaw/extensions/git-plugin-amc/dist/index.js → plugin root is ../
+const PLUGIN_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 // ── Helpers ────────────────────────────────────────────────────
 function resolveSoulPath(workspaceDir: string): string {
@@ -99,15 +104,12 @@ function mergeSoulTemplate(
   return { merged: true, reason: "Plugin block merged into SOUL.md" };
 }
 
-function resolvePluginDir(workspaceDir: string): string {
-  const candidates = [
-    join(workspaceDir, "extensions", PLUGIN_ID),
-    join(process.env.HOME || "/", ".openclaw", "extensions", PLUGIN_ID),
-  ];
-  for (const p of candidates) {
-    if (existsSync(p)) return p;
-  }
-  return candidates[1]; // fallback to default install path
+function resolvePluginDir(_workspaceDir: string): string {
+  // Use __dirname-based path — this is always correct regardless of workspaceDir.
+  // When OpenClaw loads dist/index.js, PLUGIN_ROOT resolves to the plugin install dir.
+  if (existsSync(PLUGIN_ROOT)) return PLUGIN_ROOT;
+  // Fallback: standard install path
+  return join(process.env.HOME || "/", ".openclaw", "extensions", PLUGIN_ID);
 }
 
 function loadOnboardingFlow(pluginDir: string): string | null {

@@ -1,5 +1,14 @@
 # HOOK.md — F&B Content Engine
-# OpenClaw Plugin Lifecycle Hooks · v0.4.8
+# Plugin Hook Design Reference · v0.5.4
+# ─────────────────────────────────────────
+#
+# ⚠️  THIS FILE IS DESIGN DOCUMENTATION ONLY.
+# OpenClaw does not execute declarative HOOK.md files.
+# All hooks are implemented in programmatic form in src/index.ts
+# using the OpenClaw Plugin SDK (definePluginEntry + api.on()).
+#
+# This file documents the intent and logic behind each hook.
+# For the executable implementation, see: src/index.ts
 # ─────────────────────────────────────────
 
 ## Plugin Identity
@@ -7,7 +16,7 @@
 ```yaml
 name:    fb-content-engine
 slug:    git-plugin-amc
-version: 0.4.8
+version: 0.5.4
 author:  12eat AI Lab
 ```
 

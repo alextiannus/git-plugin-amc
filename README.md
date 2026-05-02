@@ -1,5 +1,5 @@
 # F&B Content Engine
-### OpenClaw Plugin · v0.4.1
+### OpenClaw Plugin · v0.5.4
 
 A complete social media operations plugin for F&B brands.  
 Manages content from idea to publish across 7 platforms, with bilingual support,  
@@ -17,51 +17,52 @@ compliance gates, owner escalation, and automated reporting.
 
 ---
 
-### Step 2 · 安装 Plugin
-
-选择以下任意一种方式（推荐顺序从上到下）：
+### Step 2 · 安装 Plugin + 编译运行时
 
 ```bash
-# 方式 A · npm 包（最推荐，一行搞定）
+# Step 2a · 安装插件（三选一）
+
+# 方式 A · npm 包（最推荐）
 openclaw plugins install fb-content-engine
 
-# 方式 B · GitHub marketplace 安装
+# 方式 B · GitHub marketplace
 openclaw plugins install --marketplace https://github.com/alextiannus/git-plugin-amc
 
-# 方式 C · 本地路径（手动 git clone 后）
+# 方式 C · 手动 git clone
 git clone https://github.com/alextiannus/git-plugin-amc \
   ~/.openclaw/extensions/git-plugin-amc
 openclaw plugins install ~/.openclaw/extensions/git-plugin-amc
+```
 
-# 验证
-openclaw plugins list    # 应显示 fb-content-engine
-openclaw skills list     # 应显示 22 个技能（fb-content-engine 下）
+```bash
+# Step 2b · 编译 TypeScript 运行时（必须，否则插件无法加载钩子）
+cd ~/.openclaw/extensions/git-plugin-amc
+npm install
+npm run build        # 编译 src/index.ts → dist/index.js
+```
+
+```bash
+# Step 2c · 验证
+openclaw plugins list    # 应显示 fb-content-engine (loaded)
+openclaw skills list     # 应显示 22 个技能
 ```
 
 > 方式 A 需要先 `npm publish`（已在路线图）。目前推荐方式 B 或 C。
+> **`npm run build` 是必须步骤** — 插件的 `gateway_start`/`session_start` 等钩子在 `dist/index.js` 里，没有这个文件 OpenClaw 无法执行任何插件逻辑。
 
 ---
 
-### Step 3 · 运行 setup.sh 注入 SOUL 配置
-
-**这步是必须的。** `openclaw plugins enable` 只注册了插件文件，还没有把 AI 行为写进 SOUL.md。
+### Step 3 · 重启 Gateway，等待 Lark 消息
 
 ```bash
-cd ~/.openclaw/extensions/git-plugin-amc
-./setup.sh
-
-# 如果你的 SOUL.md 不在标准位置，指定路径：
-./setup.sh --soul /path/to/your/SOUL.md
+openclaw reload   # 或 openclaw gateway restart
 ```
 
-`setup.sh` 会自动完成：
-1. 定位或创建你的 SOUL.md
-2. 将 F&B Content Engine 配置块追加进去（不覆盖现有内容）
-3. 执行 `openclaw reload` 让配置生效
+插件的 `gateway_start` 钩子会自动把 `SOUL.md.template` 配置块写入你的 SOUL.md。
+下次会话启动时（`session_start`），检测到 `{{PLACEHOLDER}}` 后立即通过 Lark 发出 Bootstrap 开场消息，开始 13 问访谈。
 
-**运行完成后，打开 Lark，等待 AI 内容官主动发来第一条消息。**
+**打开 Lark，等待 AI 内容官主动发来第一条消息。**
 
-> **已安装过的实例：** 如果之前没跑过 setup.sh（Bootstrap 一直没触发），现在补跑一次即可。
 > **Recovery：** 访谈中途中断，重启后向 Lark Bot 发送 `/bootstrap` 重新触发。
 
 ---
