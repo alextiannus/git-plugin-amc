@@ -61,11 +61,14 @@ skills:
     - onboarding-flow     # self-configuring interview + SOUL.md writer
 
 # ── Agent Template ───────────────────────────────────────────
-# When user runs `openclaw new-agent --plugin fb-content-engine`,
-# OpenClaw automatically copies this file to the new instance as SOUL.md.
-# Bootstrap Mode fires immediately — no manual file operations needed.
+# When user runs `openclaw plugins install` or `openclaw new-agent --plugin fb-content-engine`,
+# OpenClaw MERGES this block into the agent's existing SOUL.md.
+# It does NOT replace the full SOUL.md — only the plugins.fb-content-engine section is added.
+# The agent's own Identity, Channels, model config, and other plugins are untouched.
 agent_template:
   soul: "SOUL.md.template"
+  merge: true                 # MERGE into existing SOUL.md, do not replace
+  merge_key: "plugins.fb-content-engine"  # only writes to this nested key
 
 # ── Tools Required ────────────────────────────────────────────
 tools_required:

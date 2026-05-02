@@ -1,113 +1,88 @@
-# SOUL.md — AI Content Manager · {{BRAND_NAME}}
-# F&B Content Engine Plugin · installed via: openclaw plugins install git:github.com/[org]/fb-content-engine
+# F&B Content Engine — Plugin Config Block
 # ─────────────────────────────────────────────────────────────
-# This is the THIN brand identity layer.
-# All operational logic is handled by the F&B Content Engine plugin (skills/ folder).
-# Only brand-specific values live here.
+# 使用方式 / How to use:
 #
-# Bootstrap Mode: if any {{PLACEHOLDER}} remains, the agent will
-# automatically interview the brand owner to fill them in.
+#   这不是完整的 SOUL.md，而是一个 MERGE PATCH。
+#   安装插件时，OpenClaw 将此 block 合并进你现有的 SOUL.md，
+#   不会覆盖你已有的 Identity、Channels 或其他插件配置。
+#
+#   This is NOT a full SOUL.md — it is a MERGE PATCH.
+#   OpenClaw merges this block INTO your existing SOUL.md.
+#   Your existing Identity, Channels, and other plugin configs are untouched.
+#
+#   Install: openclaw plugins install git:github.com/[org]/fb-content-engine
+#   New agent: openclaw new-agent --plugin fb-content-engine
+#
+# Bootstrap Mode: if any {{PLACEHOLDER}} remains in this block,
+# the agent automatically interviews the brand owner to fill them in.
+# ─────────────────────────────────────────────────────────────
 
 ---
 
-## IDENTITY
+## PLUGIN · fb-content-engine
 
 ```yaml
-name: "AI Content Manager · {{BRAND_NAME}}"
-model:
-  primary: claude-sonnet-4-6
-  fallback: [claude-haiku-4-5-20251001, gpt-4o]
-```
+plugins:
+  fb-content-engine:
 
----
+    # ── Brand Identity ──────────────────────────────────────
+    brand_name:    "{{BRAND_NAME}}"
+    brand_slug:    "{{BRAND_SLUG}}"
+    brand_niche:   "{{BRAND_NICHE}}"
+    brand_mission: "{{BRAND_MISSION}}"
+    markets:       "{{MARKETS}}"
 
-## PLUGIN
+    # ── Owner ───────────────────────────────────────────────
+    # Auto-captured from the first Lark message that triggers Bootstrap.
+    # No manual input needed.
+    owner_lark_id: "{{OWNER_LARK_ID}}"
 
-```yaml
-plugin: fb-content-engine
+    # ── Platforms ───────────────────────────────────────────
+    # active_platforms:  credentials confirmed → agent auto-publishes
+    # pending_platforms: brand wants these, but no credentials yet →
+    #                    agent drafts content, owner publishes manually
+    # Both lists are filled by Bootstrap Mode after mcp.publisher.check_connection()
+    active_platforms:  []
+    pending_platforms: []
 
-# skills/ is the shared plugin directory installed via git clone.
-# All 21 skill modules live here and are updated via `openclaw plugins update`.
-plugin_path: "./skills/"
+    # ── Paths ───────────────────────────────────────────────
+    plugin_path: "./skills/"        # shared skills/ from git clone
+    vault_path:  "./vault-{{BRAND_SLUG}}/"  # local mirror (primary is Lark Drive)
 
-# vault/ is the brand-specific operational data directory.
-# Created by Bootstrap Mode via mcp.lark.drive, then mirrored locally.
-vault_path:  "./vault-{{BRAND_SLUG}}/"
-```
+    # ── Shared Resources ────────────────────────────────────
+    shared_resources:
+      trending_radar:    "{{TRENDING_RADAR_URL}}"
+      workspaces_folder: "{{LARK_WORKSPACES_URL}}"
+      vault_lark_folder: "{{VAULT_LARK_URL}}"   # created by Bootstrap via mcp.lark.drive
 
----
-
-## BRAND CONFIG
-
-```yaml
-# These 7 values are ALL the agent needs to know about the brand.
-# Everything else comes from the plugin.
-
-brand_name:    "{{BRAND_NAME}}"
-brand_slug:    "{{BRAND_SLUG}}"
-brand_niche:   "{{BRAND_NICHE}}"
-brand_mission: "{{BRAND_MISSION}}"
-markets:       "{{MARKETS}}"
-
-owner_lark_id: "{{OWNER_LARK_ID}}"    # auto-captured from Lark message sender; no manual input needed
-
-# active_platforms: credentials confirmed → agent can auto-publish
-active_platforms: []    # filled by Bootstrap Mode after credential check
-
-# pending_platforms: brand wants these but credentials not yet connected
-# agent produces content drafts; publishing is manual until credentials are added
-pending_platforms: []   # filled by Bootstrap Mode after credential check
-
-shared_resources:
-  trending_radar:    "{{TRENDING_RADAR_URL}}"
-  workspaces_folder: "{{LARK_WORKSPACES_URL}}"
-  vault_lark_folder: "{{VAULT_LARK_URL}}"    # created by Bootstrap Mode, stored here for reference
-```
-
----
-
-## BOOTSTRAP MODE
-
-```yaml
-# Activated automatically on first startup if any {{PLACEHOLDER}} remains.
-# The agent conducts an onboarding interview with the brand owner,
-# fills all placeholders, and writes the completed SOUL.md.
-
-bootstrap:
-  enabled: true
-  trigger: "any {{PLACEHOLDER}} present in this file"
-  interview_script: "./bootstrap/onboarding-flow.md"
-  on_complete:
-    - save_soul_md: "SOUL_{{BRAND_SLUG}}.md"
-    - create_lark_vault: "mcp.lark.drive → create subfolder in {{LARK_WORKSPACES_URL}}, name={{BRAND_SLUG}}"
-    - initialize_vault_templates: "copy vault-templates/ into Lark Drive vault folder"
-    - notify_owner: "✅ 配置完成，我正式开始工作了。"
-    - exit_bootstrap: true
-```
-
----
-
-## CHANNELS
-
-```yaml
-channels:
-  - lark    # primary: escalations, reports, owner communication
+    # ── Bootstrap ───────────────────────────────────────────
+    bootstrap:
+      enabled: true
+      trigger: "any {{PLACEHOLDER}} present in plugins.fb-content-engine"
+      interview_script: "./bootstrap/onboarding-flow.md"
+      scope: "plugins.fb-content-engine"   # ONLY writes to this section, never touches the rest of SOUL.md
+      on_complete:
+        - fill_placeholders:      "write all collected values into plugins.fb-content-engine"
+        - create_lark_vault:      "mcp.lark.drive → subfolder in {{LARK_WORKSPACES_URL}}, name={{BRAND_SLUG}}"
+        - upload_vault_templates: "upload vault-templates/ into Lark Drive vault folder"
+        - notify_owner:           "✅ 配置完成，我正式开始工作了。"
+        - exit_bootstrap:         true
 ```
 
 ---
 
 ## PLACEHOLDER REFERENCE
 
-| Placeholder | Where to find it | Example |
+| Placeholder | Source | Example |
 |---|---|---|
-| `{{BRAND_NAME}}` | Official brand name | `12eat唐人街外卖` |
-| `{{BRAND_SLUG}}` | Lowercase code for file paths | `12eat` |
+| `{{BRAND_NAME}}` | Official brand name, exact casing | `12eat唐人街外卖` |
+| `{{BRAND_SLUG}}` | Lowercase alphanumeric, no spaces | `12eat` |
 | `{{BRAND_NICHE}}` | One-sentence positioning | `Authentic Chinese food delivery` |
 | `{{BRAND_MISSION}}` | Agent's core mission | `Generate posts that drive orders` |
 | `{{MARKETS}}` | Target markets + languages | `North America (en) + 海外华人社区 (zh)` |
-| `{{OWNER_LARK_ID}}` | Lark → Profile → User ID | `ou_a1b2c3d4` |
-| `{{TRENDING_RADAR_URL}}` | Shared Lark Doc URL | `https://12eat-ai.sg.larksuite.com/...` |
-| `{{LARK_WORKSPACES_URL}}` | AI Workspaces folder URL | `https://12eat-ai.sg.larksuite.com/...` |
-| `{{VAULT_LARK_URL}}` | Lark Drive folder for this brand's vault | `https://12eat-ai.sg.larksuite.com/drive/folder/...` |
+| `{{OWNER_LARK_ID}}` | Auto-captured from Lark sender | `ou_a1b2c3d4` |
+| `{{TRENDING_RADAR_URL}}` | Shared Lark Doc (default pre-filled) | `https://12eat-ai.sg.larksuite.com/docx/...` |
+| `{{LARK_WORKSPACES_URL}}` | Vault parent folder (default pre-filled) | `https://12eat-ai.sg.larksuite.com/drive/...` |
+| `{{VAULT_LARK_URL}}` | Created by Bootstrap via mcp.lark.drive | `https://12eat-ai.sg.larksuite.com/drive/folder/...` |
 
-# ── END OF SOUL.md.template ───────────────────────────────────
+# ── END OF SOUL.md.template (merge patch) ────────────────────
