@@ -1,20 +1,18 @@
-# F&B Content Engine — Plugin Config Block
+# F&B Content Engine — SOUL.md Config Block Template
 # ─────────────────────────────────────────────────────────────
-# 使用方式 / How to use:
+# 这个文件是参考模板。你不需要手动编辑它。
 #
-#   这不是完整的 SOUL.md，而是一个 MERGE PATCH。
-#   安装插件时，OpenClaw 将此 block 合并进你现有的 SOUL.md，
-#   不会覆盖你已有的 Identity、Channels 或其他插件配置。
+# 工作原理：
+#   1. 安装插件后，Bootstrap 访谈（onboarding-flow skill）自动通过 Lark 启动
+#   2. 访谈结束后，Agent 自动把填好的配置写入你的 SOUL.md
+#   3. 写入的格式就是下面 "PLUGIN · fb-content-engine" 这个 block
 #
-#   This is NOT a full SOUL.md — it is a MERGE PATCH.
-#   OpenClaw merges this block INTO your existing SOUL.md.
-#   Your existing Identity, Channels, and other plugin configs are untouched.
+# How it works:
+#   1. After plugin install, the Bootstrap interview starts automatically via Lark
+#   2. After the interview, the agent writes the completed config block to your SOUL.md
+#   3. The written block follows the format of the "PLUGIN · fb-content-engine" section below
 #
-#   Install: openclaw plugins install git:github.com/[org]/fb-content-engine
-#   New agent: openclaw new-agent --plugin fb-content-engine
-#
-# Bootstrap Mode: if any {{PLACEHOLDER}} remains in this block,
-# the agent automatically interviews the brand owner to fill them in.
+# setup.sh 用途：手动触发第一次写入（当 Bootstrap 访谈完成但 SOUL.md 写入失败时使用）
 # ─────────────────────────────────────────────────────────────
 
 ---

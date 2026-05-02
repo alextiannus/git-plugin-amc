@@ -5,16 +5,37 @@ plugin: fb-content-engine
 ---
 
 # Bootstrap · Onboarding Flow
-# F&B Content Engine · bootstrap/onboarding-flow.md
+# F&B Content Engine · bootstrap/onboarding-flow/SKILL.md
 # ──────────────────────────────────────────────────
+
+## STARTUP CHECK — Runs automatically on every agent start
+
+This skill is always loaded into the system prompt when the fb-content-engine plugin
+is installed. On every startup, the agent MUST perform this check before doing anything else:
+
+```
+1. Read SOUL.md (or agent workspace config) — look for the plugins.fb-content-engine section
+2. If section is MISSING or contains any {{PLACEHOLDER}} string:
+   → Bootstrap Mode is active
+   → Immediately send Bootstrap Opening Message via mcp.lark.message
+   → Do NOT start cron jobs or content operations
+   → Begin the 13-question interview below
+3. If section exists and all values are filled:
+   → Bootstrap is complete — skip this skill, proceed with normal operations
+   → Load skills/operations/cron-jobs/SKILL.md and start the daily schedule
+```
+
+**This check is the single gate. If brand config is not fully written in SOUL.md, nothing else runs.**
+
+---
 
 ## Purpose
 
-This file is the agent's onboarding script. It is loaded automatically
-when Bootstrap Mode is triggered (any {{PLACEHOLDER}} detected in SOUL.md).
+This skill drives the brand onboarding interview. The agent conducts it directly with
+the brand team via Lark. After all 13 questions, the agent writes the completed config
+block to SOUL.md and immediately begins normal operations.
 
-The agent conducts this interview directly with the brand owner or manager
-via their Lark account. No intermediary needed.
+No human needs to edit any files. The agent configures itself.
 
 ---
 
@@ -262,21 +283,52 @@ Want to connect them now, or skip for later?"
 
 ## Post-Interview Actions
 
-After all 13 questions are answered:
+After all 13 questions are answered, the agent writes everything to SOUL.md and workspace files.
+This is how brand config persists — the agent writes it, no human touch needed.
 
 ```
-1. Fill all {{PLACEHOLDER}} values directly in SOUL.md → overwrite in-place
-   (write only to plugins.fb-content-engine section, do not touch other sections)
-2. Update brand-voice.md with Q7/Q8 answers
-3. Fill bilingual-gate.md Canonical Dish Name Map with Q9 answers
-4. Fill allergen-gate.md Brand Dish Allergen Table with Q10 answers
+1. WRITE SOUL.md — agent appends or updates the plugins.fb-content-engine block:
+
+   Locate SOUL.md (check: ./SOUL.md → ~/.openclaw/workspace/SOUL.md → $OPENCLAW_SOUL_PATH)
+   If plugins.fb-content-engine section already exists → overwrite it in-place
+   If section is missing → append the completed block at end of file
+
+   Write the following block with all values filled:
+   ─────────────────────────────────────────────
+   ## PLUGIN · fb-content-engine
+
+   plugins:
+     fb-content-engine:
+       brand_name:        "{BRAND_NAME}"
+       brand_slug:        "{BRAND_SLUG}"
+       brand_niche:       "{BRAND_NICHE}"
+       brand_mission:     "{BRAND_MISSION}"
+       markets:           "{MARKETS}"
+       active_platforms:  [{ACTIVE_PLATFORMS}]
+       pending_platforms: [{PENDING_PLATFORMS}]
+       shared_resources:
+         trending_radar:    "{TRENDING_RADAR_URL}"
+         workspaces_folder: "{LARK_WORKSPACES_URL}"
+         vault_lark_folder: "{VAULT_LARK_URL}"
+   ─────────────────────────────────────────────
+
+2. WRITE skills/localization/brand-voice/SKILL.md
+   → Fill brand personality (Q7) and forbidden words (Q8)
+
+3. WRITE skills/localization/bilingual-gate/SKILL.md
+   → Fill Canonical Dish Name Map with Q9 answers
+
+4. WRITE skills/compliance/allergen-gate/SKILL.md
+   → Fill Brand Dish Allergen Table with Q10 answers
+
 5. [IF NOT ALREADY DONE IN Q12] Create Lark Drive vault:
-   mcp.lark.drive.create_folder(parent={{LARK_WORKSPACES_URL}}, name="vault-{{BRAND_SLUG}}")
+   mcp.lark.drive.create_folder(parent={LARK_WORKSPACES_URL}, name="vault-{BRAND_SLUG}")
    → Upload vault-templates/ files into the new folder
-   → Store returned URL as {{VAULT_LARK_URL}} in SOUL.md shared_resources
-6. Initialize vault-index.md with: brand name, owner Lark ID, Trending Radar URL, vault Lark URL
-7. Run global search for {{ in SOUL.md → must be ZERO before proceeding
-8. Send confirmation to owner:
+   → Store returned URL as VAULT_LARK_URL (used in step 1)
+
+6. VERIFY: scan SOUL.md for any remaining {{ → must be ZERO before proceeding
+
+7. Send confirmation to brand team (below)
 ```
 
 **Confirmation message:**
