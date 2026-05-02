@@ -11,7 +11,7 @@ compliance gates, owner escalation, and automated reporting.
 
 ### Step 1 · 创建 OpenClaw 实例 + 配置 Lark Bot
 
-在 OpenClaw 里新建一个 Agent 实例，配置 Lark 机器人作为消息渠道（用于审批通知、报告、升级）。
+在 OpenClaw 里新建一个 Agent 实例，配置 Lark 机器人作为消息渠道。
 
 > Create a new OpenClaw instance and configure the Lark bot as the messaging channel.
 
@@ -20,30 +20,37 @@ compliance gates, owner escalation, and automated reporting.
 ### Step 2 · 安装 Plugin（一次性 per 实例）
 
 ```bash
-openclaw plugins install git:github.com/[your-org]/fb-content-engine
+# 克隆仓库到 OpenClaw extensions 目录
+git clone https://github.com/alextiannus/git-plugin-amc \
+  ~/.openclaw/extensions/git-plugin-amc
+
+# 启用插件
+openclaw plugins enable git-plugin-amc
+
+# 验证安装
+openclaw plugins list          # 应显示 git-plugin-amc (fb-content-engine v0.4.6)
+openclaw skills list           # 应显示 22 个技能模块
 ```
 
-OpenClaw 会 git clone 整个 plugin 仓库，所有 21 个技能模块自动就位。无需手动操作。
-
-> OpenClaw git-clones the entire plugin repo into its managed plugin directory.  
-> All 21 skill modules are immediately available. No manual file operations needed.
+> **注意**：`openclaw plugins install git:...` 格式在部分版本不支持，
+> 请使用上方的手动 `git clone` 方式。仓库必须为 Public。
 
 ---
 
-### Step 3 · 加载 SOUL.md.template → 进入 Bootstrap Mode
-
-将 `SOUL.md.template` 复制一份，重命名为 `SOUL_{brand}.md`，加载进 OpenClaw 实例。
-
-Agent 启动后检测到 `{{PLACEHOLDER}}`，自动进入 Bootstrap Mode，通过 Lark 主动联系品牌主开始访谈。
+### Step 3 · 加载 SOUL.md → 进入 Bootstrap Mode
 
 ```bash
-# 加载模板（人工操作，只需一次）
-cp SOUL.md.template SOUL_goldendragon.md
-# 然后在 OpenClaw 里加载 SOUL_goldendragon.md
+# 复制模板（每个品牌一次）
+cp ~/.openclaw/extensions/git-plugin-amc/SOUL.md.template ./SOUL.md
+
+# 启动实例
+openclaw start --soul ./SOUL.md
 ```
 
-> The agent detects unfilled `{{PLACEHOLDER}}` values on startup and automatically enters  
-> Bootstrap Mode — it contacts the brand owner via Lark and runs the onboarding interview.
+Agent 启动后检测到 `{{PLACEHOLDER}}`，自动进入 Bootstrap Mode，等待第一条 Lark 消息。
+
+> The agent detects unfilled `{{PLACEHOLDER}}` values and automatically enters  
+> Bootstrap Mode — it interviews the brand team via Lark to complete configuration.
 
 ---
 

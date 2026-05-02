@@ -4,8 +4,9 @@
 # ─────────────────────────────────────────────────────────────
 
 name: fb-content-engine
+slug: git-plugin-amc          # matches GitHub repo name and openclaw extensions folder
 display_name: "F&B Content Engine"
-version: "0.4.4"
+version: "0.4.6"
 description: >
   A complete social media operations plugin for F&B brands.
   Manages content from idea to publish across 7 platforms,
@@ -60,6 +61,17 @@ skills:
 
   bootstrap:
     - onboarding-flow     # self-configuring interview + SOUL.md writer
+
+# ── Skills Discovery ─────────────────────────────────────────
+# Tells OpenClaw where to find skills (for `openclaw skills list`)
+skills_index: "SKILL.md"
+skills_path:
+  - "skills/core/"
+  - "skills/compliance/"
+  - "skills/localization/"
+  - "skills/platforms/"
+  - "skills/operations/"
+  - "bootstrap/"
 
 # ── Agent Template ───────────────────────────────────────────
 # When user runs `openclaw plugins install` or `openclaw new-agent --plugin fb-content-engine`,
