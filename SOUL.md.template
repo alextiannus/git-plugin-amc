@@ -49,16 +49,14 @@ brand_niche:   "{{BRAND_NICHE}}"
 brand_mission: "{{BRAND_MISSION}}"
 markets:       "{{MARKETS}}"
 
-owner_lark_id: "{{OWNER_LARK_ID}}"
+owner_lark_id: "{{OWNER_LARK_ID}}"    # auto-captured from Lark message sender; no manual input needed
 
-active_platforms:
-  - instagram    # comment out platforms not in use
-  - tiktok
-  - rednote
-  - facebook
-  - googlemap
-  # - youtube
-  # - x
+# active_platforms: credentials confirmed → agent can auto-publish
+active_platforms: []    # filled by Bootstrap Mode after credential check
+
+# pending_platforms: brand wants these but credentials not yet connected
+# agent produces content drafts; publishing is manual until credentials are added
+pending_platforms: []   # filled by Bootstrap Mode after credential check
 
 shared_resources:
   trending_radar:    "{{TRENDING_RADAR_URL}}"

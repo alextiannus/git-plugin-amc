@@ -12,15 +12,29 @@ via their Lark account. No intermediary needed.
 
 ---
 
+## Auto-Capture on First Message
+
+When Bootstrap Mode starts, before sending any message:
+
+```
+[AGENT ACTION — silent, runs before Q1]
+OWNER_LARK_ID = lark.message.sender.user_id
+→ Store in SOUL.md as owner_lark_id
+→ ALL users who message this Lark bot are treated as brand team members
+→ No need to ask for Lark ID — it's already known
+```
+
+---
+
 ## Opening Message (send to owner's Lark on first startup)
 
 ```
 你好！我是你的 AI 内容官，正式开始工作之前，
-我需要问你几个问题来完成配置（大约 15 个问题，30 分钟）。
+我需要问你几个问题来完成配置（大约 14 个问题，25 分钟）。
 
 Hi! I'm your AI Content Manager. Before I start working,
 I need to ask you a few questions to complete my setup
-(about 15 questions, 30 minutes).
+(about 14 questions, 25 minutes).
 
 请用你觉得最顺手的语言回答 / Please reply in whichever language feels natural.
 我们开始吧！/ Let's get started!
@@ -85,11 +99,11 @@ Adapt language to match what the owner is using.
 
 ---
 
-### Module 2 · Platforms (→ SOUL.md Section B)
+### Module 2 · Platforms (→ SOUL.md active_platforms + pending_platforms)
 
-**Q6 · Active platforms**
-> "下面这些平台，哪些需要我帮你运营？
-> Which of these platforms do you want me to manage?
+**Q6 · Platform intent**
+> "下面这些平台，哪些是你希望我帮你运营的？（可以多选）
+> Which of these platforms do you want me to manage? (select all that apply)
 > - Instagram
 > - TikTok
 > - 小红书 (RedNote)
@@ -99,37 +113,65 @@ Adapt language to match what the owner is using.
 > - X (Twitter)
 > - 其他 / Other?"
 
-→ Maps to: `active_platforms` in SOUL.md
-→ Note: Google Maps is almost always recommended even if not explicitly requested
+→ Records brand's INTENT for each platform
+→ Note: Google Maps is strongly recommended for any restaurant
 
 ---
 
-### Module 3 · Owner Contact (→ SOUL.md + owner-approval.md)
+**[AGENT ACTION after Q6 — runs silently before Q7]**
 
-**Q7 · Lark user ID**
-> "当我需要你审批内容时，会通过 Lark 通知你。
-> 请告诉我你的 Lark 用户 ID（在 Lark → 个人资料可以找到，格式类似 ou_xxxxxxxx）。
-> I'll notify you via Lark for content approvals.
-> What's your Lark user ID? (Found in Lark → Profile, format: ou_xxxxxxxx)"
+For each platform the brand selected, check if publisher credentials exist:
 
-→ Maps to: `{{OWNER_LARK_ID}}`
-→ Critical: this is the sole escalation channel
+```
+for platform in Q6_selections:
+    result = mcp.publisher.{platform}.check_connection()
+    if result == "connected":
+        → add to active_platforms   (auto-publish enabled)
+    else:
+        → add to pending_platforms  (content planning only)
+```
+
+Then inform the owner:
+
+```
+[如果有 pending_platforms]
+"好的！以下平台我已经可以直接帮你发内容：{active_platforms}
+
+以下平台还没有连接登录信息，我会帮你准备内容草稿，
+但需要你手动发布，或者之后连接账号来启用自动发布：
+{pending_platforms}
+
+需要现在连接这些账号吗？（可以跳过，之后再说）
+
+---
+Great! I can auto-publish to: {active_platforms}
+
+These platforms need credentials before I can publish automatically:
+{pending_platforms}
+Want to connect them now, or skip for later?"
+```
+
+→ If owner connects credentials now: re-run check_connection(), move to active_platforms
+→ If owner skips: leave in pending_platforms, agent still produces content drafts for manual publishing
 
 ---
 
-**Q8 · Response time expectation**
+### Module 3 · Owner Contact (→ owner-approval.md)
+
+**Q7 · Response time expectation**
 > "当我发送需要你审批的内容通知时，你通常多久能看到并回复？
 > 默认 SLA 是：营业时间内 1 小时。可以接受吗？
 > How quickly can you typically respond to approval requests?
 > Default SLA is 1 hour during business hours — does that work?"
 
-→ If adjusted: note in owner-approval.md SLA section
+→ Note: owner_lark_id was already auto-captured at session start — no need to ask
+→ If SLA adjusted: note in owner-approval.md SLA section
 
 ---
 
 ### Module 4 · Brand Voice (→ brand-voice.md)
 
-**Q9 · Brand personality**
+**Q8 · Brand personality**
 > "用三个词描述你们品牌的个性。
 > Three words that describe your brand's personality?"
 
@@ -137,7 +179,7 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q10 · Forbidden words or topics**
+**Q9 · Forbidden words or topics**
 > "有没有你绝对不希望出现在内容里的词语、话题、或竞争对手名字？
 > Any words, topics, or competitor names that should never appear in our content?"
 
@@ -147,7 +189,7 @@ Adapt language to match what the owner is using.
 
 ### Module 5 · Compliance (→ allergen-gate.md + bilingual-gate.md)
 
-**Q11 · Top dishes**
+**Q10 · Top dishes**
 > "你们最常推广的 5-10 道菜是哪些？请列出中文名和英文名。
 > What are your top 5-10 most-promoted dishes? Please give both Chinese and English names."
 
@@ -155,7 +197,7 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q12 · Allergen check**
+**Q11 · Allergen check**
 > "对于你刚才列出的菜品，哪些含有以下过敏原？
 > For the dishes you listed, which contain any of these 9 allergens?
 > 牛奶·鸡蛋·鱼·贝类·坚果·花生·小麦·大豆·芝麻
@@ -169,7 +211,7 @@ Adapt language to match what the owner is using.
 
 ### Module 6 · Shared Resources
 
-**Q13 · Trending Radar URL**
+**Q12 · Trending Radar URL**
 > "我们有一个每日更新的热点雷达文档，所有品牌都共享。
 > 地址是：[default URL from SOUL.md config]
 > 这个地址对你的品牌适用吗？还是需要用其他地址？
@@ -181,7 +223,7 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q14 · AI Workspaces folder (vault parent)**
+**Q13 · AI Workspaces folder (vault parent)**
 > "我会在 Lark 云盘里为你创建专属的品牌档案夹。
 > 默认位置是 AI Workspaces 文件夹：[default URL from SOUL.md]
 > 这个位置可以吗？如果你已经有一个偏好的位置，可以把链接给我。
@@ -192,9 +234,9 @@ Adapt language to match what the owner is using.
 
 → Maps to: `{{LARK_WORKSPACES_URL}}` (parent folder)
 → If unchanged: keep default
-→ After Q14 answer: DO NOT wait — immediately proceed to create the vault:
+→ After Q13 answer: DO NOT wait — immediately proceed to create the vault:
   ```
-  [AGENT ACTION — runs silently during Q15]
+  [AGENT ACTION — runs silently during Q14]
   mcp.lark.drive.create_folder(
     parent_url = {{LARK_WORKSPACES_URL}},
     folder_name = "vault-{{BRAND_SLUG}}"
@@ -206,7 +248,7 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q15 · Promotions and pricing**
+**Q14 · Promotions and pricing**
 > "你们有固定的优惠或套餐价格区间吗？
 > 比如午市套餐价格、家庭套餐范围等——帮助我在推广时确保价格准确。
 > Do you have standard promotions or price ranges?
@@ -218,7 +260,7 @@ Adapt language to match what the owner is using.
 
 ## Post-Interview Actions
 
-After all 15 questions are answered:
+After all 14 questions are answered:
 
 ```
 1. Fill all {{PLACEHOLDER}} values in SOUL.md → save as SOUL_{BRAND_SLUG}.md
