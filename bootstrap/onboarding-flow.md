@@ -27,19 +27,24 @@ Feedback sent to Lark bot → AI self-improves.
 
 ---
 
-## Opening Message (send on first Lark message received)
+## Opening Message
+
+**Trigger: send IMMEDIATELY and PROACTIVELY after plugin install completes.**
+Do NOT wait for the user to message first.
+This message is pushed by the `post_install` hook via `mcp.lark.message`.
 
 ```
-你好！我是你的 AI 内容官，正式开始工作之前，
-我需要问你几个问题来完成配置（大约 13 个问题，20 分钟）。
+你好！我是你的 AI 内容官，刚完成安装，马上开始配置。
+需要问你 13 个问题（大约 20 分钟），配置完成我就正式开始工作。
 
-Hi! I'm your AI Content Manager. Before I start working,
-I need to ask you a few questions to complete my setup
-(about 13 questions, 20 minutes).
+Hi! I'm your AI Content Manager — just installed and ready to configure.
+I have 13 quick questions (~20 min) and then I'll start working right away.
 
 请用你觉得最顺手的语言回答 / Please reply in whichever language feels natural.
-我们开始吧！/ Let's get started!
+我们开始吧！/ Let's go!
 ```
+
+Send Q1 immediately after this message — do not wait for a "ready" reply.
 
 ---
 
@@ -254,7 +259,8 @@ Want to connect them now, or skip for later?"
 After all 13 questions are answered:
 
 ```
-1. Fill all {{PLACEHOLDER}} values in SOUL.md → save as SOUL_{BRAND_SLUG}.md
+1. Fill all {{PLACEHOLDER}} values directly in SOUL.md → overwrite in-place
+   (write only to plugins.fb-content-engine section, do not touch other sections)
 2. Update brand-voice.md with Q7/Q8 answers
 3. Fill bilingual-gate.md Canonical Dish Name Map with Q9 answers
 4. Fill allergen-gate.md Brand Dish Allergen Table with Q10 answers
@@ -271,16 +277,14 @@ After all 13 questions are answered:
 ```
 ✅ 配置完成！我现在正式开始工作了。
 
-以下是我的设置概要：
+设置概要：
 - 品牌：{BRAND_NAME}
-- 运营平台：{ACTIVE_PLATFORMS}
-- 审批通知：会发送到你的 Lark（{OWNER_LARK_ID}）
-- 每天工作时间：06:30 – 23:45（自动化）
+- 自动发布平台：{ACTIVE_PLATFORMS}
+- 待连接平台：{PENDING_PLATFORMS}（连接账号后即可开启自动发布）
+- 每天工作时间：06:30 – 23:45（全自动）
 
-明天早上 08:00，我会给你发第一批内容提案。
-前 3 条内容需要你审批（Tier 1）后才会发布。
-
-有任何问题，随时 Lark 我！
+内容会直接发布到各平台，无需审批。
+请到各平台查看发布结果，有任何反馈随时发消息给我——我会持续自我改进。
 
 ---
 
@@ -288,14 +292,12 @@ After all 13 questions are answered:
 
 Summary:
 - Brand: {BRAND_NAME}
-- Platforms: {ACTIVE_PLATFORMS}
-- Approvals: I'll notify you via Lark ({OWNER_LARK_ID})
-- Daily schedule: 06:30 – 23:45 (automated)
+- Auto-publish platforms: {ACTIVE_PLATFORMS}
+- Pending platforms: {PENDING_PLATFORMS} (connect credentials to enable auto-publish)
+- Daily schedule: 06:30 – 23:45 (fully automated)
 
-Tomorrow at 08:00, I'll send you the first batch of content proposals.
-The first 3 posts require your approval (Tier 1) before publishing.
-
-Message me on Lark anytime!
+Content publishes directly — no approval needed.
+Check your platforms to see posts, and send me feedback anytime on Lark.
 ```
 
 ---
@@ -304,6 +306,56 @@ Message me on Lark anytime!
 
 If no response for 2 hours during the interview:
 - Send a reminder: "还在吗？我们继续吧 / Still there? Let's continue when you're ready."
-- If no response for 24 hours: log incomplete onboarding in ownerreview.md, notify management (唐三藏 or system owner) via Lark
+- If no response for 24 hours: log incomplete onboarding in ownerreview.md, send a daily nudge via Lark until Bootstrap completes.
 
 Do NOT start operating until Bootstrap Mode is fully complete (zero {{PLACEHOLDER}} remaining).
+
+---
+
+## Bootstrap Recovery Protocol
+
+Handles cases where Bootstrap did not start, or was interrupted mid-way.
+
+### Case 1 · post_install hook failed (Lark not connected yet)
+
+If `mcp.lark.message` is unavailable when post_install runs:
+```
+→ Log: "Bootstrap pending — Lark channel not connected"
+→ Do NOT send Opening Message
+→ On next on_startup: retry mcp.lark.message
+→ As soon as Lark becomes available: send Opening Message proactively
+   "你好！我在等你配置 Lark 之后就发了消息，我们现在开始吧！
+    Hi! I was waiting for Lark to connect — let's start the setup now!"
+→ Continue with Q1
+```
+
+### Case 2 · Agent restarted mid-interview (cold restart, crash, redeploy)
+
+On startup, if `{{PLACEHOLDER}}` still present AND ownerreview.md contains partial interview log:
+```
+→ Read ownerreview.md to find the last answered question (e.g. "Last answered: Q7")
+→ Send recovery message:
+   "我们继续之前的配置！之前已经完成了前 {N} 个问题，从第 {N+1} 题继续。
+    Let's pick up where we left off — you completed Q{N}, continuing from Q{N+1}."
+→ Resume from that question — do NOT restart from Q1
+→ Preserve all previously collected answers
+```
+
+### Case 3 · Bootstrap never triggered (manual install, no post_install)
+
+If the agent is running, SOUL.md has `{{PLACEHOLDER}}`, but no Bootstrap Opening Message was ever sent:
+```
+→ Detected via: on_startup sees {{PLACEHOLDER}} + ownerreview.md is empty or missing
+→ Send Opening Message immediately (same text as post_install hook)
+→ Proceed with Q1
+```
+
+### Case 4 · Manual re-trigger command
+
+Any Lark team member can send:
+```
+重新配置 / reconfigure / /bootstrap
+```
+→ Agent re-enters Bootstrap Mode, sends Opening Message, runs full 13-question interview again
+→ Existing brand config is preserved until new answers overwrite it
+→ Use case: brand rebrand, change of platforms, major voice update

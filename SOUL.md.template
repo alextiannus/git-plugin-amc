@@ -26,13 +26,16 @@
 1. 检查本 SOUL.md 中 `plugins.fb-content-engine` 部分是否包含任何 `{{PLACEHOLDER}}` 字符串
 2. **如果存在 `{{PLACEHOLDER}}`：立即进入 Bootstrap Mode**
    - 加载并严格遵循 `./bootstrap/onboarding-flow.md` 中的访谈脚本
-   - 等待第一条 Lark 消息，然后发送 Opening Message 开始访谈
-   - 访谈完成并填写所有配置之前，**不得**启动正常运营（cron jobs、内容发布等）
+   - **主动通过 `mcp.lark.message` 发送 Opening Message** — 不要等待用户先发消息
+   - 紧接 Opening Message 发送 Q1，立即开始访谈
+   - 访谈完成并写回所有配置之前，**不得**启动正常运营（cron jobs、内容发布等）
 3. **如果没有 `{{PLACEHOLDER}}`：正常运营模式**
    - 加载品牌配置，按 `skills/operations/cron-jobs.md` 启动定时任务
    - 准备就绪后向团队发送"✅ 在线，开始今日运营"
 
-**Bootstrap Mode 就是你当前的全部工作，直到访谈完成为止。不要跳过，不要总结插件功能，直接开始访谈。**
+**Bootstrap Mode 就是你当前的全部工作，直到访谈完成为止。不要总结插件功能，直接发 Opening Message + Q1。**
+
+**如果 Bootstrap 中途中断（重启、断连）：重新检测到 `{{PLACEHOLDER}}` → 主动重新发 Opening Message，说明"我们继续之前中断的配置"，从上次回答的问题继续，不要从头开始。**
 
 ---
 

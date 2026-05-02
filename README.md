@@ -37,29 +37,22 @@ openclaw skills list           # 应显示 22 个技能模块
 
 ---
 
-### Step 3 · 配置 SOUL.md → 启动网关
+### Step 3 · 插件自动完成剩余配置
 
-```bash
-# 复制模板（每个品牌一次）
-cp ~/.openclaw/extensions/git-plugin-amc/SOUL.md.template ./SOUL.md
+`openclaw plugins enable` 执行完毕后，插件会自动：
 
-# 如果你的 OpenClaw 实例已有 SOUL.md（有其他配置），手动合并：
-# 将 SOUL.md.template 中的 "PLUGIN · fb-content-engine" 整块追加到你的 SOUL.md 末尾
+1. 将 F&B Content Engine 配置块注入你的 SOUL.md（不覆盖现有配置）
+2. 重载 OpenClaw 网关
+3. **立即通过 Lark Bot 发送访谈开场白，开始 13 问 Bootstrap 配置**
 
-# 重载配置（Lark Bot 正在运行时）
-openclaw reload
+你不需要手动复制任何模板，不需要重启网关，不需要先发消息。
+**打开 Lark，等待 AI 内容官发来第一条消息即可。**
 
-# 或重启网关（冷启动）
-openclaw gateway stop
-openclaw gateway start
-```
+> 如果 Lark Bot 尚未连接：先完成 Step 1 的 Lark 绑定，然后运行 `openclaw reload`，
+> AI 内容官检测到 Lark 可用后会自动发出开场消息。
 
-Agent 启动后读取 SOUL.md，检测到 `{{PLACEHOLDER}}`，自动进入 Bootstrap Mode，等待第一条 Lark 消息。
-
-> **注意**：OpenClaw 没有 `openclaw start --soul` 命令。启动命令是 `openclaw gateway start`（或 `openclaw reload` 热重载）。
-
-> The agent reads SOUL.md on startup. If any `{{PLACEHOLDER}}` is found,  
-> it enters Bootstrap Mode and waits for the first Lark message to begin the interview.
+> **Recovery**: 如果访谈中途中断（重启、断连），重新启动后 AI 内容官会自动检测
+> 并从上次中断的问题继续，无需从头开始。也可以向 Lark Bot 发送 `/bootstrap` 手动重新触发。
 
 ---
 
