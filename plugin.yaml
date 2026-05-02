@@ -1,0 +1,151 @@
+# ─────────────────────────────────────────────────────────────
+# F&B Content Engine — Plugin Manifest
+# OpenClaw Plugin · Git Starter Kit
+# ─────────────────────────────────────────────────────────────
+
+name: fb-content-engine
+display_name: "F&B Content Engine"
+version: "0.4.0"
+description: >
+  A complete social media operations plugin for F&B brands.
+  Manages content from idea to publish across 7 platforms,
+  with bilingual support, compliance gates, owner escalation,
+  and automated daily/weekly/monthly reporting.
+author: "12eat AI Lab"
+license: MIT
+min_openclaw_version: "1.0.0"
+
+# ── Plugin Categories ─────────────────────────────────────────
+tags:
+  - f&b
+  - restaurant
+  - social-media
+  - content-engine
+  - bilingual
+  - chinese-cuisine
+
+# ── Skills Included ──────────────────────────────────────────
+skills:
+  core:
+    - repurpose-chain     # IG-first 7-step repurpose chain
+    - hook-engine         # 6 hook types × platform compatibility matrix
+    - scheduling          # posting windows + batch workflow
+    - content-types       # format specs per platform
+
+  compliance:
+    - fda-ftc-rules       # health claims, price truth, promotions
+    - allergen-gate       # 9 major allergens checker
+    - platform-policies   # TikTok/Meta/GMB specific rules
+    - image-rights        # photo licensing and consent rules
+
+  localization:
+    - bilingual-gate      # EN/ZH decision tree + canonical dish map
+    - brand-voice         # personality, vocabulary, phrase rules
+
+  platforms:
+    - instagram           # PRIMARY — 7-slide carousel, reels
+    - tiktok              # raw video, 15-60s, hook in 2s
+    - rednote             # authentic storytelling, 300-600 chars
+    - facebook            # community-focused, discussion questions
+    - youtube             # SEO-optimized, 8-12 min long-form
+    - googlemap           # reputation layer, 24h review response
+    - x                   # contrarian angle, 280 chars
+
+  operations:
+    - owner-approval      # 3-tier escalation + Lark notification
+    - vault-manager       # vault file creation and maintenance
+    - cron-jobs           # daily 06:30-23:45 automation schedule
+    - reporting           # daily snapshot, weekly, monthly reports
+
+  bootstrap:
+    - onboarding-flow     # self-configuring interview + SOUL.md writer
+
+# ── Tools Required ────────────────────────────────────────────
+tools_required:
+  - mcp.web_search
+  - mcp.translate
+  - mcp.lark.message
+  - mcp.lark.drive
+  - mcp.calendar
+
+tools_optional:
+  - mcp.image_gen           # enable if brand allows AI-generated visuals
+  - mcp.publisher.instagram
+  - mcp.publisher.tiktok
+  - mcp.publisher.rednote
+  - mcp.publisher.facebook
+  - mcp.publisher.youtube
+  - mcp.publisher.googlemap
+  - mcp.publisher.x
+
+# ── Config Schema (brand-specific values) ────────────────────
+# These are the ONLY values the brand SOUL.md needs to provide.
+# Everything else is handled by the plugin.
+config_schema:
+  brand_name:
+    type: string
+    required: true
+    description: "Official brand name, exact casing (e.g. 12eat唐人街外卖)"
+
+  brand_slug:
+    type: string
+    required: true
+    pattern: "^[a-z0-9]+$"
+    description: "Lowercase alphanumeric slug for file paths (e.g. 12eat)"
+
+  brand_niche:
+    type: string
+    required: true
+    description: "One-sentence brand positioning (≤20 words)"
+
+  brand_mission:
+    type: string
+    required: true
+    description: "AI agent's core mission statement"
+
+  markets:
+    type: string
+    required: true
+    description: "Target markets and languages (e.g. North America (en) + 海外华人社区 (zh))"
+
+  active_platforms:
+    type: array
+    required: true
+    items: [instagram, tiktok, rednote, facebook, youtube, googlemap, x]
+    description: "Platforms the agent will manage"
+
+  owner_lark_id:
+    type: string
+    required: true
+    description: "Owner's Lark user ID for escalation notifications"
+
+  trending_radar_url:
+    type: string
+    required: false
+    default: "https://12eat-ai.sg.larksuite.com/docx/TPb8d2B7Yo16SXxdBDwljnJAg2e"
+    description: "Shared Trending Radar Lark Doc URL"
+
+  lark_workspaces_url:
+    type: string
+    required: false
+    default: "https://12eat-ai.sg.larksuite.com/drive/folder/PbugfutjllCDM0dqMiIlN0orgZd"
+    description: "AI Workspaces folder URL for vault creation"
+
+# ── Update Policy ─────────────────────────────────────────────
+update:
+  channel: stable           # stable | beta | edge
+  check_interval: weekly    # daily | weekly | manual
+  auto_apply: false         # require owner confirmation before applying
+  notify_via: lark          # how to notify owner of available updates
+
+# ── Vault Templates ───────────────────────────────────────────
+vault_templates:
+  - vault-index.md
+  - brand/ownerreview.md
+  - brand/owner-profile.md
+  - media/media-index.md
+  - post/postschedule.md
+  - post/yyyymmdd-post.md
+  - report/report-rules.md
+  - report/weekly-template.md
+  - report/monthly-template.md

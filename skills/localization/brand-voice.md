@@ -1,0 +1,134 @@
+# Skill · Brand Voice
+# F&B Content Engine · localization/brand-voice.md
+# ─────────────────────────────────────────────────
+# ⚠️  BRAND-CUSTOMIZED FILE
+# Core personality is pre-filled with F&B defaults.
+# Brand-specific vocabulary and forbidden words are added during Bootstrap Mode (Q12/Q13).
+# Do NOT overwrite during plugin updates (protected by update.sh).
+# ─────────────────────────────────────────────────
+
+## Brand Personality
+
+> Fill in during Bootstrap Mode, or keep the F&B defaults below if they fit.
+
+**In one sentence, we are:**
+{{BRAND_PERSONALITY_SENTENCE}}
+_Default: "The friendly neighborhood Chinese food spot that knows you by name —
+warm, appetizing, and honest. We make you hungry before the photo loads."_
+
+**Our three personality words:**
+{{BRAND_PERSONALITY_WORDS}}
+_Default: Warm · Honest · Generous_
+
+---
+
+## Tone Markers
+
+These apply across all platforms (platform-specific tone shifts are in [[localization/bilingual-gate]]):
+
+- **Warm and appetizing** — describe food vividly; make the reader hungry
+- **Honest and specific** — real dish names, real prices, real portions
+- **Community energy** — neighborhood spot, not a faceless brand
+- **Casual but credible** — we know our food; we don't over-explain it
+- **Generous spirit** — always sharing deals, tips, recommendations
+- **Family-friendly** — all content safe for all ages at all times
+
+---
+
+## Vocabulary
+
+### Words we use
+
+**Food descriptors:**
+sizzling · steaming · fresh · wok-fired · hand-pulled · hot-tossed · slow-braised · crispy · tender · rich · fragrant · mouth-watering
+
+**Value descriptors:**
+affordable · combo · deal · lunch special · family meal · set meal · value
+
+**Community words:**
+regulars · neighborhood · kitchen · chef · homemade · authentic · craving
+
+**Brand-specific additions (fill during Bootstrap Mode):**
+{{BRAND_SPECIFIC_VOCABULARY}}
+
+---
+
+### Words we NEVER use
+
+**Corporate buzzwords (always forbidden):**
+moreover · furthermore · synergy · holistic · circle back · leverage · utilize · optimize · scalable
+
+**Food claims we can't back up:**
+gourmet (unless genuinely upscale) · artisanal (unless it genuinely is) · award-winning (unless we have the award) · world-famous · best in [city] (unless provable)
+
+**Health/medical language:**
+healthy (as a medical claim) · nutritious (unless certified) · superfood · detox · immune-boosting
+→ See [[compliance/fda-ftc-rules]] for the full list
+
+**Brand-specific forbidden words (fill during Bootstrap Mode):**
+{{BRAND_FORBIDDEN_WORDS}}
+
+---
+
+## Phrases We Use
+
+- "This one's a must-try."
+- "Our regulars swear by this."
+- "Perfect for [lunch / family dinner / late night]."
+- "Craving satisfied."
+- "Fresh out of the wok."
+- "You're going to love this."
+- "Ask for this by name."
+
+**Brand-specific phrases (fill during Bootstrap Mode):**
+{{BRAND_SPECIFIC_PHRASES}}
+
+---
+
+## Phrases We Never Use
+
+- "In today's fast-paced world..."
+- "It goes without saying..."
+- "We are committed to providing..."
+- "Our team of dedicated professionals..."
+- Anything that sounds like a press release or corporate memo
+- Any phrase that treats the customer as a consumer rather than a neighbor
+
+---
+
+## Writing the Brand Voice in Practice
+
+**Strong example (passes the voice test):**
+> "$12.90 lunch set. Feeds two. Our regulars have been ordering this every Tuesday
+> for the past year. You'll see why."
+
+**Weak example (fails the voice test):**
+> "We are pleased to offer our valued customers a premium dining experience
+> at an affordable price point with our set lunch menu."
+
+**Why the first works:**
+- Specific price upfront
+- Social proof ("regulars", "past year")
+- Confident and direct
+- Treats the reader like someone who already knows us
+
+---
+
+## Voice Consistency Check
+
+Before publishing any post, ask:
+1. Could a corporate brand say exactly this? → If yes, rewrite it.
+2. Does it make you hungry or curious? → If no, rewrite the hook.
+3. Is it specific? (dish name, price, portion) → If vague, add specifics.
+4. Would it embarrass a local restaurant owner? → If yes, don't publish.
+
+---
+
+## Voice Drift Protocol
+
+Monthly: Compare recent posts against this file.
+If the last 10 posts don't sound like the personality above:
+1. Flag in ownerreview.md
+2. Do NOT change brand-voice.md without owner sign-off
+3. Adjust hook and caption writing to re-align
+4. Check if platform-tone.md has drifted away from core voice

@@ -1,0 +1,27 @@
+# ── Lock files (generated per brand by install.sh) ──────────────
+.fb-engine-lock-*.yaml
+
+# ── Brand-specific generated folders ────────────────────────────
+# These are created by install.sh and are brand-specific.
+# Do NOT commit brand skill graphs or vaults into the plugin repo.
+# NOTE: vault-templates/ is intentionally NOT excluded (it's part of the plugin).
+content-skill-graph-*/
+vault-*/
+!vault-templates/
+!vault-templates/**
+SOUL_*.md
+
+# ── macOS ────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ── Editors ──────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Temp files ───────────────────────────────────────────────────
+*.bak
+*.tmp

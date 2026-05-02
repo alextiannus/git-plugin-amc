@@ -1,0 +1,87 @@
+# Skill · Facebook
+# F&B Content Engine · platforms/facebook.md
+# ──────────────────────────────────────────
+
+## Role in Repurpose Chain
+
+**Step 4.** Frame the same content as a community conversation, not a broadcast.
+Facebook is about belonging. Every post should invite participation.
+
+---
+
+## Posting Specs
+
+| Setting | Value |
+|---|---|
+| Frequency | 3-4x per week |
+| Best times | 12–1pm · 6–8pm |
+| Peak days | Tuesday · Thursday · Saturday |
+| Post length | 100-300 words |
+| Images | 1-4 photos |
+| Language | EN primary; ZH secondary for Chinese-community posts |
+
+---
+
+## The Facebook Formula
+
+```
+[Hook — same emotional trigger as IG, but can be slightly longer]
+[2-3 sentences of substance — dish story, deal, or community moment]
+[Discussion question OR community CTA]
+```
+
+The discussion question is what makes Facebook different from other platforms. It is mandatory.
+
+**Strong discussion questions:**
+- "What's your go-to order when you can't decide? 👇"
+- "Tag someone who needs to try this with you."
+- "Spicy or mild — which side are you on?"
+- "What dish from your hometown do you miss most? We might be able to help."
+- "Family dinner sorted — what's everyone ordering this weekend?"
+
+---
+
+## Content That Works on Facebook
+
+- **Community stories** — regulars, loyal customers, neighborhood moments
+- **Family meal deals** — Facebook skews older; families respond well to value
+- **Deal alerts** — price-conscious audience, clear value messaging
+- **Local event tie-ins** — community festivals, cultural holidays, neighborhood news
+- **Poll posts** — "Which new dish should we add next?" drives strong engagement
+- **Behind-the-scenes** — longer captions are fine; Facebook readers tolerate text more
+
+---
+
+## Audience on Facebook
+
+Facebook skews slightly older than TikTok/Instagram.
+- Hungry Locals, especially families making group meal decisions
+- Community members who want to feel connected to the neighborhood spot
+- Less discovery-focused; more loyalty and community-focused
+
+---
+
+## Facebook Groups
+
+When content is relevant to local community groups:
+- Share to local food groups, expat groups, neighborhood groups where permitted
+- Never post the exact same content to multiple groups without adapting for each community
+
+---
+
+## Hook Selection for Facebook
+
+Best performing hooks on Facebook (reference [[core/hook-engine]]):
+1. Deal ★★★ — price + value; families respond to clear savings
+2. Community ★★★ — social proof; "our regulars" framing
+3. Craving ★★ — works, but less powerful than on visual platforms
+
+---
+
+## Facebook-Specific Rules
+
+- Contests require official rules and cannot require sharing as a mandatory entry condition (Meta policy)
+- Branded content tag required for any paid partnership
+- Never post the exact same caption as Instagram — Facebook readers often follow both
+- Reactions: "Love" signals stronger interest than "Like" — create content that earns Love reactions
+- Buying likes or engagement is prohibited and will hurt organic reach
