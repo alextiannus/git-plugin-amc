@@ -12,29 +12,30 @@ via their Lark account. No intermediary needed.
 
 ---
 
-## Auto-Capture on First Message
-
-When Bootstrap Mode starts, before sending any message:
+## Team Access Model
 
 ```
-[AGENT ACTION — silent, runs before Q1]
-OWNER_LARK_ID = lark.message.sender.user_id
-→ Store in SOUL.md as owner_lark_id
-→ ALL users who message this Lark bot are treated as brand team members
-→ No need to ask for Lark ID — it's already known
+所有通过 Lark Bot 发消息的用户 = 品牌管理团队成员。
+无需配置特定的 owner_lark_id，无需审批机制。
+AI 直接发布内容，团队在社交媒体上查看，通过 Lark 发反馈给 AI 自我改进。
+
+All Lark bot users = brand team members.
+No owner_lark_id needed. No approval gate.
+AI publishes directly. Team reviews on social platforms.
+Feedback sent to Lark bot → AI self-improves.
 ```
 
 ---
 
-## Opening Message (send to owner's Lark on first startup)
+## Opening Message (send on first Lark message received)
 
 ```
 你好！我是你的 AI 内容官，正式开始工作之前，
-我需要问你几个问题来完成配置（大约 14 个问题，25 分钟）。
+我需要问你几个问题来完成配置（大约 13 个问题，20 分钟）。
 
 Hi! I'm your AI Content Manager. Before I start working,
 I need to ask you a few questions to complete my setup
-(about 14 questions, 25 minutes).
+(about 13 questions, 20 minutes).
 
 请用你觉得最顺手的语言回答 / Please reply in whichever language feels natural.
 我们开始吧！/ Let's get started!
@@ -152,26 +153,16 @@ Want to connect them now, or skip for later?"
 ```
 
 → If owner connects credentials now: re-run check_connection(), move to active_platforms
-→ If owner skips: leave in pending_platforms, agent still produces content drafts for manual publishing
+→ If owner skips: leave in pending_platforms
+   pending_platforms behaviour: SILENT — agent does NOT generate content or drafts for these platforms.
+   A weekly cron reminder is sent via Lark: "[平台名] 尚未连接账号，连接后即可开始自动运营。"
+   No action taken until credentials are confirmed.
 
 ---
 
-### Module 3 · Owner Contact (→ owner-approval.md)
+### Module 3 · Brand Voice (→ brand-voice.md)
 
-**Q7 · Response time expectation**
-> "当我发送需要你审批的内容通知时，你通常多久能看到并回复？
-> 默认 SLA 是：营业时间内 1 小时。可以接受吗？
-> How quickly can you typically respond to approval requests?
-> Default SLA is 1 hour during business hours — does that work?"
-
-→ Note: owner_lark_id was already auto-captured at session start — no need to ask
-→ If SLA adjusted: note in owner-approval.md SLA section
-
----
-
-### Module 4 · Brand Voice (→ brand-voice.md)
-
-**Q8 · Brand personality**
+**Q7 · Brand personality**
 > "用三个词描述你们品牌的个性。
 > Three words that describe your brand's personality?"
 
@@ -179,7 +170,7 @@ Want to connect them now, or skip for later?"
 
 ---
 
-**Q9 · Forbidden words or topics**
+**Q8 · Forbidden words or topics**
 > "有没有你绝对不希望出现在内容里的词语、话题、或竞争对手名字？
 > Any words, topics, or competitor names that should never appear in our content?"
 
@@ -187,9 +178,9 @@ Want to connect them now, or skip for later?"
 
 ---
 
-### Module 5 · Compliance (→ allergen-gate.md + bilingual-gate.md)
+### Module 4 · Compliance (→ allergen-gate.md + bilingual-gate.md)
 
-**Q10 · Top dishes**
+**Q9 · Top dishes**
 > "你们最常推广的 5-10 道菜是哪些？请列出中文名和英文名。
 > What are your top 5-10 most-promoted dishes? Please give both Chinese and English names."
 
@@ -197,7 +188,7 @@ Want to connect them now, or skip for later?"
 
 ---
 
-**Q11 · Allergen check**
+**Q10 · Allergen check**
 > "对于你刚才列出的菜品，哪些含有以下过敏原？
 > For the dishes you listed, which contain any of these 9 allergens?
 > 牛奶·鸡蛋·鱼·贝类·坚果·花生·小麦·大豆·芝麻
@@ -209,9 +200,9 @@ Want to connect them now, or skip for later?"
 
 ---
 
-### Module 6 · Shared Resources
+### Module 5 · Shared Resources
 
-**Q12 · Trending Radar URL**
+**Q11 · Trending Radar URL**
 > "我们有一个每日更新的热点雷达文档，所有品牌都共享。
 > 地址是：[default URL from SOUL.md config]
 > 这个地址对你的品牌适用吗？还是需要用其他地址？
@@ -223,7 +214,7 @@ Want to connect them now, or skip for later?"
 
 ---
 
-**Q13 · AI Workspaces folder (vault parent)**
+**Q12 · AI Workspaces folder (vault parent)**
 > "我会在 Lark 云盘里为你创建专属的品牌档案夹。
 > 默认位置是 AI Workspaces 文件夹：[default URL from SOUL.md]
 > 这个位置可以吗？如果你已经有一个偏好的位置，可以把链接给我。
@@ -234,21 +225,21 @@ Want to connect them now, or skip for later?"
 
 → Maps to: `{{LARK_WORKSPACES_URL}}` (parent folder)
 → If unchanged: keep default
-→ After Q13 answer: DO NOT wait — immediately proceed to create the vault:
+→ After Q12 answer: immediately create the vault without waiting:
   ```
-  [AGENT ACTION — runs silently during Q14]
+  [AGENT ACTION — runs silently during Q13]
   mcp.lark.drive.create_folder(
     parent_url = {{LARK_WORKSPACES_URL}},
     folder_name = "vault-{{BRAND_SLUG}}"
   )
   → Save returned folder URL as {{VAULT_LARK_URL}}
-  → Copy vault-templates/ contents into the new Lark Drive folder
+  → Upload vault-templates/ contents into the new Lark Drive folder
   → If folder creation fails: log error, ask owner to create manually and paste the URL
   ```
 
 ---
 
-**Q14 · Promotions and pricing**
+**Q13 · Promotions and pricing**
 > "你们有固定的优惠或套餐价格区间吗？
 > 比如午市套餐价格、家庭套餐范围等——帮助我在推广时确保价格准确。
 > Do you have standard promotions or price ranges?
@@ -260,14 +251,14 @@ Want to connect them now, or skip for later?"
 
 ## Post-Interview Actions
 
-After all 14 questions are answered:
+After all 13 questions are answered:
 
 ```
 1. Fill all {{PLACEHOLDER}} values in SOUL.md → save as SOUL_{BRAND_SLUG}.md
-2. Update brand-voice.md with Q9/Q10 answers
-3. Fill bilingual-gate.md Canonical Dish Name Map with Q11 answers
-4. Fill allergen-gate.md Brand Dish Allergen Table with Q12 answers
-5. [IF NOT ALREADY DONE IN Q14] Create Lark Drive vault:
+2. Update brand-voice.md with Q7/Q8 answers
+3. Fill bilingual-gate.md Canonical Dish Name Map with Q9 answers
+4. Fill allergen-gate.md Brand Dish Allergen Table with Q10 answers
+5. [IF NOT ALREADY DONE IN Q12] Create Lark Drive vault:
    mcp.lark.drive.create_folder(parent={{LARK_WORKSPACES_URL}}, name="vault-{{BRAND_SLUG}}")
    → Upload vault-templates/ files into the new folder
    → Store returned URL as {{VAULT_LARK_URL}} in SOUL.md shared_resources

@@ -32,10 +32,10 @@ plugins:
     brand_mission: "{{BRAND_MISSION}}"
     markets:       "{{MARKETS}}"
 
-    # ── Owner ───────────────────────────────────────────────
-    # Auto-captured from the first Lark message that triggers Bootstrap.
-    # No manual input needed.
-    owner_lark_id: "{{OWNER_LARK_ID}}"
+    # ── Team ────────────────────────────────────────────────
+    # All Lark users who message this bot are treated as brand team members.
+    # No owner ID needed — there is no single approver.
+    # team_lark_chat: the Lark group/bot that brand team uses to communicate with this agent
 
     # ── Platforms ───────────────────────────────────────────
     # active_platforms:  credentials confirmed → agent auto-publishes
@@ -65,7 +65,7 @@ plugins:
         - fill_placeholders:      "write all collected values into plugins.fb-content-engine"
         - create_lark_vault:      "mcp.lark.drive → subfolder in {{LARK_WORKSPACES_URL}}, name={{BRAND_SLUG}}"
         - upload_vault_templates: "upload vault-templates/ into Lark Drive vault folder"
-        - notify_owner:           "✅ 配置完成，我正式开始工作了。"
+        - notify_team:            "✅ 配置完成，我正式开始工作了。内容将直接发布，请到各平台查看并随时发消息给我反馈。"
         - exit_bootstrap:         true
 ```
 
@@ -80,7 +80,7 @@ plugins:
 | `{{BRAND_NICHE}}` | One-sentence positioning | `Authentic Chinese food delivery` |
 | `{{BRAND_MISSION}}` | Agent's core mission | `Generate posts that drive orders` |
 | `{{MARKETS}}` | Target markets + languages | `North America (en) + 海外华人社区 (zh)` |
-| `{{OWNER_LARK_ID}}` | Auto-captured from Lark sender | `ou_a1b2c3d4` |
+| ~~`{{OWNER_LARK_ID}}`~~ | Removed — all Lark users are team | — |
 | `{{TRENDING_RADAR_URL}}` | Shared Lark Doc (default pre-filled) | `https://12eat-ai.sg.larksuite.com/docx/...` |
 | `{{LARK_WORKSPACES_URL}}` | Vault parent folder (default pre-filled) | `https://12eat-ai.sg.larksuite.com/drive/...` |
 | `{{VAULT_LARK_URL}}` | Created by Bootstrap via mcp.lark.drive | `https://12eat-ai.sg.larksuite.com/drive/folder/...` |

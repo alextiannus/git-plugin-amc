@@ -5,7 +5,7 @@
 
 name: fb-content-engine
 display_name: "F&B Content Engine"
-version: "0.4.2"
+version: "0.4.4"
 description: >
   A complete social media operations plugin for F&B brands.
   Manages content from idea to publish across 7 platforms,
@@ -52,7 +52,8 @@ skills:
     - x                   # contrarian angle, 280 chars
 
   operations:
-    - owner-approval      # 3-tier escalation + Lark notification
+    - owner-approval      # crisis protocol + compliance hard stops (no approval gate for regular posts)
+    - feedback-loop       # team feedback collection, weekly self-assessment, self-improvement
     - vault-manager       # vault file creation and maintenance
     - cron-jobs           # daily 06:30-23:45 automation schedule
     - reporting           # daily snapshot, weekly, monthly reports
@@ -131,11 +132,9 @@ config_schema:
     items: [instagram, tiktok, rednote, facebook, youtube, googlemap, x]
     description: "Platforms brand wants but credentials not yet connected — agent plans content, manual publish"
 
-  owner_lark_id:
-    type: string
-    required: false
-    auto_capture: "lark.message.sender.user_id"
-    description: "Auto-captured from the first Lark message that triggers Bootstrap. No manual input needed."
+  # owner_lark_id: REMOVED
+  # All Lark users who message this bot are treated as brand team members.
+  # No single approver — the whole team can send feedback and commands.
 
   trending_radar_url:
     type: string

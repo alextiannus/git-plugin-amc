@@ -1,130 +1,124 @@
-# Skill · Owner Approval
+# Skill · Team Communication & Crisis Protocol
 # F&B Content Engine · operations/owner-approval.md
 # ──────────────────────────────────────────────────
 
-## Purpose
+## Core Operating Principle
 
-Define when and how the AI Content Manager escalates to the brand owner,
-what the owner needs to do, and what happens if there's no response.
+**AI Content Manager publishes directly. No approval gate for regular content.**
+
+The team reviews published content on social platforms and sends feedback
+via Lark. The AI collects feedback, logs it, and self-improves.
+Escalation via Lark exists ONLY for crisis situations.
 
 ---
 
-## The Notification Protocol (applies to ALL tiers)
+## Regular Content · Direct Publish Flow
 
-For EVERY escalation — any tier — perform BOTH actions simultaneously:
-
-**Action 1: Append to post record**
-Write an escalation block to the related post record file:
-`vault-{brand}/post/YYYY-MM-DD_{slug}.md` → under "Issues / Notes"
-
-```markdown
-## Issues / Notes
-
-**Escalation — [TIMESTAMP]**
-- Tier: [1 / 2 / 3]
-- Trigger: [one-line reason]
-- Status: PENDING OWNER RESPONSE
-- Question: [exact question that needs an answer]
+```
+Topic Discovery → Content Creation → Compliance Gates → Publish
+                                                           ↓
+                                              Team reviews on IG/FB/etc.
+                                                           ↓
+                                          Team sends feedback via Lark bot
+                                                           ↓
+                                              AI logs → self-improves
 ```
 
-**Action 2: Send Lark message to owner**
-Message must contain:
-- Tier (1 / 2 / 3)
-- Trigger reason (one line, specific)
-- Direct link to the post record file in vault
-- The exact question: ✅ Approve / ✏️ Edit / ❌ Reject / 🕒 Hold?
-
-These two actions are NOT alternatives. Both happen every time.
+No Lark notification needed for regular scheduled posts.
+The weekly digest (Tier 3) informs the team of what was published.
 
 ---
 
-## Tier 1 — Pause & Wait (block publish until approved)
+## Feedback Reception (any time, any team member)
 
-**Triggers:**
-- Compliance Gate RED hit
-- Compliance Gate YELLOW hit involving: competitor name, heritage claim, political content
-- Crisis communication (food-safety incident, PR issue, ≥3 negative comments same hour)
-- Any post claiming price > $50 or deal > 30% off
-- First post of any new dish (price verification required)
+Any Lark message that is NOT a command is treated as feedback.
 
-**SLA:**
-- Notify within 5 minutes of trigger
-- Owner response window: 1 hour during operating hours
-- If no response after 1 hour: DO NOT publish. Auto-bump notification. Try again in 1 hour.
-- If no response after 3 hours: move draft to "Pending" in postschedule.md; log in ownerreview.md
+**Pattern matching:**
+- "这条帖子太硬了" / "that post was too formal" → style feedback
+- "多发一些食物特写" / "more close-up food shots" → content direction feedback
+- "周二那条反应不好" / "Tuesday's post didn't perform well" → performance feedback
+- "不要用这个词" / "don't use this word" → vocabulary feedback
 
-**Tier 1 is a hard stop. There are no exceptions.**
-
----
-
-## Tier 2 — Notify & Auto-Hold (auto-publish if no objection)
-
-**Triggers:**
-- New content format being trialed for the first time
-- Content tagged by owner as "VIP topics" in the brand config
-- Cross-store or chain-level content (affects multiple locations)
-
-**SLA:**
-- Notify within 30 minutes of draft completion
-- Owner response window: 4 hours
-- If no response after 4 hours: auto-publish + log "Auto-approved (no response)" in ownerreview.md
+**Agent response:**
+1. Acknowledge: "收到，我记下来了 / Got it, noted."
+2. Log to `vault-{brand}/brand/ownerreview.md` under today's date
+3. Tag by category: [style] [content] [vocabulary] [timing] [platform]
+4. Batch for weekly self-assessment (see `feedback-loop.md`)
 
 ---
 
-## Tier 3 — Notify Only (no hold, no publish delay)
+## Tier 3 — Informational Notifications (no action needed)
 
-**Triggers:**
-- Daily digest: summary of what was published today
-- Weekly digest: what's planned for next week
-- Anomaly alert: engagement drop >30% week-over-week on any platform
-- Milestone: first 1,000 followers, 100 reviews, etc.
+Sent proactively by the agent. Team reads when convenient.
 
-**No action required from owner.** These are informational only.
-
----
-
-## Owner Response Options
-
-Owner replies to the Lark message with one of:
-
-| Response | Meaning | Agent Action |
+| Trigger | Timing | Content |
 |---|---|---|
-| ✅ APPROVE | Publish as-is | Publish immediately, update post record status |
-| ✏️ EDIT | Owner provides specific edits | Apply edits, re-run Compliance + Bilingual Gates, then publish |
-| ❌ REJECT | Kill this draft | Archive draft, log reason in ownerreview.md, do not republish |
-| 🕒 HOLD | Defer to specific date/time | Reschedule in postschedule.md, send reminder 1h before new slot |
+| Weekly digest | Monday 10:00 | What published last week, what's planned this week |
+| Engagement anomaly | As detected | Drop >30% WoW on any platform — FYI only |
+| Platform milestone | As detected | First 1,000 followers, 100 reviews, etc. |
+| Plugin update available | Monday 09:00 | New version notice, changelog summary |
+| Pending platform reminder | Monday 09:00 | "[Platform] not yet connected — connect to enable auto-publish" |
 
 ---
 
-## Crisis Mode
+## Crisis Protocol (the only hard stop)
 
-**Trigger:** Any of the following:
-- ≥5 one-star reviews in 24 hours
-- Food-safety keywords in incoming reviews (illness, poisoning, foreign object, injury)
-- Coordinated negative comment attack across platforms
+**Trigger conditions — any one of:**
+- ≥5 one-star reviews within 24 hours
+- Food-safety keywords in reviews: illness / poisoning / foreign object / injury / 异物 / 食物中毒
+- Coordinated negative attack: ≥10 similar negative comments across platforms within 2 hours
+- Any team member sends "CRISIS" via Lark
 
-**Immediate actions (no owner confirmation needed for steps 1-3):**
-1. PAUSE all auto-replies and scheduled posts immediately
-2. Send [URGENT] Lark message to owner via standard dual-channel protocol
-3. Switch comment-reply mode to "human-only" (no auto-replies)
+**Immediate actions (no confirmation needed):**
+```
+1. PAUSE all scheduled posts and auto-replies immediately
+2. Send [🚨 CRISIS] alert to team Lark:
+   - Platform(s) affected
+   - Trigger description + count
+   - Direct links to the content/reviews causing the issue
+3. Switch to human-only mode: AI drafts responses, team sends manually
+```
 
-**Resume conditions:**
-- Owner explicitly replies "CRISIS-CLEAR" on the post record OR via Lark message
-- Do not resume automatically under any circumstances
+**Resume:**
+- Team sends "CRISIS-CLEAR" via Lark
+- Agent confirms: "收到，恢复正常运营。/ Crisis cleared. Resuming normal operations."
+- Log the incident in `vault-{brand}/brand/ownerreview.md`
+
+**Crisis Mode does not expire automatically. Explicit clear required.**
 
 ---
 
-## Escalation Log
+## Compliance Hard Stops (auto-hold, no publish)
 
-Every escalation (all tiers) is logged in:
+Even without a crisis, these trigger an automatic hold + Lark alert:
+
+| Trigger | Hold duration | Alert content |
+|---|---|---|
+| FDA/FTC RED flag detected | Indefinite | Specific violation + suggested fix |
+| Allergen claim without verified data | Indefinite | Which dish, which allergen is unconfirmed |
+| Price claim > $100 or discount > 40% | 2 hours | Price verification request |
+
+Agent Lark message format for these:
+```
+⚠️ 内容暂停发布 / Post on hold
+原因 / Reason: [specific trigger]
+草稿链接 / Draft: [vault link]
+请确认后回复「发布」/ Reply "发布" to publish after confirming
+```
+
+---
+
+## Activity Log
+
+All Tier 3 notifications and crisis events logged in:
 `vault-{brand}/brand/ownerreview.md`
 
-Format:
 ```markdown
-## [DATE] Escalation Log
+## [DATE] Activity Log
 
-| Time | Tier | Trigger | Status | Resolution |
-|---|---|---|---|---|
-| 11:32 | T1 | New dish post — price unverified | PENDING | |
-| 14:05 | T2 | New Reels format trial | AUTO-APPROVED | Published 18:05 |
+| Time | Type | Description | Status |
+|---|---|---|---|
+| 10:00 | Weekly digest | Sent — 7 posts published last week | Delivered |
+| 14:32 | Compliance hold | IG post — price claim unverified | Resolved 15:10 |
+| 19:00 | Crisis | 6× 1-star reviews, food safety keyword | CRISIS-CLEAR 20:30 |
 ```
