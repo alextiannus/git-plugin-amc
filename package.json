@@ -8,8 +8,23 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
+    "postinstall": "npm run build",
     "prepublishOnly": "npm run build"
   },
+  "files": [
+    "dist",
+    "plugin.yaml",
+    "openclaw.plugin.json",
+    "SOUL.md.template",
+    "skills",
+    "bootstrap",
+    "vault-templates",
+    "README.md",
+    "HOOK.md",
+    "SKILL.md",
+    "setup.sh",
+    "update.sh"
+  ],
   "keywords": [
     "openclaw",
     "openclaw-plugin",

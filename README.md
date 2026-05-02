@@ -17,7 +17,7 @@ compliance gates, owner escalation, and automated reporting.
 
 ---
 
-### Step 2 · 安装 Plugin + 编译运行时
+### Step 2 · 安装 Plugin
 
 ```bash
 # Step 2a · 安装插件（三选一）
@@ -35,20 +35,13 @@ openclaw plugins install ~/.openclaw/extensions/git-plugin-amc
 ```
 
 ```bash
-# Step 2b · 编译 TypeScript 运行时（必须，否则插件无法加载钩子）
-cd ~/.openclaw/extensions/git-plugin-amc
-npm install
-npm run build        # 编译 src/index.ts → dist/index.js
-```
-
-```bash
-# Step 2c · 验证
+# Step 2b · 验证
 openclaw plugins list    # 应显示 fb-content-engine (loaded)
 openclaw skills list     # 应显示 22 个技能
 ```
 
 > 方式 A 需要先 `npm publish`（已在路线图）。目前推荐方式 B 或 C。
-> **`npm run build` 是必须步骤** — 插件的 `gateway_start`/`session_start` 等钩子在 `dist/index.js` 里，没有这个文件 OpenClaw 无法执行任何插件逻辑。
+> 插件已包含 pre-compiled 编译文件并支持自动 postinstall，无需手动 npm install 和 build。
 
 ---
 
