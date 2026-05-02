@@ -17,42 +17,49 @@ compliance gates, owner escalation, and automated reporting.
 
 ---
 
-### Step 2 · 安装 Plugin（一次性 per 实例）
+### Step 2 · 克隆仓库 + 注册插件
 
 ```bash
-# 克隆仓库到 OpenClaw extensions 目录
+# 1. 克隆到 OpenClaw extensions 目录
 git clone https://github.com/alextiannus/git-plugin-amc \
   ~/.openclaw/extensions/git-plugin-amc
 
-# 启用插件
-openclaw plugins enable git-plugin-amc
+# 2. 注册插件（二选一）
+openclaw plugins enable git-plugin-amc   # 推荐
 
-# 验证安装
-openclaw plugins list          # 应显示 git-plugin-amc (fb-content-engine v0.4.6)
-openclaw skills list           # 应显示 22 个技能模块
+# 如果上面命令失败，手动编辑 ~/.openclaw/openclaw.json：
+# plugins.allow 数组加入 "git-plugin-amc"
+# plugins.entries 加入 { "name": "git-plugin-amc", "enabled": true, "path": "~/.openclaw/extensions/git-plugin-amc" }
+
+# 3. 验证
+openclaw plugins list    # 应显示 git-plugin-amc (bundle, loaded)
 ```
 
-> **注意**：`openclaw plugins install git:...` 格式在部分版本不支持，
-> 请使用上方的手动 `git clone` 方式。仓库必须为 Public。
+> 仓库必须为 **Public**（私有仓库需要 SSH key 或 token）。
 
 ---
 
-### Step 3 · 插件自动完成剩余配置
+### Step 3 · 运行 setup.sh 注入 SOUL 配置
 
-`openclaw plugins enable` 执行完毕后，插件会自动：
+**这步是必须的。** `openclaw plugins enable` 只注册了插件文件，还没有把 AI 行为写进 SOUL.md。
 
-1. 将 F&B Content Engine 配置块注入你的 SOUL.md（不覆盖现有配置）
-2. 重载 OpenClaw 网关
-3. **立即通过 Lark Bot 发送访谈开场白，开始 13 问 Bootstrap 配置**
+```bash
+cd ~/.openclaw/extensions/git-plugin-amc
+./setup.sh
 
-你不需要手动复制任何模板，不需要重启网关，不需要先发消息。
-**打开 Lark，等待 AI 内容官发来第一条消息即可。**
+# 如果你的 SOUL.md 不在标准位置，指定路径：
+./setup.sh --soul /path/to/your/SOUL.md
+```
 
-> 如果 Lark Bot 尚未连接：先完成 Step 1 的 Lark 绑定，然后运行 `openclaw reload`，
-> AI 内容官检测到 Lark 可用后会自动发出开场消息。
+`setup.sh` 会自动完成：
+1. 定位或创建你的 SOUL.md
+2. 将 F&B Content Engine 配置块追加进去（不覆盖现有内容）
+3. 执行 `openclaw reload` 让配置生效
 
-> **Recovery**: 如果访谈中途中断（重启、断连），重新启动后 AI 内容官会自动检测
-> 并从上次中断的问题继续，无需从头开始。也可以向 Lark Bot 发送 `/bootstrap` 手动重新触发。
+**运行完成后，打开 Lark，等待 AI 内容官主动发来第一条消息。**
+
+> **已安装过的实例：** 如果之前没跑过 setup.sh（Bootstrap 一直没触发），现在补跑一次即可。
+> **Recovery：** 访谈中途中断，重启后向 Lark Bot 发送 `/bootstrap` 重新触发。
 
 ---
 
