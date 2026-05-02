@@ -143,10 +143,19 @@ Bootstrap Mode 访谈结束后，3 个文件会被品牌信息自动填写：
 
 ## 路线图
 
-- [ ] v0.5 · 提交 awesome-openclaw-agents 官方目录
-- [ ] v0.5 · ClawHub 注册（`openclaw plugins install clawhub:fb-content-engine`）
-- [ ] v0.6 · 多品牌 Dashboard（Mission Control 集成）
-- [ ] v0.6 · GitHub Webhook → 自动触发所有实例更新
+**v0.5 · 多品牌规模化**
+- [ ] Mission Control 集成（`abhi1693/openclaw-mission-control`）
+  — 一台服务器统一管理所有品牌 Agent 实例
+  — Dashboard 创建/启停实例，无需 SSH + CLI
+  — 统一监控所有品牌的 cron 状态、发布日志、异常告警
+  — 一键向全部实例推送 plugin 更新
+- [ ] VPS 部署指南（systemd / Docker，保障 24/7 稳定运行）
+- [ ] 提交 awesome-openclaw-agents 官方目录
+- [ ] ClawHub 注册（`openclaw plugins install clawhub:fb-content-engine`）
+
+**v0.6 · 自动化升级**
+- [ ] GitHub Webhook → plugin 发版后自动通知所有实例更新
+- [ ] 多品牌跨平台数据聚合报告（Mission Control 层）
 
 ---
 
