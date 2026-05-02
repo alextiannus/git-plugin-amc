@@ -1,29 +1,57 @@
 {
-  "name": "fb-content-engine",
-  "version": "0.5.2",
-  "description": "Complete social media operations plugin for F&B brands. Manages content from idea to publish across 7 platforms with bilingual support, compliance gates, and automated daily/weekly/monthly reporting.",
-  "author": "12eat AI Lab",
-  "license": "MIT",
-  "repository": "https://github.com/alextiannus/git-plugin-amc",
-
-  "skills": [
-    "skills/core",
-    "skills/compliance",
-    "skills/localization",
-    "skills/platforms",
-    "skills/operations",
-    "bootstrap"
-  ],
-
+  "id": "git-plugin-amc",
+  "name": "F&B Content Engine",
+  "description": "Social media operations plugin for F&B brands — 7 platforms, bilingual, compliance gates, automated reporting, self-configuring onboarding.",
+  "version": "0.5.4",
+  "kind": "context-engine",
   "configSchema": {
-    "brand_name":    { "type": "string", "required": true,  "description": "Official brand name, exact casing (e.g. 12eat唐人街外卖)" },
-    "brand_slug":    { "type": "string", "required": true,  "description": "Lowercase alphanumeric slug for file paths (e.g. 12eat)" },
-    "brand_niche":   { "type": "string", "required": true,  "description": "One-sentence brand positioning (≤20 words)" },
-    "brand_mission": { "type": "string", "required": true,  "description": "AI agent's core mission statement" },
-    "markets":       { "type": "string", "required": true,  "description": "Target markets and languages" },
-    "active_platforms":  { "type": "array",  "required": true,  "description": "Platforms with credentials — agent auto-publishes" },
-    "pending_platforms": { "type": "array",  "required": false, "default": [], "description": "Platforms brand wants but credentials not connected yet" },
-    "trending_radar_url":    { "type": "string", "required": false, "default": "https://12eat-ai.sg.larksuite.com/docx/TPb8d2B7Yo16SXxdBDwljnJAg2e" },
-    "lark_workspaces_url":   { "type": "string", "required": false, "default": "https://12eat-ai.sg.larksuite.com/drive/folder/PbugfutjllCDM0dqMiIlN0orgZd" }
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "brand_name": {
+        "type": "string",
+        "description": "Official brand name, exact casing (e.g. 12eat唐人街外卖)"
+      },
+      "brand_slug": {
+        "type": "string",
+        "description": "Lowercase alphanumeric slug for file paths (e.g. 12eat)",
+        "pattern": "^[a-z0-9]+$"
+      },
+      "brand_niche": {
+        "type": "string",
+        "description": "One-sentence brand positioning (≤20 words)"
+      },
+      "brand_mission": {
+        "type": "string",
+        "description": "AI agent's core mission statement"
+      },
+      "markets": {
+        "type": "string",
+        "description": "Target markets and languages"
+      },
+      "active_platforms": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Platforms with confirmed credentials — agent auto-publishes"
+      },
+      "pending_platforms": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Platforms brand wants but credentials not yet connected"
+      },
+      "trending_radar_url": {
+        "type": "string",
+        "description": "Shared Trending Radar Lark Doc URL"
+      },
+      "lark_workspaces_url": {
+        "type": "string",
+        "description": "AI Workspaces folder URL for vault creation"
+      },
+      "vault_lark_url": {
+        "type": "string",
+        "description": "Created by Bootstrap via mcp.lark.drive"
+      }
+    },
+    "required": ["brand_name", "brand_slug", "brand_niche", "brand_mission", "markets"]
   }
 }
