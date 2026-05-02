@@ -2,6 +2,7 @@
   "name": "fb-content-engine",
   "version": "0.5.4",
   "description": "F&B Content Engine — OpenClaw plugin for restaurant social media operations across 7 platforms with bilingual support, compliance gates, and automated reporting.",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -41,6 +42,7 @@
     "openclaw": ">=1.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "@types/node": "^20.0.0"
   }
 }

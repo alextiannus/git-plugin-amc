@@ -83,7 +83,7 @@ plugins:
     # ── Bootstrap ───────────────────────────────────────────
     bootstrap:
       enabled: true
-      trigger: "any {{PLACEHOLDER}} present in plugins.fb-content-engine"
+      trigger: "any unfilled placeholder present in plugins.fb-content-engine"
       interview_script: "bootstrap/onboarding-flow/SKILL.md"
       scope: "plugins.fb-content-engine"   # ONLY writes to this section, never touches the rest of SOUL.md
       on_complete:
@@ -105,7 +105,7 @@ plugins:
 | `{{BRAND_NICHE}}` | One-sentence positioning | `Authentic Chinese food delivery` |
 | `{{BRAND_MISSION}}` | Agent's core mission | `Generate posts that drive orders` |
 | `{{MARKETS}}` | Target markets + languages | `North America (en) + 海外华人社区 (zh)` |
-| ~~`{{OWNER_LARK_ID}}`~~ | Removed — all Lark users are team | — |
+| ~~OWNER_LARK_ID~~ | Removed — all Lark users are team | — |
 | `{{TRENDING_RADAR_URL}}` | Shared Lark Doc (default pre-filled) | `https://12eat-ai.sg.larksuite.com/docx/...` |
 | `{{LARK_WORKSPACES_URL}}` | Vault parent folder (default pre-filled) | `https://12eat-ai.sg.larksuite.com/drive/...` |
 | `{{VAULT_LARK_URL}}` | Created by Bootstrap via mcp.lark.drive | `https://12eat-ai.sg.larksuite.com/drive/folder/...` |
