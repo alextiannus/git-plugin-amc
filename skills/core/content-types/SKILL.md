@@ -1,3 +1,9 @@
+---
+name: content-types
+description: "Format specs per platform: carousel, reels, short video, etc."
+plugin: fb-content-engine
+---
+
 # Skill · Content Types
 # F&B Content Engine · core/content-types.md
 # ──────────────────────────────────────────

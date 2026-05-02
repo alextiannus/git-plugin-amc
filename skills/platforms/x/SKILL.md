@@ -1,3 +1,9 @@
+---
+name: x
+description: "Contrarian angle, 280 chars"
+plugin: fb-content-engine
+---
+
 # Skill · X / Twitter
 # F&B Content Engine · platforms/x.md
 # ─────────────────────────────────────

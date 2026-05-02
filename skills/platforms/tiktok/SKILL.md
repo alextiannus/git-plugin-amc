@@ -1,3 +1,9 @@
+---
+name: tiktok
+description: "Raw video, 15–60s, 2-second hook rule"
+plugin: fb-content-engine
+---
+
 # Skill · TikTok
 # F&B Content Engine · platforms/tiktok.md
 # ─────────────────────────────────────────

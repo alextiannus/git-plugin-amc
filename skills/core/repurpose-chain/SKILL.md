@@ -1,3 +1,9 @@
+---
+name: repurpose-chain
+description: "IG-first 7-step content repurpose chain across 7 platforms"
+plugin: fb-content-engine
+---
+
 # Skill · Repurpose Chain
 # F&B Content Engine · core/repurpose-chain.md
 # ─────────────────────────────────────────────

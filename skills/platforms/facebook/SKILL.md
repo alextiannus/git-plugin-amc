@@ -1,3 +1,9 @@
+---
+name: facebook
+description: "Community-focused, discussion questions mandatory"
+plugin: fb-content-engine
+---
+
 # Skill · Facebook
 # F&B Content Engine · platforms/facebook.md
 # ──────────────────────────────────────────

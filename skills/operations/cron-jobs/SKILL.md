@@ -1,3 +1,9 @@
+---
+name: cron-jobs
+description: "Daily 06:30–23:45 automation schedule"
+plugin: fb-content-engine
+---
+
 # Skill · Cron Jobs
 # F&B Content Engine · operations/cron-jobs.md
 # ──────────────────────────────────────────────

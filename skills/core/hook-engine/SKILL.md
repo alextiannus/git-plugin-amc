@@ -1,3 +1,9 @@
+---
+name: hook-engine
+description: "6 hook types × platform compatibility matrix"
+plugin: fb-content-engine
+---
+
 # Skill · Hook Engine
 # F&B Content Engine · core/hook-engine.md
 # ─────────────────────────────────────────

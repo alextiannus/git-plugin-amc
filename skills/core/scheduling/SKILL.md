@@ -1,3 +1,9 @@
+---
+name: scheduling
+description: "Posting windows, batch workflow, optimal timing"
+plugin: fb-content-engine
+---
+
 # Skill · Scheduling
 # F&B Content Engine · core/scheduling.md
 # ─────────────────────────────────────────

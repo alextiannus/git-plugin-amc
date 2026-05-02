@@ -17,25 +17,28 @@ compliance gates, owner escalation, and automated reporting.
 
 ---
 
-### Step 2 · 克隆仓库 + 注册插件
+### Step 2 · 安装 Plugin
+
+选择以下任意一种方式（推荐顺序从上到下）：
 
 ```bash
-# 1. 克隆到 OpenClaw extensions 目录
+# 方式 A · npm 包（最推荐，一行搞定）
+openclaw plugins install fb-content-engine
+
+# 方式 B · GitHub marketplace 安装
+openclaw plugins install --marketplace https://github.com/alextiannus/git-plugin-amc
+
+# 方式 C · 本地路径（手动 git clone 后）
 git clone https://github.com/alextiannus/git-plugin-amc \
   ~/.openclaw/extensions/git-plugin-amc
+openclaw plugins install ~/.openclaw/extensions/git-plugin-amc
 
-# 2. 注册插件（二选一）
-openclaw plugins enable git-plugin-amc   # 推荐
-
-# 如果上面命令失败，手动编辑 ~/.openclaw/openclaw.json：
-# plugins.allow 数组加入 "git-plugin-amc"
-# plugins.entries 加入 { "name": "git-plugin-amc", "enabled": true, "path": "~/.openclaw/extensions/git-plugin-amc" }
-
-# 3. 验证
-openclaw plugins list    # 应显示 git-plugin-amc (bundle, loaded)
+# 验证
+openclaw plugins list    # 应显示 fb-content-engine
+openclaw skills list     # 应显示 22 个技能（fb-content-engine 下）
 ```
 
-> 仓库必须为 **Public**（私有仓库需要 SSH key 或 token）。
+> 方式 A 需要先 `npm publish`（已在路线图）。目前推荐方式 B 或 C。
 
 ---
 

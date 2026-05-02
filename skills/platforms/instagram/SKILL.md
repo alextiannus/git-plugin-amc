@@ -1,3 +1,9 @@
+---
+name: instagram
+description: "PRIMARY — carousel specs, reels, caption formula"
+plugin: fb-content-engine
+---
+
 # Skill · Instagram
 # F&B Content Engine · platforms/instagram.md
 # ─────────────────────────────────────────────

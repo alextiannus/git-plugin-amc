@@ -25,10 +25,10 @@ content-skill-graph-*/
 
 # ── Brand-customized skill files (written by Bootstrap, never overwritten by git pull) ──
 # Generic defaults live in the corresponding .template files (tracked by git).
-# Bootstrap writes brand-specific content into these non-template filenames.
-skills/localization/brand-voice.md
-skills/compliance/allergen-gate.md
-skills/localization/bilingual-gate.md
+# Bootstrap writes brand-specific content into skill subdirectory SKILL.md files.
+skills/localization/brand-voice/SKILL.md
+skills/compliance/allergen-gate/SKILL.md
+skills/localization/bilingual-gate/SKILL.md
 
 # ── Temp files ───────────────────────────────────────────────────
 *.bak

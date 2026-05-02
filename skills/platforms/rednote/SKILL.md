@@ -1,3 +1,9 @@
+---
+name: rednote
+description: "Authentic storytelling, 300–600 chars ZH"
+plugin: fb-content-engine
+---
+
 # Skill · RedNote 小红书
 # F&B Content Engine · platforms/rednote.md
 # ─────────────────────────────────────────

@@ -1,3 +1,9 @@
+---
+name: reporting
+description: "Daily digest, weekly, monthly reports"
+plugin: fb-content-engine
+---
+
 # Skill · Reporting
 # F&B Content Engine · operations/reporting.md
 # ─────────────────────────────────────────────

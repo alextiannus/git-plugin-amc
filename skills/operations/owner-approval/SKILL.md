@@ -1,3 +1,9 @@
+---
+name: owner-approval
+description: "Crisis protocol and compliance hard stops"
+plugin: fb-content-engine
+---
+
 # Skill · Team Communication & Crisis Protocol
 # F&B Content Engine · operations/owner-approval.md
 # ──────────────────────────────────────────────────

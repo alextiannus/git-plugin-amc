@@ -1,3 +1,9 @@
+---
+name: image-rights
+description: "Photo licensing, consent, source tiers"
+plugin: fb-content-engine
+---
+
 # Skill · Image Rights
 # F&B Content Engine · compliance/image-rights.md
 # ─────────────────────────────────────────────────

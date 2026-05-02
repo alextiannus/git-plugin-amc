@@ -1,3 +1,9 @@
+---
+name: fda-ftc-rules
+description: "Health claim rules, price truth, promotions compliance"
+plugin: fb-content-engine
+---
+
 # Skill · FDA / FTC Rules
 # F&B Content Engine · compliance/fda-ftc-rules.md
 # ─────────────────────────────────────────────────

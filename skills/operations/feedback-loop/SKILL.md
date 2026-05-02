@@ -1,3 +1,9 @@
+---
+name: feedback-loop
+description: "Team feedback collection and weekly self-improvement"
+plugin: fb-content-engine
+---
+
 # Skill · Feedback Loop & Self-Improvement
 # F&B Content Engine · operations/feedback-loop.md
 # ──────────────────────────────────────────────────

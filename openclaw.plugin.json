@@ -1,0 +1,29 @@
+{
+  "name": "fb-content-engine",
+  "version": "0.5.2",
+  "description": "Complete social media operations plugin for F&B brands. Manages content from idea to publish across 7 platforms with bilingual support, compliance gates, and automated daily/weekly/monthly reporting.",
+  "author": "12eat AI Lab",
+  "license": "MIT",
+  "repository": "https://github.com/alextiannus/git-plugin-amc",
+
+  "skills": [
+    "skills/core",
+    "skills/compliance",
+    "skills/localization",
+    "skills/platforms",
+    "skills/operations",
+    "bootstrap"
+  ],
+
+  "configSchema": {
+    "brand_name":    { "type": "string", "required": true,  "description": "Official brand name, exact casing (e.g. 12eat唐人街外卖)" },
+    "brand_slug":    { "type": "string", "required": true,  "description": "Lowercase alphanumeric slug for file paths (e.g. 12eat)" },
+    "brand_niche":   { "type": "string", "required": true,  "description": "One-sentence brand positioning (≤20 words)" },
+    "brand_mission": { "type": "string", "required": true,  "description": "AI agent's core mission statement" },
+    "markets":       { "type": "string", "required": true,  "description": "Target markets and languages" },
+    "active_platforms":  { "type": "array",  "required": true,  "description": "Platforms with credentials — agent auto-publishes" },
+    "pending_platforms": { "type": "array",  "required": false, "default": [], "description": "Platforms brand wants but credentials not connected yet" },
+    "trending_radar_url":    { "type": "string", "required": false, "default": "https://12eat-ai.sg.larksuite.com/docx/TPb8d2B7Yo16SXxdBDwljnJAg2e" },
+    "lark_workspaces_url":   { "type": "string", "required": false, "default": "https://12eat-ai.sg.larksuite.com/drive/folder/PbugfutjllCDM0dqMiIlN0orgZd" }
+  }
+}

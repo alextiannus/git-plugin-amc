@@ -1,3 +1,9 @@
+---
+name: youtube
+description: "SEO-optimised, 8–12 min long-form"
+plugin: fb-content-engine
+---
+
 # Skill · YouTube
 # F&B Content Engine · platforms/youtube.md
 # ─────────────────────────────────────────

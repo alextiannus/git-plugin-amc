@@ -1,3 +1,9 @@
+---
+name: googlemap
+description: "Reputation layer, 24h review response SLA"
+plugin: fb-content-engine
+---
+
 # Skill · Google Maps / Google Business Profile
 # F&B Content Engine · platforms/googlemap.md
 # ─────────────────────────────────────────────

@@ -1,3 +1,9 @@
+---
+name: onboarding-flow
+description: "13-question brand interview, self-configuring SOUL.md writer"
+plugin: fb-content-engine
+---
+
 # Bootstrap · Onboarding Flow
 # F&B Content Engine · bootstrap/onboarding-flow.md
 # ──────────────────────────────────────────────────
