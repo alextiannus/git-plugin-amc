@@ -1,7 +1,7 @@
 ---
 name: feedback-loop
 description: "Team feedback collection and weekly self-improvement"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · Feedback Loop & Self-Improvement
@@ -123,5 +123,5 @@ The following files are protected from self-modification:
 
 - `allergen-gate.md` — food safety data, only updated by team directly
 - `compliance/fda-ftc-rules.md` — regulatory rules, never self-modified
-- `SOUL.md plugins.fb-content-engine` section — only updated by explicit team command
+- `SOUL.md plugins.git-plugin-amc` section — only updated by explicit team command
 - `vault-{brand}/` operational records — append-only, never deleted

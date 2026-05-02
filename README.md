@@ -23,7 +23,7 @@ compliance gates, owner escalation, and automated reporting.
 # Step 2a · 安装插件（三选一）
 
 # 方式 A · npm 包（最推荐）
-openclaw plugins install fb-content-engine
+openclaw plugins install git-plugin-amc
 
 # 方式 B · GitHub marketplace
 openclaw plugins install --marketplace https://github.com/alextiannus/git-plugin-amc
@@ -36,7 +36,7 @@ openclaw plugins install ~/.openclaw/extensions/git-plugin-amc
 
 ```bash
 # Step 2b · 验证
-openclaw plugins list    # 应显示 fb-content-engine (loaded)
+openclaw plugins list    # 应显示 git-plugin-amc (loaded)
 openclaw skills list     # 应显示 22 个技能
 ```
 
@@ -88,7 +88,7 @@ OpenClaw 每周检查 Plugin 版本，有更新时通知品牌主确认后应用
 
 ```bash
 # OpenClaw 原生命令（推荐）
-openclaw plugins update fb-content-engine
+openclaw plugins update git-plugin-amc
 
 # 手动 git pull（备用，仅在 OpenClaw 管理外使用）
 ./update.sh
@@ -105,7 +105,7 @@ openclaw plugins update fb-content-engine
 ## Plugin 结构
 
 ```
-fb-content-engine/
+git-plugin-amc/
 ├── plugin.yaml              ← Plugin 清单（版本、技能列表、更新策略）
 ├── SOUL.md.template         ← 品牌配置薄层（复制后填写 8 个参数即可）
 ├── update.sh                ← 手动更新脚本（备用；OpenClaw 原生更新优先）
@@ -164,7 +164,7 @@ Bootstrap Mode 访谈结束后，3 个文件会被品牌信息自动填写：
   — 一键向全部实例推送 plugin 更新
 - [ ] VPS 部署指南（systemd / Docker，保障 24/7 稳定运行）
 - [ ] 提交 awesome-openclaw-agents 官方目录
-- [ ] ClawHub 注册（`openclaw plugins install clawhub:fb-content-engine`）
+- [ ] ClawHub 注册（`openclaw plugins install clawhub:git-plugin-amc`）
 
 **v0.6 · 自动化升级**
 - [ ] GitHub Webhook → plugin 发版后自动通知所有实例更新

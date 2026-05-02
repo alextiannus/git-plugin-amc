@@ -14,7 +14,7 @@
 ## Plugin Identity
 
 ```yaml
-name:    fb-content-engine
+name:    git-plugin-amc
 slug:    git-plugin-amc
 version: 0.5.4
 author:  12eat AI Lab
@@ -32,10 +32,10 @@ This is the primary onboarding trigger — no manual steps required.
    → Check: ./SOUL.md → $OPENCLAW_SOUL_PATH → ~/.openclaw/SOUL.md
    → If not found: create ./SOUL.md as an empty file
 
-2. Check if `plugins.fb-content-engine:` block already exists in SOUL.md
+2. Check if `plugins.git-plugin-amc:` block already exists in SOUL.md
    → If YES: skip insertion (do not overwrite existing brand config)
    → If NO: append the full plugin block from SOUL.md.template
-             (only the "PLUGIN · fb-content-engine" section — not the header comments)
+             (only the "PLUGIN · git-plugin-amc" section — not the header comments)
 
 3. Save SOUL.md
 
@@ -56,7 +56,7 @@ When the agent starts (gateway start or reload):
 
 ```
 1. Load all skills from ./skills/ into agent context
-2. Read SOUL.md → plugins.fb-content-engine section
+2. Read SOUL.md → plugins.git-plugin-amc section
 3. If any {{PLACEHOLDER}} found in that section:
    → Bootstrap Mode is active
    → If post_install already sent Opening Message: wait for reply, continue interview
@@ -97,7 +97,7 @@ Triggered when any team member sends one of these Lark messages:
 
 ```
 1. Check latest available version:
-   openclaw plugins check fb-content-engine
+   openclaw plugins check git-plugin-amc
    → or: git ls-remote --tags origin | tail -1
 
 2. If already on latest version:

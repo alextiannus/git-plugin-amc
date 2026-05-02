@@ -1,7 +1,7 @@
 ---
 name: onboarding-flow
 description: "13-question brand interview, self-configuring SOUL.md writer"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Bootstrap · Onboarding Flow
@@ -266,7 +266,7 @@ After all 13 questions are answered:
 
 ```
 1. Fill all {{PLACEHOLDER}} values directly in SOUL.md → overwrite in-place
-   (write only to plugins.fb-content-engine section, do not touch other sections)
+   (write only to plugins.git-plugin-amc section, do not touch other sections)
 2. Update brand-voice.md with Q7/Q8 answers
 3. Fill bilingual-gate.md Canonical Dish Name Map with Q9 answers
 4. Fill allergen-gate.md Brand Dish Allergen Table with Q10 answers

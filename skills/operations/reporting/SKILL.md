@@ -1,7 +1,7 @@
 ---
 name: reporting
 description: "Daily digest, weekly, monthly reports"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · Reporting

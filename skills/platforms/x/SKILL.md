@@ -1,7 +1,7 @@
 ---
 name: x
 description: "Contrarian angle, 280 chars"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · X / Twitter

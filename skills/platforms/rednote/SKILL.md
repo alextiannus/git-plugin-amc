@@ -1,7 +1,7 @@
 ---
 name: rednote
 description: "Authentic storytelling, 300–600 chars ZH"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · RedNote 小红书

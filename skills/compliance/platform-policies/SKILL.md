@@ -1,7 +1,7 @@
 ---
 name: platform-policies
 description: "Meta / TikTok / GMB / RedNote specific content rules"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · Platform Policies

@@ -3,7 +3,7 @@
 # OpenClaw Plugin · Git Starter Kit
 # ─────────────────────────────────────────────────────────────
 
-name: fb-content-engine
+name: git-plugin-amc
 slug: git-plugin-amc          # matches GitHub repo name and openclaw extensions folder
 display_name: "F&B Content Engine"
 version: "0.5.4"
@@ -74,14 +74,14 @@ skills_path:
   - "bootstrap/"
 
 # ── Agent Template ───────────────────────────────────────────
-# When user runs `openclaw plugins install` or `openclaw new-agent --plugin fb-content-engine`,
+# When user runs `openclaw plugins install` or `openclaw new-agent --plugin git-plugin-amc`,
 # OpenClaw MERGES this block into the agent's existing SOUL.md.
-# It does NOT replace the full SOUL.md — only the plugins.fb-content-engine section is added.
+# It does NOT replace the full SOUL.md — only the plugins.git-plugin-amc section is added.
 # The agent's own Identity, Channels, model config, and other plugins are untouched.
 agent_template:
   soul: "SOUL.md.template"
   merge: true                 # MERGE into existing SOUL.md, do not replace
-  merge_key: "plugins.fb-content-engine"  # only writes to this nested key
+  merge_key: "plugins.git-plugin-amc"  # only writes to this nested key
 
 # ── Tools Required ────────────────────────────────────────────
 tools_required:
@@ -107,33 +107,33 @@ tools_optional:
 config_schema:
   brand_name:
     type: string
-    required: true
+    required: false
     description: "Official brand name, exact casing (e.g. 12eat唐人街外卖)"
 
   brand_slug:
     type: string
-    required: true
+    required: false
     pattern: "^[a-z0-9]+$"
     description: "Lowercase alphanumeric slug for file paths (e.g. 12eat)"
 
   brand_niche:
     type: string
-    required: true
+    required: false
     description: "One-sentence brand positioning (≤20 words)"
 
   brand_mission:
     type: string
-    required: true
+    required: false
     description: "AI agent's core mission statement"
 
   markets:
     type: string
-    required: true
+    required: false
     description: "Target markets and languages (e.g. North America (en) + 海外华人社区 (zh))"
 
   active_platforms:
     type: array
-    required: true
+    required: false
     items: [instagram, tiktok, rednote, facebook, youtube, googlemap, x]
     description: "Platforms with confirmed credentials — agent can auto-publish"
 

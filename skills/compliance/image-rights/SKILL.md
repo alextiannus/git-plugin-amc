@@ -1,7 +1,7 @@
 ---
 name: image-rights
 description: "Photo licensing, consent, source tiers"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · Image Rights

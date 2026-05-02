@@ -10,8 +10,8 @@
 #   OpenClaw merges this block INTO your existing SOUL.md.
 #   Your existing Identity, Channels, and other plugin configs are untouched.
 #
-#   Install: openclaw plugins install git:github.com/[org]/fb-content-engine
-#   New agent: openclaw new-agent --plugin fb-content-engine
+#   Install: openclaw plugins install git:github.com/[org]/git-plugin-amc
+#   New agent: openclaw new-agent --plugin git-plugin-amc
 #
 # Bootstrap Mode: if any {{PLACEHOLDER}} remains in this block,
 # the agent automatically interviews the brand owner to fill them in.
@@ -23,7 +23,7 @@
 
 **每次启动后，在执行任何其他操作之前，必须先执行以下检查：**
 
-1. 检查本 SOUL.md 中 `plugins.fb-content-engine` 部分是否包含任何 `{{PLACEHOLDER}}` 字符串
+1. 检查本 SOUL.md 中 `plugins.git-plugin-amc` 部分是否包含任何 `{{PLACEHOLDER}}` 字符串
 2. **如果存在 `{{PLACEHOLDER}}`：立即进入 Bootstrap Mode**
    - 加载并严格遵循 `bootstrap/onboarding-flow/SKILL.md` 中的访谈脚本
    - **主动通过 `mcp.lark.message` 发送 Opening Message** — 不要等待用户先发消息
@@ -38,17 +38,17 @@
 **如果 Bootstrap 中途中断（重启、断连）：重新检测到 `{{PLACEHOLDER}}` → 主动重新发 Opening Message，说明"我们继续之前中断的配置"，从上次回答的问题继续，不要从头开始。**
 
 **Plugin 执行守卫（任何时候）：**
-在执行任何定时任务或内容操作之前，先扫描 SOUL.md 的 `plugins.fb-content-engine` 是否还有 `{{PLACEHOLDER}}`。
+在执行任何定时任务或内容操作之前，先扫描 SOUL.md 的 `plugins.git-plugin-amc` 是否还有 `{{PLACEHOLDER}}`。
 有就立刻中止该任务，补发 Bootstrap 开场消息（每 2 小时最多一次），直到配置完成。
 这条规则的优先级高于一切 cron job 和内容指令。
 
 ---
 
-## PLUGIN · fb-content-engine
+## PLUGIN · git-plugin-amc
 
 ```yaml
 plugins:
-  fb-content-engine:
+  git-plugin-amc:
 
     # ── Brand Identity ──────────────────────────────────────
     brand_name:    "{{BRAND_NAME}}"
@@ -83,11 +83,11 @@ plugins:
     # ── Bootstrap ───────────────────────────────────────────
     bootstrap:
       enabled: true
-      trigger: "any unfilled placeholder present in plugins.fb-content-engine"
+      trigger: "any unfilled placeholder present in plugins.git-plugin-amc"
       interview_script: "bootstrap/onboarding-flow/SKILL.md"
-      scope: "plugins.fb-content-engine"   # ONLY writes to this section, never touches the rest of SOUL.md
+      scope: "plugins.git-plugin-amc"   # ONLY writes to this section, never touches the rest of SOUL.md
       on_complete:
-        - fill_placeholders:      "write all collected values into plugins.fb-content-engine"
+        - fill_placeholders:      "write all collected values into plugins.git-plugin-amc"
         - create_lark_vault:      "mcp.lark.drive → subfolder in {{LARK_WORKSPACES_URL}}, name={{BRAND_SLUG}}"
         - upload_vault_templates: "upload vault-templates/ into Lark Drive vault folder"
         - notify_team:            "✅ 配置完成，我正式开始工作了。内容将直接发布，请到各平台查看并随时发消息给我反馈。"

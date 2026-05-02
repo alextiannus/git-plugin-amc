@@ -1,7 +1,7 @@
 ---
 name: instagram
 description: "PRIMARY — carousel specs, reels, caption formula"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · Instagram

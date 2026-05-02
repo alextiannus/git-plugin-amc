@@ -1,7 +1,7 @@
 ---
 name: cron-jobs
 description: "Daily 06:30–23:45 automation schedule"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · Cron Jobs
@@ -21,7 +21,7 @@ unless the agent is in Crisis Mode (all jobs paused until owner clears).
 Before executing any scheduled or on-demand job, check:
 
 ```
-1. Scan SOUL.md → plugins.fb-content-engine section for any {{PLACEHOLDER}} string
+1. Scan SOUL.md → plugins.git-plugin-amc section for any {{PLACEHOLDER}} string
 2. If {{PLACEHOLDER}} found:
    → ABORT this job immediately — do not execute
    → Bootstrap Mode is incomplete

@@ -39,11 +39,11 @@ function resolveSoulPath(workspaceDir) {
     return defaultPath;
 }
 function hasPluginBlock(soulContent) {
-    return (soulContent.includes("PLUGIN · fb-content-engine") ||
-        soulContent.includes("plugins.fb-content-engine:"));
+    return (soulContent.includes("PLUGIN · git-plugin-amc") ||
+        soulContent.includes("plugins.git-plugin-amc:"));
 }
 function hasPlaceholders(soulContent) {
-    const blockStart = soulContent.indexOf("PLUGIN · fb-content-engine");
+    const blockStart = soulContent.indexOf("PLUGIN · git-plugin-amc");
     if (blockStart === -1)
         return false;
     const section = soulContent.slice(blockStart);
@@ -57,11 +57,11 @@ function extractPluginBlock(pluginDir) {
     }
     const template = readFileSync(templatePath, "utf-8");
     const startupMarker = "## STARTUP BEHAVIOR — F&B Content Engine";
-    const blockMarker = "## PLUGIN · fb-content-engine";
+    const blockMarker = "## PLUGIN · git-plugin-amc";
     const startupStart = template.indexOf(startupMarker);
     const blockStart = template.indexOf(blockMarker);
     if (blockStart === -1) {
-        throw new Error("SOUL.md.template missing '## PLUGIN · fb-content-engine' section");
+        throw new Error("SOUL.md.template missing '## PLUGIN · git-plugin-amc' section");
     }
     // Include STARTUP BEHAVIOR section if it comes before the block
     const extractFrom = startupStart !== -1 && startupStart < blockStart ? startupStart : blockStart;

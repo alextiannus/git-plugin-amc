@@ -1,7 +1,7 @@
 ---
 name: content-types
 description: "Format specs per platform: carousel, reels, short video, etc."
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · Content Types

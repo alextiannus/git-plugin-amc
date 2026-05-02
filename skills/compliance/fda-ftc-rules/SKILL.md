@@ -1,7 +1,7 @@
 ---
 name: fda-ftc-rules
 description: "Health claim rules, price truth, promotions compliance"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · FDA / FTC Rules

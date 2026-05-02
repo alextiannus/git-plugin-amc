@@ -58,7 +58,7 @@ echo "📄 SOUL.md: $SOUL_PATH"
 echo ""
 
 # ── Step 2: Check if plugin block already exists ──────────────
-if grep -q "PLUGIN · fb-content-engine" "$SOUL_PATH" 2>/dev/null; then
+if grep -q "PLUGIN · git-plugin-amc" "$SOUL_PATH" 2>/dev/null; then
   echo "✅ Plugin block already present in SOUL.md. Skipping injection."
   echo "   (Run with --force to re-inject: not yet implemented)"
 else

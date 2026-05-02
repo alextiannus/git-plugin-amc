@@ -1,7 +1,7 @@
 ---
 name: youtube
 description: "SEO-optimised, 8–12 min long-form"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · YouTube

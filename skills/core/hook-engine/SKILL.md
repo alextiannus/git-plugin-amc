@@ -1,7 +1,7 @@
 ---
 name: hook-engine
 description: "6 hook types × platform compatibility matrix"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · Hook Engine

@@ -1,7 +1,7 @@
 ---
 name: googlemap
 description: "Reputation layer, 24h review response SLA"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · Google Maps / Google Business Profile

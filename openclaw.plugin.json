@@ -51,7 +51,6 @@
         "type": "string",
         "description": "Created by Bootstrap via mcp.lark.drive"
       }
-    },
-    "required": ["brand_name", "brand_slug", "brand_niche", "brand_mission", "markets"]
+    }
   }
 }

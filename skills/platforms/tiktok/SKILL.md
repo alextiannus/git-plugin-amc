@@ -1,7 +1,7 @@
 ---
 name: tiktok
 description: "Raw video, 15–60s, 2-second hook rule"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · TikTok

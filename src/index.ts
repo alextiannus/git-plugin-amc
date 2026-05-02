@@ -46,13 +46,13 @@ function resolveSoulPath(workspaceDir: string): string {
 
 function hasPluginBlock(soulContent: string): boolean {
   return (
-    soulContent.includes("PLUGIN · fb-content-engine") ||
-    soulContent.includes("plugins.fb-content-engine:")
+    soulContent.includes("PLUGIN · git-plugin-amc") ||
+    soulContent.includes("plugins.git-plugin-amc:")
   );
 }
 
 function hasPlaceholders(soulContent: string): boolean {
-  const blockStart = soulContent.indexOf("PLUGIN · fb-content-engine");
+  const blockStart = soulContent.indexOf("PLUGIN · git-plugin-amc");
   if (blockStart === -1) return false;
   const section = soulContent.slice(blockStart);
   PLACEHOLDER_REGEX.lastIndex = 0;
@@ -68,13 +68,13 @@ function extractPluginBlock(pluginDir: string): string {
   const template = readFileSync(templatePath, "utf-8");
 
   const startupMarker = "## STARTUP BEHAVIOR — F&B Content Engine";
-  const blockMarker = "## PLUGIN · fb-content-engine";
+  const blockMarker = "## PLUGIN · git-plugin-amc";
 
   const startupStart = template.indexOf(startupMarker);
   const blockStart = template.indexOf(blockMarker);
 
   if (blockStart === -1) {
-    throw new Error("SOUL.md.template missing '## PLUGIN · fb-content-engine' section");
+    throw new Error("SOUL.md.template missing '## PLUGIN · git-plugin-amc' section");
   }
 
   // Include STARTUP BEHAVIOR section if it comes before the block

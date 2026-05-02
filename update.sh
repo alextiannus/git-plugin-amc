@@ -8,7 +8,7 @@
 #   → Agent runs this script and confirms via Lark when done.
 #
 # ALSO WORKS: OpenClaw native command
-#   openclaw plugins update fb-content-engine
+#   openclaw plugins update git-plugin-amc
 #
 # USE THIS SCRIPT DIRECTLY ONLY IF:
 #   - You need to force-update from CLI outside normal flow

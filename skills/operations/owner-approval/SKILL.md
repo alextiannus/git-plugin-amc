@@ -1,7 +1,7 @@
 ---
 name: owner-approval
 description: "Crisis protocol and compliance hard stops"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · Team Communication & Crisis Protocol

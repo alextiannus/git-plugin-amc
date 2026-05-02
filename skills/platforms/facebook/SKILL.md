@@ -1,7 +1,7 @@
 ---
 name: facebook
 description: "Community-focused, discussion questions mandatory"
-plugin: fb-content-engine
+plugin: git-plugin-amc
 ---
 
 # Skill · Facebook
