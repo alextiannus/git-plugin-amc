@@ -1,5 +1,5 @@
 # F&B Content Engine
-### OpenClaw Plugin · v0.6.0
+### OpenClaw Plugin · v0.6.2
 
 A complete social media operations plugin for F&B brands.  
 Manages content from idea to publish across 7 platforms, with bilingual support,  
@@ -185,7 +185,7 @@ openclaw skill-packs install \
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
-| v0.6.0 | 2026-05 | Skill Packs 拆分为独立 repo；发布层重构 PostFast MCP + GBP MCP；修复 npm build |
+| v0.6.2 | 2026-05 | Skill Packs 拆分为独立 repo；发布层重构 PostFast MCP + GBP MCP；修复 npm build |
 | v0.5.0 | 2026-05 | 架构重构：src/index.ts 程序化钩子，openclaw.plugin.json，23个技能目录结构 |
 | v0.4.0 | 2026-05 | 初始发布，7平台支持，Bootstrap Mode，3级升级协议 |
 

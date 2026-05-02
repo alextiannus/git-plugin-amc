@@ -168,11 +168,21 @@ These platforms need credentials before I can publish automatically:
 Want to connect them now, or skip for later?"
 ```
 
-→ If owner connects credentials now: re-run check_connection(), move to active_platforms
+→ If owner wants to connect credentials now:
+   1. Ask: "好的！请把 PostFast API Key 发给我（postfa.st → Settings → API Keys）
+           Please send me your PostFast API Key (postfa.st → Settings → API Keys)"
+   2. Wait for key. Validate it starts with "pk_" or "sk_" — if wrong format, ask again.
+   3. Follow `mcp-setup` skill · Procedure A exactly:
+      - Add to openclaw.json under "mcp" key (NOT "mcpServers")
+      - Run `openclaw reload`
+      - Re-run check_connection() per platform
+      - Move verified platforms to active_platforms in SOUL.md
+   4. Confirm to user which platforms are now active
+
 → If owner skips: leave in pending_platforms
    pending_platforms behaviour: SILENT — agent does NOT generate content or drafts for these platforms.
    A weekly cron reminder is sent via Lark: "[平台名] 尚未连接账号，连接后即可开始自动运营。"
-   No action taken until credentials are confirmed.
+   To connect later: user sends "连接账号" or "add postfast" → agent runs mcp-setup · Procedure C.
 
 ---
 
