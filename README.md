@@ -158,11 +158,34 @@ Bootstrap Mode 访谈结束后，3 个文件会被品牌信息自动填写：
 
 ---
 
+## Skill Packs（扩展技能库）
+
+Skill packs 独立维护，**不包含在本 plugin 的默认安装中**。按需安装，不影响核心 plugin 更新。
+
+```bash
+# 安装单个 skill pack
+openclaw skill-packs install \
+  --repo https://github.com/alextiannus/acm-skill-packs \
+  community/copywriting/aida-engine
+
+# 安装整个分类
+openclaw skill-packs install \
+  --repo https://github.com/alextiannus/acm-skill-packs \
+  community/copywriting
+```
+
+| 仓库 | 内容 | 许可 |
+|---|---|---|
+| [acm-skill-packs](https://github.com/alextiannus/acm-skill-packs) | 8个社区 packs：文案框架、平台算法、F&B专项 | MIT 开源 |
+| @12eat-ai/skill-packs-premium | F&B深度、出海华人市场、节日营销、KOL Brief | 商业许可 |
+
+---
+
 ## 版本历史
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
-| v0.6.0 | 2026-05 | 发布层重构：7个 mcp.publisher.* → PostFast MCP + GBP MCP；修复 npm build 错误；补全 src/types |
+| v0.6.0 | 2026-05 | Skill Packs 拆分为独立 repo；发布层重构 PostFast MCP + GBP MCP；修复 npm build |
 | v0.5.0 | 2026-05 | 架构重构：src/index.ts 程序化钩子，openclaw.plugin.json，23个技能目录结构 |
 | v0.4.0 | 2026-05 | 初始发布，7平台支持，Bootstrap Mode，3级升级协议 |
 
@@ -170,17 +193,14 @@ Bootstrap Mode 访谈结束后，3 个文件会被品牌信息自动填写：
 
 ## 路线图
 
-**v0.5 · 多品牌规模化**
+**v0.7 · 多品牌规模化**
 - [ ] Mission Control 集成（`abhi1693/openclaw-mission-control`）
-  — 一台服务器统一管理所有品牌 Agent 实例
-  — Dashboard 创建/启停实例，无需 SSH + CLI
-  — 统一监控所有品牌的 cron 状态、发布日志、异常告警
-  — 一键向全部实例推送 plugin 更新
+  — 一台服务器统一管理所有品牌 Agent 实例，无需 SSH + CLI
+  — 统一监控 cron 状态、发布日志、异常告警，一键推送 plugin 更新
 - [ ] VPS 部署指南（systemd / Docker，保障 24/7 稳定运行）
-- [ ] 提交 awesome-openclaw-agents 官方目录
-- [ ] ClawHub 注册（`openclaw plugins install clawhub:git-plugin-amc`）
+- [ ] npm publish + ClawHub 注册（`openclaw plugins install clawhub:git-plugin-amc`）
 
-**v0.6 · 自动化升级**
+**v0.8 · 自动化升级**
 - [ ] GitHub Webhook → plugin 发版后自动通知所有实例更新
 - [ ] 多品牌跨平台数据聚合报告（Mission Control 层）
 

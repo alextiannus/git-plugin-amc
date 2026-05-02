@@ -74,12 +74,17 @@ skills_path:
   - "bootstrap/"
 
 # ── Skill Packs ──────────────────────────────────────────────
-# Optional extension packs loaded on top of core skills.
-# community/ and verified/ are open source (this repo).
-# premium/ is delivered via @12eat-ai/skill-packs-premium (npm private).
-skill_packs_path:
-  - "skill-packs/community/"
-  - "skill-packs/verified/"
+# Skill packs are NOT bundled with this plugin.
+# They live in a separate open-source repository and are installed on demand.
+#
+# Registry:  https://github.com/alextiannus/acm-skill-packs
+# Premium:   @12eat-ai/skill-packs-premium (npm private)
+#
+# Install a pack:
+#   openclaw skill-packs install \
+#     --repo https://github.com/alextiannus/acm-skill-packs \
+#     community/copywriting/aida-engine
+skill_packs_registry: "https://github.com/alextiannus/acm-skill-packs"
 
 # ── Agent Template ───────────────────────────────────────────
 # When user runs `openclaw plugins install` or `openclaw new-agent --plugin git-plugin-amc`,
