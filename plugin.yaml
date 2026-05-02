@@ -86,20 +86,18 @@ agent_template:
 # ── Tools Required ────────────────────────────────────────────
 tools_required:
   - mcp.web_search
-  - mcp.translate
   - mcp.lark.message
   - mcp.lark.drive
   - mcp.calendar
 
 tools_optional:
+  - mcp.postfast            # unified publishing: Instagram, Facebook, TikTok, YouTube, X, Threads, LinkedIn
+                            # native MCP Server — zero wrapper code required
+                            # RedNote: semi-auto (agent drafts → team posts manually via Lark)
+  - mcp.gbp                 # Google Business Profile: posts + review replies + insights
+                            # lightweight custom MCP wrapping free GBP API
+  - mcp.analytics           # cross-platform metrics aggregation (Metricool API)
   - mcp.image_gen           # enable if brand allows AI-generated visuals
-  - mcp.publisher.instagram
-  - mcp.publisher.tiktok
-  - mcp.publisher.rednote
-  - mcp.publisher.facebook
-  - mcp.publisher.youtube
-  - mcp.publisher.googlemap
-  - mcp.publisher.x
 
 # ── Config Schema (brand-specific values) ────────────────────
 # These are the ONLY values the brand SOUL.md needs to provide.

@@ -136,11 +136,16 @@ For each platform the brand selected, check if publisher credentials exist:
 
 ```
 for platform in Q6_selections:
-    result = mcp.publisher.{platform}.check_connection()
-    if result == "connected":
-        → add to active_platforms   (auto-publish enabled)
+    if platform == "googlemap":
+        result = mcp.gbp.check_connection()
+    elif platform == "rednote":
+        result = "pending"   # RedNote has no public API — always semi-auto
     else:
-        → add to pending_platforms  (content planning only)
+        result = mcp.postfast.check_connection(platform)
+    if result == "connected":
+        → add to active_platforms   (auto-publish via mcp.postfast or mcp.gbp)
+    else:
+        → add to pending_platforms  (agent drafts content, team posts manually via Lark)
 ```
 
 Then inform the owner:

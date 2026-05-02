@@ -96,7 +96,7 @@ openclaw plugins update git-plugin-amc
 ```
 
 **更新策略：**
-- ✅ 自动更新：21 个通用技能文件、合规规则、平台策略、cron 计划
+- ✅ 自动更新：20 个通用技能文件、合规规则、平台策略、cron 计划
 - 🔒 永不覆盖：`brand-voice.md`、`allergen-gate.md`、`bilingual-gate.md`（品牌定制内容）
 - 🔒 永不覆盖：Lark Drive vault 里的所有运营记录
 
@@ -110,16 +110,16 @@ git-plugin-amc/
 ├── SOUL.md.template         ← 品牌配置薄层（复制后填写 8 个参数即可）
 ├── update.sh                ← 手动更新脚本（备用；OpenClaw 原生更新优先）
 │
-├── skills/                  ← 21 个技能模块（OpenClaw plugin install 后自动就位）
+├── skills/                  ← 23 个技能模块（OpenClaw plugin install 后自动就位）
 │   ├── core/                   repurpose-chain, hook-engine, scheduling, content-types
 │   ├── compliance/             fda-ftc-rules, allergen-gate*, platform-policies, image-rights
 │   ├── localization/           brand-voice*, bilingual-gate*
 │   ├── platforms/              instagram, tiktok, rednote, facebook, youtube, googlemap, x
-│   └── operations/             owner-approval, vault-manager, cron-jobs, reporting
+│   └── operations/             owner-approval, feedback-loop, vault-manager, cron-jobs, reporting
 │                            (* = brand-customized by Bootstrap Mode, never auto-updated)
 │
-├── bootstrap/               ← Bootstrap Mode：15问访谈脚本 + 配置逻辑
-│   └── onboarding-flow.md
+├── bootstrap/               ← Bootstrap Mode：13问访谈脚本 + 配置逻辑
+│   └── onboarding-flow/SKILL.md
 │
 └── vault-templates/         ← 运营模板（Bootstrap Mode 上传到 Lark Drive vault）
     ├── vault-index.md
@@ -141,7 +141,20 @@ Bootstrap Mode 访谈结束后，3 个文件会被品牌信息自动填写：
 | `skills/compliance/allergen-gate.md` | 菜品过敏原对照表 | 访谈 Q12 |
 | `skills/localization/bilingual-gate.md` | 中英文菜单词典 | 访谈 Q11 |
 
-其余 18 个技能文件为通用内容，Plugin 更新时自动覆盖。
+其余 20 个技能文件为通用内容，Plugin 更新时自动覆盖。
+
+---
+
+## 发布与互动工具栈
+
+| 工具 | 作用 | 覆盖平台 |
+|---|---|---|
+| **PostFast MCP** (`mcp.postfast`) | 统一发布，原生 MCP Server，零开发 | Instagram, Facebook, TikTok, YouTube, X, Threads, LinkedIn |
+| **GBP MCP** (`mcp.gbp`) | Google Business Profile 发帖 + 评论回复 + 数据 | Google Maps / Google Search |
+| **Metricool** (`mcp.analytics`) | 跨平台数据聚合报告 | 所有已连接平台 |
+| **半自动（Lark）** | 小红书及未连接平台：Agent 生成内容推送 Lark，团队手动发布 | 小红书 + pending_platforms |
+
+> PostFast 定价：€29/月（12个账号），含所有已支持平台。GBP API 免费。
 
 ---
 
@@ -149,7 +162,8 @@ Bootstrap Mode 访谈结束后，3 个文件会被品牌信息自动填写：
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
-| v0.4.1 | 2026-05 | 架构重构：OpenClaw 原生 plugin install，删除 install.sh，Lark Drive vault 自动创建 |
+| v0.5.4 | 2026-05 | 发布层重构：7个 mcp.publisher.* → PostFast MCP + GBP MCP；修复 npm build 错误；补全 src/types |
+| v0.5.0 | 2026-05 | 架构重构：src/index.ts 程序化钩子，openclaw.plugin.json，23个技能目录结构 |
 | v0.4.0 | 2026-05 | 初始发布，7平台支持，Bootstrap Mode，3级升级协议 |
 
 ---

@@ -187,19 +187,16 @@ monthly:
 - mcp.lark.message   # team communication, feedback, crisis alerts
 - mcp.lark.drive     # vault folder creation and file management
 - mcp.web_search     # trending content research
-- mcp.translate      # bilingual content generation
 - mcp.calendar       # scheduling and posting windows
 ```
 
 ## tools_optional
 
 ```yaml
-- mcp.publisher.instagram
-- mcp.publisher.tiktok
-- mcp.publisher.rednote
-- mcp.publisher.facebook
-- mcp.publisher.youtube
-- mcp.publisher.googlemap
-- mcp.publisher.x
-- mcp.image_gen
+- mcp.postfast       # unified publishing across Instagram, Facebook, TikTok, YouTube, X, Threads, LinkedIn
+                     # PostFast native MCP Server — no wrapper code needed
+                     # RedNote: semi-auto (agent drafts content → team posts via Lark)
+- mcp.gbp            # Google Business Profile: posts, review replies, insights (free GBP API)
+- mcp.analytics      # cross-platform metrics aggregation (Metricool API)
+- mcp.image_gen      # AI-generated visuals (enable if brand permits)
 ```

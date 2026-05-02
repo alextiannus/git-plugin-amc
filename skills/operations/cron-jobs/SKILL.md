@@ -108,7 +108,9 @@ If any placeholder remains, no operational work executes — period.
 1. Read postschedule.md for items with time=11:00 and status=ready
 2. For each ready item:
    - Verify Compliance Gate + Bilingual Gate still pass (content may have aged)
-   - Publish via appropriate mcp.publisher.*
+   - Publish via mcp.postfast (Instagram/Facebook/TikTok/YouTube/X/Threads)
+     or mcp.gbp (Google Business Profile posts)
+     or push draft to Lark for manual publish (RedNote + any pending_platforms)
    - Update post record status to "published"
    - Log publish timestamp and URL
 3. If Compliance Gate RED or allergen unverified at publish time:
