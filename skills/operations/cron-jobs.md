@@ -60,14 +60,15 @@ unless the agent is in Crisis Mode (all jobs paused until owner clears).
 ### 10:00 · Google Maps Actions
 
 ```
-1. Check GMB API for new reviews since last check
-2. For each new review:
-   - Positive → draft response, auto-publish (no hold needed)
-   - Negative → draft response, Tier 1 escalation before publishing
-   - Crisis keywords detected → full Crisis Mode trigger
-3. Check for new Q&A questions → draft responses, auto-publish
-4. If business post is scheduled for today → publish at 10:00
-5. Log all responses in post record + ownerreview.md
+1. If Google Maps is in pending_platforms: SKIP. Weekly reminder only.
+2. Check GMB API for new reviews since last check
+3. For each new review:
+   - Positive / Neutral → draft response, auto-publish
+   - Negative           → draft empathetic response, auto-publish after 30-min delay
+   - Crisis keywords (illness / poisoning / 食物中毒 / 异物)
+                        → trigger full Crisis Mode, do NOT auto-reply
+4. Check for new Q&A questions → draft responses, auto-publish
+5. Log all actions in post records + ownerreview.md
 ```
 
 ---
@@ -145,9 +146,9 @@ Write one paragraph to ownerreview.md:
 
 "[DATE] — Published [N] posts across [platforms].
 Top performer: [post slug] on [platform] with [metric].
-Pending items: [N] drafts awaiting approval.
+On hold: [N] drafts (compliance or allergen issue — see details in vault).
 Anomalies: [any flags, or 'none'].
-Tomorrow's schedule: [N] posts approved and ready."
+Tomorrow's schedule: [N] posts queued and ready to publish."
 ```
 
 ---
@@ -159,6 +160,7 @@ Tomorrow's schedule: [N] posts approved and ready."
 | Monday 08:00 | Self-improvement report | Send weekly feedback summary to team (see feedback-loop.md Step 4) |
 | Monday 09:00 | Plugin version check | Run `openclaw plugins check fb-content-engine`; if update available → notify team via Lark (Tier 3) |
 | Monday 09:00 | Pending platform reminder | For each platform in pending_platforms: notify team "[Platform] 尚未连接账号，连接后即可开始自动运营" |
+| Monday 09:00 | Allergen pending check | Scan allergen-gate.md for [?PENDING] entries; if any found → Lark alert: "[菜品名] 过敏原信息未确认，涉及该菜品的帖子将暂停发布直到补全" |
 | Monday 10:00 | Weekly report generation | report/weekly/YYYY-Www.md + Lark notification to team |
 | Sunday 22:00 | Weekly self-assessment | Process all feedback tagged in ownerreview.md → apply changes (see feedback-loop.md) |
 | Sunday evening | Weekly content batch | Propose 2-3 themes → run repurpose chain → fill next week's postschedule |
