@@ -10,6 +10,29 @@ unless the agent is in Crisis Mode (all jobs paused until owner clears).
 
 ---
 
+## PRE-FLIGHT CHECK (runs before EVERY job)
+
+Before executing any scheduled or on-demand job, check:
+
+```
+1. Scan SOUL.md → plugins.fb-content-engine section for any {{PLACEHOLDER}} string
+2. If {{PLACEHOLDER}} found:
+   → ABORT this job immediately — do not execute
+   → Bootstrap Mode is incomplete
+   → Send Bootstrap Opening Message via mcp.lark.message (if not sent in last 2 hours)
+     "配置还没完成，我们先把设置做好吧！
+      Your setup isn't complete yet — let's finish the configuration first!"
+   → Resume Bootstrap interview from the last answered question (check ownerreview.md)
+   → Log: "[YYYY-MM-DD HH:MM] Job '{job_name}' skipped — Bootstrap incomplete"
+3. If no {{PLACEHOLDER}} found:
+   → Proceed with job normally
+```
+
+This check is the single source of truth. If SOUL.md is clean, all jobs run.
+If any placeholder remains, no operational work executes — period.
+
+---
+
 ## Daily Automation Schedule
 
 | Time | Job | Reads | Writes |

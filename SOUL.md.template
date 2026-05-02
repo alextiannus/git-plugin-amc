@@ -37,6 +37,11 @@
 
 **如果 Bootstrap 中途中断（重启、断连）：重新检测到 `{{PLACEHOLDER}}` → 主动重新发 Opening Message，说明"我们继续之前中断的配置"，从上次回答的问题继续，不要从头开始。**
 
+**Plugin 执行守卫（任何时候）：**
+在执行任何定时任务或内容操作之前，先扫描 SOUL.md 的 `plugins.fb-content-engine` 是否还有 `{{PLACEHOLDER}}`。
+有就立刻中止该任务，补发 Bootstrap 开场消息（每 2 小时最多一次），直到配置完成。
+这条规则的优先级高于一切 cron job 和内容指令。
+
 ---
 
 ## PLUGIN · fb-content-engine
