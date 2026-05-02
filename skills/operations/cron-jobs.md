@@ -155,6 +155,7 @@ Tomorrow's schedule: [N] posts approved and ready."
 | Day/Time | Job | Output |
 |---|---|---|
 | Monday 10:00 | Weekly report generation | report/weekly/YYYY-Www.md + Lark Doc notification |
+| Monday 09:00 | Plugin version check | Run `openclaw plugins check fb-content-engine`; if update available → notify owner via Lark (Tier 3): "Plugin 有新版本 vX.Y.Z，是否现在更新？" |
 | Sunday evening (or Monday morning) | Weekly content batch | Propose 2-3 themes → run repurpose chain → fill postschedule |
 | Friday (any time) | Weekly review | Analyze hook performance → update hook-engine.md + scheduling.md |
 

@@ -181,13 +181,28 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q14 · AI Workspaces folder**
-> "新品牌的文件夹会创建在这个位置：[default URL]
-> 这个位置可以吗？
-> Your brand's vault folder will be created here: [url]. Is that correct?"
+**Q14 · AI Workspaces folder (vault parent)**
+> "我会在 Lark 云盘里为你创建专属的品牌档案夹。
+> 默认位置是 AI Workspaces 文件夹：[default URL from SOUL.md]
+> 这个位置可以吗？如果你已经有一个偏好的位置，可以把链接给我。
+>
+> I'll create your brand's vault folder in Lark Drive.
+> Default location is the AI Workspaces folder: [url]. Is that OK?
+> If you have a preferred parent folder, paste the Lark Drive link."
 
-→ Maps to: `{{LARK_WORKSPACES_URL}}`
+→ Maps to: `{{LARK_WORKSPACES_URL}}` (parent folder)
 → If unchanged: keep default
+→ After Q14 answer: DO NOT wait — immediately proceed to create the vault:
+  ```
+  [AGENT ACTION — runs silently during Q15]
+  mcp.lark.drive.create_folder(
+    parent_url = {{LARK_WORKSPACES_URL}},
+    folder_name = "vault-{{BRAND_SLUG}}"
+  )
+  → Save returned folder URL as {{VAULT_LARK_URL}}
+  → Copy vault-templates/ contents into the new Lark Drive folder
+  → If folder creation fails: log error, ask owner to create manually and paste the URL
+  ```
 
 ---
 
@@ -210,9 +225,12 @@ After all 15 questions are answered:
 2. Update brand-voice.md with Q9/Q10 answers
 3. Fill bilingual-gate.md Canonical Dish Name Map with Q11 answers
 4. Fill allergen-gate.md Brand Dish Allergen Table with Q12 answers
-5. Initialize vault-{BRAND_SLUG}/ from vault-templates/
-6. Set vault-index.md with brand name, owner Lark ID, Trending Radar URL
-7. Run global search for {{ in SOUL.md → must be zero before proceeding
+5. [IF NOT ALREADY DONE IN Q14] Create Lark Drive vault:
+   mcp.lark.drive.create_folder(parent={{LARK_WORKSPACES_URL}}, name="vault-{{BRAND_SLUG}}")
+   → Upload vault-templates/ files into the new folder
+   → Store returned URL as {{VAULT_LARK_URL}} in SOUL.md shared_resources
+6. Initialize vault-index.md with: brand name, owner Lark ID, Trending Radar URL, vault Lark URL
+7. Run global search for {{ in SOUL.md → must be ZERO before proceeding
 8. Send confirmation to owner:
 ```
 

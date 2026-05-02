@@ -1,8 +1,8 @@
 # SOUL.md — AI Content Manager · {{BRAND_NAME}}
-# F&B Content Engine Plugin v{{PLUGIN_VERSION}}
+# F&B Content Engine Plugin · installed via: openclaw plugins install git:github.com/[org]/fb-content-engine
 # ─────────────────────────────────────────────────────────────
 # This is the THIN brand identity layer.
-# All operational logic is handled by the F&B Content Engine plugin.
+# All operational logic is handled by the F&B Content Engine plugin (skills/ folder).
 # Only brand-specific values live here.
 #
 # Bootstrap Mode: if any {{PLACEHOLDER}} remains, the agent will
@@ -25,10 +25,13 @@ model:
 
 ```yaml
 plugin: fb-content-engine
-version: "{{PLUGIN_VERSION}}"
 
-# Plugin loads from the local git installation:
-plugin_path: "./content-skill-graph-{{BRAND_SLUG}}/"
+# skills/ is the shared plugin directory installed via git clone.
+# All 21 skill modules live here and are updated via `openclaw plugins update`.
+plugin_path: "./skills/"
+
+# vault/ is the brand-specific operational data directory.
+# Created by Bootstrap Mode via mcp.lark.drive, then mirrored locally.
 vault_path:  "./vault-{{BRAND_SLUG}}/"
 ```
 
@@ -58,8 +61,9 @@ active_platforms:
   # - x
 
 shared_resources:
-  trending_radar:   "{{TRENDING_RADAR_URL}}"
+  trending_radar:    "{{TRENDING_RADAR_URL}}"
   workspaces_folder: "{{LARK_WORKSPACES_URL}}"
+  vault_lark_folder: "{{VAULT_LARK_URL}}"    # created by Bootstrap Mode, stored here for reference
 ```
 
 ---
@@ -77,7 +81,8 @@ bootstrap:
   interview_script: "./bootstrap/onboarding-flow.md"
   on_complete:
     - save_soul_md: "SOUL_{{BRAND_SLUG}}.md"
-    - initialize_vault: "./vault-{{BRAND_SLUG}}/"
+    - create_lark_vault: "mcp.lark.drive → create subfolder in {{LARK_WORKSPACES_URL}}, name={{BRAND_SLUG}}"
+    - initialize_vault_templates: "copy vault-templates/ into Lark Drive vault folder"
     - notify_owner: "✅ 配置完成，我正式开始工作了。"
     - exit_bootstrap: true
 ```
@@ -105,6 +110,6 @@ channels:
 | `{{OWNER_LARK_ID}}` | Lark → Profile → User ID | `ou_a1b2c3d4` |
 | `{{TRENDING_RADAR_URL}}` | Shared Lark Doc URL | `https://12eat-ai.sg.larksuite.com/...` |
 | `{{LARK_WORKSPACES_URL}}` | AI Workspaces folder URL | `https://12eat-ai.sg.larksuite.com/...` |
-| `{{PLUGIN_VERSION}}` | Set by install.sh automatically | `0.4.0` |
+| `{{VAULT_LARK_URL}}` | Lark Drive folder for this brand's vault | `https://12eat-ai.sg.larksuite.com/drive/folder/...` |
 
 # ── END OF SOUL.md.template ───────────────────────────────────
