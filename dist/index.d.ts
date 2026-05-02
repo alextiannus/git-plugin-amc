@@ -8,7 +8,7 @@
  * Key hooks:
  * - gateway_start       → merge SOUL.md.template into workspace SOUL.md (if not already present)
  * - session_start       → detect {{PLACEHOLDER}} → trigger Bootstrap onboarding interview
- * - before_prompt_build → inject onboarding-flow context when Bootstrap is active
+ * - before_prompt_build → inject onboarding context (Bootstrap) OR credential check (normal ops)
  * - agent_end           → log Bootstrap completion status
  */
 declare const _default: unknown;
