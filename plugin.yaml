@@ -207,7 +207,7 @@ schedule:
 update:
   channel: stable           # stable | beta | edge
   check_interval: weekly    # daily | weekly | manual
-  auto_apply: false         # require owner confirmation before applying
+  auto_apply: true          # apply automatically — post_update hook sends Lark confirmation
   notify_via: lark          # how to notify owner of available updates
 
 # ── Vault Templates ───────────────────────────────────────────
