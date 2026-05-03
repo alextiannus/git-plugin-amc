@@ -1,0 +1,156 @@
+# ─────────────────────────────────────────────────────────────
+# release-notify.yml — F&B Content Engine Update Broadcast
+# ─────────────────────────────────────────────────────────────
+#
+# Triggered on every new version tag (v*).
+# Sends a bilingual update notification to the shared Lark group
+# so all installed instances are notified within minutes of a release.
+#
+# Required GitHub Secret:
+#   LARK_UPDATE_WEBHOOK  →  Lark bot webhook URL for the shared
+#                           "F&B Content Engine 更新通知" group.
+#                           Get it from: Lark group → Settings → Bots → Add Bot
+#
+# Optional GitHub Secret:
+#   LARK_DEV_WEBHOOK     →  A separate dev/test Lark group webhook.
+#                           If set, pre-release tags (v*-beta, v*-rc*) are
+#                           sent only here instead of the main channel.
+# ─────────────────────────────────────────────────────────────
+
+name: Release Notify
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*'          # matches v0.7.0, v1.0.0, etc.
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    name: Broadcast to Lark
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout (needed to read plugin.yaml + CHANGELOG) ──────────
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0        # full history for changelog extraction
+
+      # ── 2. Extract version info ───────────────────────────────────────
+      - name: Extract version
+        id: version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+          # Detect pre-release (beta / rc / alpha)
+          if [[ "$TAG" =~ -(beta|rc|alpha) ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ── 3. Extract changelog for this version ─────────────────────────
+      - name: Extract changelog
+        id: changelog
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          NOTES=""
+
+          # Try README.md version history table first
+          if [ -f "README.md" ]; then
+            NOTES=$(awk "/\| v${VERSION//./\\.}.*\|/{found=1; next} found && /^\|/{print; next} found{exit}" README.md | \
+                    head -3 | sed 's/^| //' | sed 's/ |$//' | tr '\n' '；' | sed 's/；$//')
+          fi
+
+          # Fallback: last git tag message
+          if [ -z "$NOTES" ]; then
+            NOTES=$(git tag -l --format='%(contents:subject)' "${{ steps.version.outputs.tag }}" 2>/dev/null | head -1)
+          fi
+
+          # Final fallback
+          if [ -z "$NOTES" ]; then
+            NOTES="技能文件、合规规则、平台策略更新"
+          fi
+
+          echo "notes=${NOTES}" >> "$GITHUB_OUTPUT"
+
+      # ── 4. Build Lark message payload ─────────────────────────────────
+      - name: Build message
+        id: message
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          NOTES="${{ steps.changelog.outputs.notes }}"
+          DATE=$(date -u '+%Y-%m-%d')
+          PRERELEASE="${{ steps.version.outputs.prerelease }}"
+
+          if [ "$PRERELEASE" = "true" ]; then
+            TITLE="🧪 F&B Content Engine 预览版 / Preview"
+            BADGE="（测试版 — 建议在非生产环境更新）"
+          else
+            TITLE="🔔 F&B Content Engine 有新版本 / New Release"
+            BADGE=""
+          fi
+
+          # Build the message text (Lark card format)
+          MSG=$(cat <<EOF
+${TITLE}
+
+版本 / Version: v${VERSION}  ${BADGE}
+发布日期 / Date: ${DATE}
+更新内容 / Changes: ${NOTES}
+
+🔒 品牌定制文件不受影响 / Brand files untouched:
+   brand-voice · allergen-gate · bilingual-gate
+
+👇 向你的 AI 内容官发送以下 Lark 消息，立即开始更新：
+   "更新插件"
+
+或手动执行 / Or run manually:
+   openclaw plugins update git-plugin-amc
+
+📦 Release: https://github.com/${{ github.repository }}/releases/tag/v${VERSION}
+EOF
+)
+          # Escape for JSON (replace newlines with \n, quotes with \")
+          MSG_JSON=$(echo "$MSG" | python3 -c "import sys,json; print(json.dumps(sys.stdin.read()))")
+          echo "json=${MSG_JSON}" >> "$GITHUB_OUTPUT"
+
+      # ── 5a. Send to main Lark channel (stable releases only) ──────────
+      - name: Notify main Lark channel
+        if: steps.version.outputs.prerelease == 'false' && env.LARK_UPDATE_WEBHOOK != ''
+        env:
+          LARK_UPDATE_WEBHOOK: ${{ secrets.LARK_UPDATE_WEBHOOK }}
+        run: |
+          curl -s -X POST "$LARK_UPDATE_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "{\"msg_type\": \"text\", \"content\": {\"text\": ${{ steps.message.outputs.json }}}}" \
+            | python3 -c "import sys,json; r=json.load(sys.stdin); print('✅ Lark notified' if r.get('code')==0 else f'❌ Lark error: {r}')"
+
+      # ── 5b. Send to dev channel (pre-releases) ────────────────────────
+      - name: Notify dev Lark channel (pre-release)
+        if: steps.version.outputs.prerelease == 'true' && env.LARK_DEV_WEBHOOK != ''
+        env:
+          LARK_DEV_WEBHOOK: ${{ secrets.LARK_DEV_WEBHOOK }}
+        run: |
+          curl -s -X POST "$LARK_DEV_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "{\"msg_type\": \"text\", \"content\": {\"text\": ${{ steps.message.outputs.json }}}}" \
+            | python3 -c "import sys,json; r=json.load(sys.stdin); print('✅ Dev channel notified' if r.get('code')==0 else f'❌ Error: {r}')"
+
+      # ── 6. Summary ────────────────────────────────────────────────────
+      - name: Job summary
+        run: |
+          echo "## 🔔 Release Notification" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Version | v${{ steps.version.outputs.version }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Pre-release | ${{ steps.version.outputs.prerelease }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Changelog | ${{ steps.changelog.outputs.notes }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Main channel | ${{ secrets.LARK_UPDATE_WEBHOOK != '' && 'configured' || 'not set' }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Dev channel | ${{ secrets.LARK_DEV_WEBHOOK != '' && 'configured' || 'not set' }} |" >> "$GITHUB_STEP_SUMMARY"

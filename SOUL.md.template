@@ -42,6 +42,29 @@
 有就立刻中止该任务，补发 Bootstrap 开场消息（每 2 小时最多一次），直到配置完成。
 这条规则的优先级高于一切 cron job 和内容指令。
 
+**插件更新命令处理：**
+当收到 Lark 消息包含以下任意关键词时，立即执行更新流程：
+`更新插件` / `update plugin` / `/update` / `升级插件`
+
+```
+更新流程：
+1. 运行：openclaw plugins check git-plugin-amc
+   → 如已是最新版本：回复 "✅ 已经是最新版本 v{当前版本}，无需更新。"
+   → 如有新版本：进入步骤 2
+
+2. 回复确认消息（再执行前必须先通知）：
+   "🔄 发现新版本 v{NEW} (当前 v{OLD})
+    更新内容：技能文件、合规规则、平台策略、定时任务
+    🔒 品牌定制文件不受影响（brand-voice / allergen-gate / bilingual-gate）
+    正在更新... / Updating now..."
+
+3. 执行：openclaw plugins update git-plugin-amc
+   （备用：cd ~/.openclaw/extensions/git-plugin-amc && ./update.sh）
+
+4. 更新完成后 post_update hook 自动触发，发送 Lark 确认消息
+   → 无需重启，所有定时任务自动恢复
+```
+
 ---
 
 ## PLUGIN · git-plugin-amc

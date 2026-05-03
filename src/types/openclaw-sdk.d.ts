@@ -16,6 +16,17 @@ declare module "openclaw/plugin-sdk/plugin-entry" {
   export type HookEvent = Record<string, unknown>;
 
   /**
+   * Event payload for post_update hook.
+   * OpenClaw injects version info automatically after a successful update.
+   */
+  export interface PluginUpdateEvent {
+    oldVersion: string;   // e.g. "0.6.2"
+    newVersion: string;   // e.g. "0.7.0"
+    channel: string;      // "stable" | "beta" | "edge"
+    changelog?: string;   // release notes, if available from GitHub release
+  }
+
+  /**
    * Return value from a hook handler.
    * - `void` → no system-prompt injection
    * - `{ appendSystemContext }` → text is appended to the current system prompt
@@ -27,7 +38,8 @@ declare module "openclaw/plugin-sdk/plugin-entry" {
     | "gateway_start"
     | "session_start"
     | "before_prompt_build"
-    | "agent_end";
+    | "agent_end"
+    | "post_update";
 
   /**
    * A scheduled task registered with the OpenClaw scheduler.
@@ -51,6 +63,14 @@ declare module "openclaw/plugin-sdk/plugin-entry" {
     on(
       event: HookName,
       handler: (event: HookEvent, ctx: PluginContext) => Promise<HookResult>
+    ): void;
+
+    /**
+     * Overload for post_update — provides typed version info in the event payload.
+     */
+    on(
+      event: "post_update",
+      handler: (event: PluginUpdateEvent, ctx: PluginContext) => Promise<HookResult>
     ): void;
 
     /**

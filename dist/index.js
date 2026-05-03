@@ -316,6 +316,34 @@ function loadMcpSetupSkill(pluginDir) {
         return null;
     return readFileSync(skillPath, "utf-8");
 }
+function readPluginVersion(pluginDir) {
+    const yamlPath = join(pluginDir, "plugin.yaml");
+    if (!existsSync(yamlPath))
+        return "unknown";
+    const content = readFileSync(yamlPath, "utf-8");
+    const match = content.match(/^version:\s*"?([^"\n]+)"?/m);
+    return match ? match[1].trim() : "unknown";
+}
+function extractBrandSlug(soulContent) {
+    const match = soulContent.match(/brand_slug:\s*"?([^"\n]+)"?/);
+    return match ? match[1].trim().replace(/["']/g, "") : "brand";
+}
+function logUpdateToVault(workspaceDir, soulContent, entry) {
+    const brandSlug = extractBrandSlug(soulContent);
+    const candidates = [
+        join(workspaceDir, `vault-${brandSlug}`, "brand", "ownerreview.md"),
+        join(workspaceDir, "vault", "brand", "ownerreview.md"),
+    ];
+    for (const p of candidates) {
+        if (existsSync(p)) {
+            appendFileSync(p, entry, "utf-8");
+            return;
+        }
+    }
+    // If vault doesn't exist locally yet, log to workspace root as fallback
+    const fallback = join(workspaceDir, "plugin-update.log");
+    appendFileSync(fallback, entry, "utf-8");
+}
 // ── Plugin Entry ───────────────────────────────────────────────
 export default definePluginEntry({
     id: PLUGIN_ID,
@@ -426,6 +454,50 @@ export default definePluginEntry({
                     mcpSetupSkill
                         ? mcpSetupSkill
                         : "See: skills/operations/mcp-setup/SKILL.md",
+                ].join("\n"),
+            };
+        });
+        // ── post_update: Confirm update via Lark + log to vault ──────────────
+        // Fired by OpenClaw after `openclaw plugins update` or `./update.sh` succeeds.
+        // The event payload contains oldVersion / newVersion injected by OpenClaw.
+        api.on("post_update", async (event, ctx) => {
+            const workspaceDir = ctx.workspaceDir || process.cwd();
+            const pluginDir = resolvePluginDir(workspaceDir);
+            const oldVersion = event["oldVersion"] ?? "previous";
+            const newVersion = event["newVersion"] ?? readPluginVersion(pluginDir);
+            const changelog = event["changelog"] ?? "";
+            console.log(`[${PLUGIN_ID}] ✅ Updated: ${oldVersion} → ${newVersion}`);
+            // Write to vault log
+            const soulPath = resolveSoulPath(workspaceDir);
+            const soulContent = existsSync(soulPath) ? readFileSync(soulPath, "utf-8") : "";
+            const date = new Date().toISOString().split("T")[0];
+            logUpdateToVault(workspaceDir, soulContent, `\n[${date}] Plugin updated: ${oldVersion} → ${newVersion}\n`);
+            // Inject Lark confirmation context for the agent to send
+            const changelogSection = changelog
+                ? `\n更新内容 / What's new:\n${changelog}\n`
+                : "";
+            return {
+                appendSystemContext: [
+                    "## ✅ F&B Content Engine — Plugin Updated Successfully",
+                    "",
+                    `Plugin has been updated from **${oldVersion}** to **${newVersion}**.`,
+                    "",
+                    "Send the following confirmation message via `mcp.lark.message` immediately:",
+                    "```",
+                    `✅ 插件已成功更新 / Plugin updated successfully`,
+                    ``,
+                    `版本 / Version: ${oldVersion} → ${newVersion}`,
+                    changelogSection,
+                    `更新内容 / Updated: 技能文件、合规规则、平台策略、定时任务`,
+                    `Skill files, compliance rules, platform policies, cron schedule`,
+                    ``,
+                    `🔒 品牌定制文件未变动 / Brand files untouched:`,
+                    `   brand-voice · allergen-gate · bilingual-gate`,
+                    ``,
+                    `✅ 所有定时任务已恢复运行 / All scheduled tasks resumed`,
+                    "```",
+                    "",
+                    "After sending: resume normal operations — no restart required.",
                 ].join("\n"),
             };
         });
