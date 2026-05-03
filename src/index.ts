@@ -6,10 +6,15 @@
  * approach with programmatic hooks that OpenClaw can actually execute.
  *
  * Key hooks:
- * - gateway_start       → merge SOUL.md.template into workspace SOUL.md (if not already present)
+ * - gateway_start       → merge SOUL.md.template + register all 22 cron schedules
  * - session_start       → detect {{PLACEHOLDER}} → trigger Bootstrap onboarding interview
  * - before_prompt_build → inject onboarding context (Bootstrap) OR credential check (normal ops)
- * - agent_end           → log Bootstrap completion status
+ * - agent_end           → log Bootstrap / credential completion status
+ *
+ * Schedule registration:
+ * - All 22 tasks from skills/operations/cron-jobs.md are registered programmatically
+ * - Tasks are suspended automatically by OpenClaw when Bootstrap Mode is active
+ * - api.registerSchedule() is idempotent — safe to call on every gateway_start
  */
 
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
@@ -30,6 +35,150 @@ const POSTFAST_PLATFORMS = new Set([
 ]);
 // Platforms handled by GBP MCP (Google Business Profile)
 const GBP_PLATFORMS = new Set(["googlemap"]);
+
+// ── Cron Schedule Definitions ──────────────────────────────────
+// Source of truth: skills/operations/cron-jobs.md
+// Cron format: minute hour dom month dow (standard 5-field, UTC)
+// Registered programmatically — no manual setup required.
+// api.registerSchedule() is idempotent: safe to call on every gateway_start.
+// Note: three Monday-09:00 tasks are offset by 5 min to avoid collision.
+const SCHEDULE = [
+  // ── Daily ──────────────────────────────────────────────────
+  {
+    cron: "30 6 * * *",
+    task: "trending-radar-refresh",
+    prompt:
+      "执行 trending-radar-refresh：打开共享 Trending Radar 文档，搜索今日热门话题（美食、餐厅、本地生活），更新 Top 5 趋势条目，为今日内容生产做好素材准备。",
+  },
+  {
+    cron: "0 8 * * *",
+    task: "topic-discovery",
+    prompt:
+      "执行 topic-discovery：基于今日 Trending Radar 结果，为品牌选出 1–2 个最契合的话题，起草今日内容创作方向，记录到 vault postschedule.md。",
+  },
+  {
+    cron: "0 10 * * *",
+    task: "google-maps-actions",
+    prompt:
+      "执行 google-maps-actions：检查 Google Business Profile 新评论，按品牌 voice 回复所有未回复评论（24h SLA），发布今日 GBP 帖子（如有排期）。",
+  },
+  {
+    cron: "0 11 * * *",
+    task: "lunch-publish-window",
+    prompt:
+      "执行 lunch-publish-window：发布今日午餐时段内容（Instagram 主帖 / Stories / Facebook），确认发布成功，记录到 postschedule.md。",
+  },
+  {
+    cron: "0 13 * * *",
+    task: "lunch-snapshot",
+    prompt:
+      "执行 lunch-snapshot：抓取今日午餐帖子发布后 2 小时的初始数据（likes、reach、comments），记录到 vault report 文件夹。",
+  },
+  {
+    cron: "0 17 * * *",
+    task: "dinner-publish-window",
+    prompt:
+      "执行 dinner-publish-window：发布今日晚餐时段内容（Instagram Reels / TikTok / Facebook），确认发布成功，记录到 postschedule.md。",
+  },
+  {
+    cron: "0 19 * * *",
+    task: "dinner-snapshot",
+    prompt:
+      "执行 dinner-snapshot：抓取今日晚餐帖子发布后 2 小时的初始数据，记录到 vault report 文件夹。",
+  },
+  {
+    cron: "0 20 * * *",
+    task: "comment-dm-reply",
+    prompt:
+      "执行 comment-dm-reply：检查所有平台的新评论和私信，按品牌 voice 回复，重点处理带问题或投诉的评论，记录无法处理的问题到 ownerreview.md。",
+  },
+  {
+    cron: "30 23 * * *",
+    task: "daily-metrics-snapshot",
+    prompt:
+      "执行 daily-metrics-snapshot：从所有已连接平台拉取今日数据（via mcp.analytics），保存到 vault report 文件夹的日快照文件。",
+  },
+  {
+    cron: "45 23 * * *",
+    task: "daily-mini-digest",
+    prompt:
+      "执行 daily-mini-digest：生成今日运营简报（发布情况、互动亮点、待处理事项），通过 mcp.lark.message 发送给品牌团队。",
+  },
+  // ── Weekly ─────────────────────────────────────────────────
+  {
+    cron: "0 8 * * 1",
+    task: "self-improvement-report",
+    prompt:
+      "执行 self-improvement-report：回顾上周内容表现，识别最高/最低效帖子，总结学习点，更新 feedback-loop 文件，提出下周内容优化建议。",
+  },
+  {
+    cron: "0 9 * * 1",
+    task: "plugin-version-check",
+    prompt:
+      "执行 plugin-version-check：检查 git-plugin-amc 是否有新版本可用（openclaw plugins check git-plugin-amc），如有新版本通过 Lark 通知品牌团队。",
+  },
+  {
+    cron: "5 9 * * 1",
+    task: "pending-platform-reminder",
+    prompt:
+      "执行 pending-platform-reminder：检查 SOUL.md 中的 pending_platforms 列表，如非空则通过 Lark 提醒品牌团队连接剩余平台账号。",
+  },
+  {
+    cron: "10 9 * * 1",
+    task: "allergen-pending-check",
+    prompt:
+      "执行 allergen-pending-check：检查 allergen-gate.md 中是否有标记为 PENDING 的菜品，如有则通过 Lark 请品牌确认过敏原信息。",
+  },
+  {
+    cron: "0 10 * * 1",
+    task: "weekly-report",
+    prompt:
+      "执行 weekly-report：生成上周完整运营报告（内容数量、互动率、最佳帖子、平台对比、下周计划），保存到 vault report 文件夹，通过 Lark 发送给品牌团队。",
+  },
+  {
+    cron: "0 18 * * 5",
+    task: "weekly-performance-review",
+    prompt:
+      "执行 weekly-performance-review：对本周所有帖子做绩效复盘，找出 Top 3 和 Bottom 3，分析原因，更新内容策略建议。",
+  },
+  {
+    cron: "0 20 * * 0",
+    task: "weekly-content-batch",
+    prompt:
+      "执行 weekly-content-batch：为下一周生成内容批次草稿（7天内容日历，涵盖所有 active 平台），存入 vault postschedule.md，通过 Lark 通知品牌团队审阅。",
+  },
+  {
+    cron: "0 22 * * 0",
+    task: "weekly-self-assessment",
+    prompt:
+      "执行 weekly-self-assessment：对本周 AI 运营质量做自我评估（准时率、内容质量、合规情况、用户反馈），记录到 vault ownerreview.md，提出改进行动项。",
+  },
+  // ── Monthly ────────────────────────────────────────────────
+  {
+    cron: "0 10 1 * *",
+    task: "monthly-report",
+    prompt:
+      "执行 monthly-report：生成上月完整运营月报（KPI 达成、内容总量、各平台表现、粉丝增长、最佳内容精选），保存到 vault report，通过 Lark 发送给品牌团队。",
+  },
+  {
+    cron: "5 10 1 * *",
+    task: "compliance-review",
+    prompt:
+      "执行 compliance-review：审查上月所有发布内容是否符合 fda-ftc-rules 和平台政策，记录任何合规风险，建议下月注意事项。",
+  },
+  {
+    cron: "10 10 1 * *",
+    task: "voice-drift-check",
+    prompt:
+      "执行 voice-drift-check：对比上月内容与 brand-voice.md 定义的品牌声音，检测是否出现语气漂移，提出校正建议，更新品牌声音记录。",
+  },
+  {
+    cron: "15 10 1 * *",
+    task: "kpi-reset",
+    prompt:
+      "执行 kpi-reset：重置本月 KPI 追踪计数器，在 vault report 文件夹创建新月份报告文件，确认本月内容日历和发布计划就位。",
+  },
+] as const;
 
 // Plugin root = one level above dist/ where this file compiles to
 // e.g. ~/.openclaw/extensions/git-plugin-amc/dist/index.js → plugin root is ../
@@ -276,6 +425,14 @@ export default definePluginEntry({
           `[${PLUGIN_ID}] ✅ SOUL.md.template merged. Bootstrap Mode will activate on next session.`
         );
       }
+
+      // ── Register all 22 cron schedules ───────────────────────────────
+      // Idempotent — safe to call on every gateway_start.
+      // OpenClaw suspends tasks automatically while Bootstrap Mode is active.
+      api.registerSchedule([...SCHEDULE]);
+      console.log(
+        `[${PLUGIN_ID}] ✅ Registered ${SCHEDULE.length} scheduled tasks (daily/weekly/monthly)`
+      );
     });
 
     // ── session_start: Detect Bootstrap Mode or missing credentials ──────

@@ -171,6 +171,38 @@ config_schema:
     default: "https://12eat-ai.sg.larksuite.com/drive/folder/PbugfutjllCDM0dqMiIlN0orgZd"
     description: "AI Workspaces folder URL for vault creation"
 
+# ── Schedule (22 tasks) ───────────────────────────────────────
+# Declarative manifest — OpenClaw reads this to display schedule without
+# executing the plugin JS. Authoritative registration is done programmatically
+# via api.registerSchedule() in src/index.ts on every gateway_start.
+# Cron: minute hour dom month dow (UTC). Suspended automatically during Bootstrap.
+schedule:
+  daily:
+    - { cron: "30 6 * * *", task: trending-radar-refresh }
+    - { cron: "0 8 * * *",  task: topic-discovery }
+    - { cron: "0 10 * * *", task: google-maps-actions }
+    - { cron: "0 11 * * *", task: lunch-publish-window }
+    - { cron: "0 13 * * *", task: lunch-snapshot }
+    - { cron: "0 17 * * *", task: dinner-publish-window }
+    - { cron: "0 19 * * *", task: dinner-snapshot }
+    - { cron: "0 20 * * *", task: comment-dm-reply }
+    - { cron: "30 23 * * *",task: daily-metrics-snapshot }
+    - { cron: "45 23 * * *",task: daily-mini-digest }
+  weekly:
+    - { cron: "0 8 * * 1",  task: self-improvement-report }
+    - { cron: "0 9 * * 1",  task: plugin-version-check }
+    - { cron: "5 9 * * 1",  task: pending-platform-reminder }
+    - { cron: "10 9 * * 1", task: allergen-pending-check }
+    - { cron: "0 10 * * 1", task: weekly-report }
+    - { cron: "0 18 * * 5", task: weekly-performance-review }
+    - { cron: "0 20 * * 0", task: weekly-content-batch }
+    - { cron: "0 22 * * 0", task: weekly-self-assessment }
+  monthly:
+    - { cron: "0 10 1 * *", task: monthly-report }
+    - { cron: "5 10 1 * *", task: compliance-review }
+    - { cron: "10 10 1 * *",task: voice-drift-check }
+    - { cron: "15 10 1 * *",task: kpi-reset }
+
 # ── Update Policy ─────────────────────────────────────────────
 update:
   channel: stable           # stable | beta | edge
