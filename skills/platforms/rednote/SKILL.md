@@ -51,19 +51,14 @@ While the core principle remains the same as Instagram (always pass the **"So Wh
 
 ### 2. The Anatomy of a High-Converting RedNote Post
 
-```
-[Title: MUST have keywords + emotional trigger, max 20 chars]
-[Empty Line]
-[The Hook: First sentence must deliver the core value or result]
-[Empty Line]
-[The Body: Emoji-bulleted list of specific details (taste, price, how to order)]
-[Empty Line]
-[The Honest Assessment: 1 pro + 1 minor con/tip for authenticity]
-[Empty Line]
-[The CTA: Drive comments by asking for their favorite order]
-[Empty Line]
-[Hashtags: 3-5 hyper-specific search keywords]
-```
+**DO NOT use rigid headings like "特色亮点", "优惠活动", or "顾客评价".** RedNote posts must read like a fluid, enthusiastic recommendation from a real person (KOC).
+
+- **[Title]** MUST have keywords + emotional trigger, max 20 chars (e.g., "留学生必看！人均$15吃撑的隐藏版麻辣香锅🌶️")
+- **[The Hook]** First sentence must validate the title immediately. "这绝不是广，是我过去一周连吃三次的宝藏店铺..."
+- **[The Fluid Narrative]** Tell the story of eating the food. Focus on sensory details (taste, texture) and practical tips (how to order, exact price). Use emojis naturally within the text, not just as bullet points. 
+- **[The Honest Assessment]** 1 pro + 1 minor con/tip for authenticity (e.g., "唯一缺点就是饭点要排队，建议错峰去").
+- **[The CTA]** Drive comments by asking a polarizing question. "微辣还是变态辣？在评论区告诉我你的极限🌶️👇"
+- **[Hashtags]** 3-5 hyper-specific search keywords at the very bottom.
 
 ### 2. Crafting the Perfect SEO Title & Hook
 Unlike Instagram, RedNote has a dedicated Title field. This is 80% of the battle for CTR.
@@ -141,3 +136,12 @@ Primarily Chinese-speaking: overseas Chinese students, expats, Chinese tourists,
 - Hungry Locals looking for reliable Chinese food recommendations
 - Explorers seeking authentic Chinese food experiences
 - Both audiences respond well to honest, detailed, personal reviews
+
+---
+
+## 🛑 Anti-Hallucination & Authenticity Rules
+
+To maintain brand safety and organic authenticity, you MUST adhere to these strict constraints:
+1. **NO Fake Contact Info:** NEVER hallucinate or invent store addresses, phone numbers, or operating hours. If they are not explicitly provided in your memory (`brand-voice.md`, `owner-profile.md`, or the prompt), simply omit them or use a placeholder like `[等待主理人补充]`.
+2. **NO Fake Reviews:** NEVER invent "Customer Reviews" (顾客评价) or fake quotes from non-existent people. Organic posts should be written from the perspective of the brand or a genuine KOC. Invented reviews look like spam and violate authenticity guidelines.
+3. **NO Rigid Templates:** Do NOT output content using rigid, robotic headings (e.g., `[特色亮点]`, `[优惠活动]`, `[店铺信息]`) unless explicitly required by the platform format (e.g., YouTube descriptions). Social media posts should flow naturally and conversationally, like a human wrote them.
