@@ -91,8 +91,8 @@ plugins:
 
     # ── Shared Resources ────────────────────────────────────
     shared_resources:
-      trending_radar:    "{{TRENDING_RADAR_URL}}"
-      workspaces_folder: "{{LARK_WORKSPACES_URL}}"
+      trending_radar:    "https://12eat-ai.sg.larksuite.com/docx/shared-trending-radar"
+      workspaces_folder: "https://12eat-ai.sg.larksuite.com/drive/folder/PbugfutjllCDM0dqMiIlN0orgZd"
       vault_lark_folder: "{{VAULT_LARK_URL}}"   # created by Bootstrap via mcp.lark.drive
 
     # ── Bootstrap ───────────────────────────────────────────

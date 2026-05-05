@@ -230,19 +230,19 @@ Want to connect them now, or skip for later?"
 
 **Q11 · Trending Radar URL**
 > "我们有一个每日更新的热点雷达文档，所有品牌都共享。
-> 地址是：[default URL from SOUL.md config]
+> 地址是：[read trending_radar from SOUL.md]
 > 这个地址对你的品牌适用吗？还是需要用其他地址？
 > We have a shared daily Trending Radar document.
 > The default URL is: [url]. Does this apply to your brand, or do you need a different one?"
 
-→ Maps to: `{{TRENDING_RADAR_URL}}`
+→ Maps to: `trending_radar` in SOUL.md
 → If unchanged: keep default
 
 ---
 
 **Q12 · AI Workspaces folder (vault parent)**
 > "我会在 Lark 云盘里为你创建专属的品牌档案夹。
-> 默认位置是 AI Workspaces 文件夹：[default URL from SOUL.md]
+> 默认位置是 AI Workspaces 文件夹：[read workspaces_folder from SOUL.md]
 > 这个位置可以吗？如果你已经有一个偏好的位置，可以把链接给我。
 >
 > I'll create your brand's vault folder in Lark Drive.
@@ -288,7 +288,7 @@ After all 13 questions are answered:
    Execute `node scripts/create-vault.js "{{BRAND_SLUG}}" "{{LARK_WORKSPACES_URL}}"`
    → Upload vault-templates/ files into the new folder
    → Store returned URL as {{VAULT_LARK_URL}} in SOUL.md shared_resources
-6. Initialize vault-index.md with: brand name, owner Lark ID, Trending Radar URL, vault Lark URL
+6. Use your feishu_drive tool to update the uploaded `vault-index.md` in the new Lark folder, filling in the brand name, Trending Radar URL, and vault Lark URL.
 7. Run global search for {{ in SOUL.md → must be ZERO before proceeding
 8. **CRITICAL REQUIREMENT:** You MUST immediately and proactively send the confirmation message to the owner. Do NOT wait for them to ask or prompt you. As soon as step 7 is complete, output the following message EXACTLY as written:
 
