@@ -83,6 +83,7 @@ async function uploadFile(token, filePath, fileName, folderToken) {
 async function syncDirectory(token, localDir, remoteFolderToken) {
   const entries = await fs.readdir(localDir, { withFileTypes: true });
   for (const entry of entries) {
+    if (entry.name.startsWith('.')) continue;
     const fullPath = path.join(localDir, entry.name);
     if (entry.isDirectory()) {
       console.log(`[+] Creating folder: ${entry.name}`);
@@ -105,12 +106,17 @@ async function main() {
 
   const templatesDir = path.join(process.cwd(), 'vault-templates');
   
+  let hasTemplates = false;
   try {
     await fs.access(templatesDir);
+    hasTemplates = true;
+  } catch (err) {
+    console.log("No vault-templates directory found, skipping template upload.");
+  }
+
+  if (hasTemplates) {
     console.log("Uploading templates...");
     await syncDirectory(token, templatesDir, rootFolder.token);
-  } catch (err) {
-    console.log("No vault-templates directory found or error accessing it:", err.message);
   }
 
   console.log("✅ Vault folder created successfully!");
