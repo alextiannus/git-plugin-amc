@@ -15,7 +15,7 @@ This is the final compliance gate. Do NOT rely on simple word blacklists. You mu
 
 ## The Humanizer Framework
 
-When auditing and rewriting content in Step 8 of the Repurpose Chain, you must apply the following three principles:
+When auditing and rewriting content at the Final Gate (De-AI Gate) of the Repurpose Chain, you must apply the following three principles:
 
 ### 1. Maximize Burstiness (节奏突现度)
 AI writes with uniform sentence length. Humans write with highly variable rhythm.
