@@ -6,7 +6,7 @@
 name: git-plugin-amc
 slug: git-plugin-amc          # matches GitHub repo name and openclaw extensions folder
 display_name: "F&B Content Engine"
-version: "0.7.2"
+version: "0.7.3"
 description: >
   A complete social media operations plugin for F&B brands.
   Manages content from idea to publish across 7 platforms,
@@ -38,6 +38,7 @@ skills:
     - allergen-gate       # 9 major allergens checker
     - platform-policies   # TikTok/Meta/GMB specific rules
     - image-rights        # photo licensing and consent rules
+    - de-ai-gate          # scrubs robotic phrasing and AI-isms
 
   localization:
     - bilingual-gate      # EN/ZH decision tree + canonical dish map

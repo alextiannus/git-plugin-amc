@@ -130,6 +130,10 @@ Never explicitly ask for reviews in exchange for anything (FTC + Google violatio
 
 3. Owner Gate → [[operations/owner-approval]]
    Only triggers on flagged drafts (Tier 1 or 2 conditions)
+
+4. De-AI Gate → [[compliance/de-ai-gate]]
+   Scrub out "AI-isms", robotic phrasing, and symmetrical templates.
+   Silently rewrite any offending sentences to be colloquial and human-like before final output.
 ```
 
 ---
