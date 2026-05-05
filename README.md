@@ -22,17 +22,11 @@ compliance gates, owner escalation, and automated reporting.
 ```bash
 # Step 2a · 安装插件（三选一）
 
-# 方式 A · npm 包（最推荐）
-openclaw plugins install git-plugin-amc
-
-# 方式 B · GitHub marketplace
-openclaw plugins install --marketplace https://github.com/alextiannus/git-plugin-amc
-
-# 方式 C · 手动 git clone
-git clone https://github.com/alextiannus/git-plugin-amc \
-  ~/.openclaw/extensions/git-plugin-amc
-openclaw plugins install ~/.openclaw/extensions/git-plugin-amc
+### Setup
+```bash
+openclaw plugins install https://github.com/alextiannus/git-plugin-amc.git
 ```
+*This command automatically clones the plugin, installs dependencies, builds the source, and injects the configuration into your `SOUL.md`.*
 
 ```bash
 # Step 2b · 验证
