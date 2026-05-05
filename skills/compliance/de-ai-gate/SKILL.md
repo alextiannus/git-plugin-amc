@@ -1,46 +1,48 @@
 ---
 name: de-ai-gate
-description: "Scrubs robotic phrasing, AI-isms, and excessive formatting"
+description: "Humanizer engine: injects Burstiness, Perplexity, and Asymmetry"
 plugin: git-plugin-amc
 ---
 
-# Skill · De-AI Gate (去AI化审核)
+# Skill · De-AI Gate (去机器味引擎)
 # F&B Content Engine · compliance/de-ai-gate.md
 # ─────────────────────────────────────────────
 
 ## Purpose
-This is the final compliance gate before any output is delivered. Its sole purpose is to detect and scrub "AI-isms" (Template Hallucination, Robotic Tone, Symmetrical Formatting) from generated content, ensuring the final copy reads exactly like a human wrote it.
+This is the final compliance gate. Do NOT rely on simple word blacklists. You must use the industry-standard "Bypass AI" framework focusing on **Burstiness**, **Perplexity**, and **Asymmetry** to transform the draft into 100% human-like organic content.
 
 ---
 
-## 🛑 Trigger Words & Patterns (Blacklist)
+## The Humanizer Framework
 
-If ANY of the following patterns are found in the draft, you MUST rewrite the sentence to sound conversational, imperfect, and colloquial.
+When auditing and rewriting content in Step 8 of the Repurpose Chain, you must apply the following three principles:
 
-### Chinese AI-isms (中文高频机翻词)
-- **Forbidden Starters:** "在这个快节奏的时代", "不可否认", "无疑是", "众所周知", "正如古语所说"
-- **Forbidden Transitions:** "此外", "另外", "更重要的是", "让我们一起来探索", "不仅...而且..."
-- **Forbidden Endings:** "还在等什么", "快来体验吧", "期待您的光临", "不仅仅是一道菜，更是一种..."
-- **Corporate Speak:** "旨在", "致力于", "为您带来", "全方位", "极致体验"
+### 1. Maximize Burstiness (节奏突现度)
+AI writes with uniform sentence length. Humans write with highly variable rhythm.
+- **Rule:** You MUST aggressively mix extremely short, punchy sentences (2-5 words) with longer, flowing descriptions. 
+- **Action:** If you see a paragraph where all sentences are roughly the same length, break it. Insert a one-word sentence. ("真的。" / "Exactly.") Use fragments. Start sentences with "But" or "And" ("但是..." / "而且...").
 
-### English AI-isms (英文高频机翻词)
-- **Forbidden Verbs:** Delve, Elevate, Embark, Unleash, Discover, Transform
-- **Forbidden Nouns:** Tapestry, Testament, Symphony (e.g., "A symphony of flavors"), Realm, Journey
-- **Forbidden Transitions:** Moreover, Furthermore, In conclusion, Crucial, Essential, Not only... but also
-- **Forbidden Clichés:** "Buckle up", "Look no further", "Take it to the next level"
+### 2. Maximize Perplexity (用词困惑度)
+AI chooses the most statistically probable next word. Humans use slang, idioms, and unpredictable phrasing.
+- **Rule:** Lower the predictability of your vocabulary. 
+- **Action (Chinese):** Ban high-probability transitions: "在这个快节奏的时代", "不可否认", "不仅...而且", "总而言之". Replace formal adjectives with visceral, sensory descriptions ("好吃到无语", "直接封神", "破防了").
+- **Action (English):** Ban corporate/AI buzzwords: "Delve", "Elevate", "Tapestry", "Testament", "Moreover", "In conclusion". Use casual, native phrasing ("Honestly", "You gotta try this", "It hits different").
+
+### 3. Enforce Asymmetry (反结构对称)
+AI loves symmetry (e.g., exactly 3 bullet points, each with exactly 1 emoji and 2 sentences). Human social media is chaotic.
+- **Rule:** Never output perfectly symmetrical lists or paragraphs.
+- **Action:** If you have bullet points, make one very long and detailed, and another just a few words. Remove emojis from some lines while leaving them on others. Do NOT use structured bracket headers like `[特色亮点]` or `**Why us?**`.
 
 ---
 
-## 🛑 Formatting Scrubbing Rules
+## The "Smart Friend" Litmus Test
 
-Human social media posts are chaotic and fluid. AI posts are overly structured. You must scrub the following:
-
-1. **Symmetrical Bullet Points:** If you see 4 bullet points that are all exactly the same length and use the exact same emoji structure, break them up. Make one longer, turn one into a regular sentence, or remove the emojis.
-2. **Robotic Headings:** Remove bracketed or bolded structural headings like `[特色亮点]`, `[优惠活动]`, `[店铺信息]`, `**Why choose us?**`.
-3. **Emoji Spam:** No more than 1 emoji per sentence. Never stack 3 emojis together (`🔥👇😋`).
-4. **Hashtag Stuffing:** Keep hashtags at the very bottom, separated by a blank line. Do not inline hashtags (`Come try our #Spicy #Fish today`).
+Read the audited draft silently to yourself.
+Ask: *"Would I send this exact message to a smart foodie friend on WeChat/WhatsApp?"*
+- If it sounds like a brand press release or a corporate brochure → **FAIL**. Rewrite it with more attitude, more opinions, and minor grammatical imperfections.
+- If it sounds like someone aggressively hyping up a spot they just discovered → **PASS**.
 
 ---
 
 ## Action Mandate
-During the **Final Step · De-AI & Authenticity Audit** of the Repurpose Chain, if you detect any violations of this gate, do NOT explain the violation. Simply execute the rewrite silently and provide the final humanized output.
+During the **Final Step · De-AI & Authenticity Audit** of the Repurpose Chain, you must apply this Humanizer Framework. Do NOT explain what you are doing. Simply output the final, asymmetrical, high-burstiness humanized text.
