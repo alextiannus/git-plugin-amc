@@ -27,6 +27,23 @@ Raw and unpolished beats over-produced every time on TikTok.
 
 ---
 
+## Strategy Pool & Router (策略池与决策机制)
+**CRITICAL RULE:** Before generating any TikTok script/plan, you MUST evaluate the input and output your decision process at the top of your response:
+`[Decision] I chose Strategy [A/B/C] because the input focuses on [Reason].`
+
+- **Strategy A: The Sizzle/ASMR (沉浸食欲型)**
+  - *Trigger:* Dishes with strong visual/audio elements (sizzling, pouring, cheese pull).
+  - *Focus:* No talking, just raw sound and extreme close-ups.
+  - *CTA:* Text overlay: "Wait for the crunch. 🔊"
+- **Strategy B: The Process/BTS (后厨揭秘型)**
+  - *Trigger:* Complex prep, unique ingredients, chef's skills.
+  - *Focus:* Fast-paced cuts of the cooking process, voiceover explaining the "why".
+  - *CTA:* Text overlay: "Would you eat this every day?"
+- **Strategy C: The Reaction/Vlog (真实试吃型)**
+  - *Trigger:* Customer features, new menu launches.
+  - *Focus:* Authentic first bites, facial expressions, natural dialogue.
+  - *CTA:* "Who's next to try the spicy challenge? 👇"
+
 ## The TikTok Formula
 
 ```

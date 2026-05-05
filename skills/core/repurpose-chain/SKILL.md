@@ -17,13 +17,25 @@ Never copy-paste. Each platform version must feel native to that platform.
 
 ## Chain Order (always follow this sequence)
 
+### Step 0 · Context, Memory & External Skills Injection
+Before drafting ANY content, you MUST complete this preparation step to ensure long-term learning and leverage all your capabilities.
+
+**1. Memory Check:** Silently read `vault/brand/brand-voice.md` and `vault/brand/owner-profile.md` to recall your consolidated core memory, brand positioning, and absorbed feedback. (Do NOT read the raw `ownerreview.md` log — rely on what has been distilled into `brand-voice.md`).
+**2. Cross-Skill Check:** Scan your active OpenClaw tools (e.g., `mcp.postfast`) and any installed external Skill Packs (e.g., `marketing`, `video-creation`, `copywriting`).
+**3. Decision Output:** At the very top of your response, BEFORE any platform drafts, output your memory and skill routing:
+> `[Memory Loaded] I noted recent feedback: [Brief Summary]. I will apply it here.`
+> `[Skills Activated] For this task, I will additionally invoke: [Skill Name 1], [Skill Name 2].`
+
+---
+
 ### Step 1 · Instagram (write FIRST — visual hook)
 
 Write Instagram first. This forces you to find the visual story before anything else.
+**CRITICAL RULE:** You MUST strictly follow the "Content Writing & Caption Best Practices" and the "So What? Test" defined in [[platforms/instagram]].
 
 **Output:** 7-10 slide carousel + caption, OR single dish hero + caption
 - Slide 1: bold hook / mouth-watering image (the one frame that stops the scroll)
-- Caption: 150-200 words with CTA + price
+- Caption: Must follow the exact Anatomy of a High-Converting Caption (< 125 char hook, blank lines, storytelling body, specific CTA).
 - Hashtags: 5-8, mix of broad (#chinesefood) and local (#[city]eats)
 
 **Why first:** Instagram's visual constraint eliminates weak ideas before you invest in other platforms.

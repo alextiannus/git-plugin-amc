@@ -30,8 +30,28 @@ Facebook is about belonging. Every post should invite participation.
 
 ## The Facebook Formula
 
+Facebook is about belonging. Every post should invite participation and target local families or regulars.
+
+### Strategy Pool & Router (策略池与决策机制)
+**CRITICAL RULE:** Before generating any Facebook content, you MUST evaluate the input and output your decision process at the top of your response:
+`[Decision] I chose Strategy [A/B/C] because the input focuses on [Reason].`
+
+- **Strategy A: The Community Story (街坊邻居型)**
+  - *Trigger:* Local events, regulars, history, BTS.
+  - *Focus:* Warm tone, gratitude to the neighborhood, storytelling.
+  - *CTA:* "What's your favorite memory here?" or "Say hi to Chef when you drop by!"
+- **Strategy B: The Family Meal (家庭聚餐型)**
+  - *Trigger:* Large portions, catering, weekend specials, kid-friendly items.
+  - *Focus:* Ease of ordering, feeding the whole family, value.
+  - *CTA:* "Tag whoever is on dish duty tonight." or "Let us handle Friday dinner."
+- **Strategy C: The Local Poll (互动投票型)**
+  - *Trigger:* Menu changes, seasonal items, general engagement.
+  - *Focus:* Asking the audience for input.
+  - *CTA:* "Spicy or mild? Let us know below to settle a kitchen debate."
+
+### Caption Anatomy
 ```
-[Hook — same emotional trigger as IG, but can be slightly longer]
+[Hook — emotional trigger, community focus, or value statement]
 [2-3 sentences of substance — dish story, deal, or community moment]
 [Discussion question OR community CTA]
 ```

@@ -77,10 +77,22 @@ In crisis: pause all review responses and scheduled posts until owner clears.
 
 Google Business posts expire after 6 months. Post 2-3x per week to keep the profile active.
 
-**Post types:**
-- **What's New** — new menu items, seasonal specials
-- **Offer** — deals with explicit start/end dates and terms
-- **Event** — any in-store or community event
+### Strategy Pool & Router (策略池与决策机制)
+**CRITICAL RULE:** Before generating any Google Map Business Post, you MUST evaluate the input and output your decision process at the top of your response:
+`[Decision] I chose Strategy [A/B/C] because the input focuses on [Reason].`
+
+- **Strategy A: The Update (上新/通知型)**
+  - *Trigger:* New menu items, holiday hours, seasonal changes.
+  - *Focus:* Clear, factual, informative. No fluff.
+  - *CTA:* "Learn more" or "See Menu".
+- **Strategy B: The Offer (限时促销型)**
+  - *Trigger:* Deals, lunch specials, discounts.
+  - *Focus:* Explicit start/end dates, terms & conditions, urgency.
+  - *CTA:* "Redeem online" or "Order now".
+- **Strategy C: The Reputation (高光展示型)**
+  - *Trigger:* Highlighting a signature dish or celebrating a milestone.
+  - *Focus:* Leveraging a recent positive review snippet, reinforcing trust.
+  - *CTA:* "Read our reviews" or "Book a table".
 
 **Post specs:**
 - 100-300 words

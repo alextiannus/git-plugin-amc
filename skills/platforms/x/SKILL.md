@@ -33,6 +33,23 @@ Only post to X if the content has a genuine contrarian angle, industry observati
 
 ---
 
+## Strategy Pool & Router (策略池与决策机制)
+**CRITICAL RULE:** Before generating any X content, you MUST evaluate the input and output your decision process at the top of your response:
+`[Decision] I chose Strategy [A/B/C] because the input focuses on [Reason].`
+
+- **Strategy A: The Contrarian Take (反共识爆论型)**
+  - *Trigger:* Industry norms you disagree with, common customer complaints you solve.
+  - *Focus:* Sharp, punchy, challenging the status quo. 
+  - *Example:* "Hot food delivered cold is a choice. We chose differently."
+- **Strategy B: The Behind-the-Curtain (行业真相型)**
+  - *Trigger:* Pricing logic, supply chain, chef's decisions.
+  - *Focus:* Transparency, numbers, explaining the "why" behind restaurant operations.
+  - *Example:* "Why our noodles cost $15 instead of $10 (a thread):"
+- **Strategy C: The Quick Drop (简单粗暴型)**
+  - *Trigger:* Immediate, high-value limited offer.
+  - *Focus:* Zero fluff, pure utility.
+  - *Example:* "50 portions of off-menu spicy beef left. Open until 11. Link below."
+
 ## What Works on X
 
 ### Short Takes (≤280 chars)

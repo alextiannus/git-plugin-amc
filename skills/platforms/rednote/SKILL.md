@@ -28,25 +28,61 @@ More detail, more honesty, more personal experience. RedNote readers want depth.
 
 ---
 
-## The RedNote Formula
+## Content Writing & Copywriting Best Practices (小红书爆款写作技巧)
 
-RedNote readers are sophisticated. They want the full picture: taste, texture, price, portion, and your honest opinion. Generic promotional copy fails here.
+While the core principle remains the same as Instagram (always pass the **"So What?" Test**), RedNote (Xiaohongshu) requires a highly specific execution style. It acts as both a search engine and a community for genuine recommendations (种草).
+
+### 1. Strategy Pool & Router (策略池与决策机制)
+**CRITICAL RULE:** Before generating any RedNote content, you MUST evaluate the input and output your decision process at the top of your response:
+`[Decision] I chose Strategy [A/B/C] because the input focuses on [Reason].`
+
+- **Strategy A: 测评种草型 (The Review)**
+  - *Trigger:* Standard dish feature, menu highlights.
+  - *Focus:* First-person taste test, exact portion size, "真实评价" (honest review).
+  - *CTA:* Ask a polarizing flavor preference question (e.g., "香菜加爆还是达咩？").
+- **Strategy B: 羊毛情报型 (The Deal Alert)**
+  - *Trigger:* Discounts, student meals, limited-time promos.
+  - *Focus:* "人均$15吃撑" (full for $15), math breakdown, value-for-money.
+  - *CTA:* "赶紧@你的饭搭子周末去冲！" (Tag your foodie buddy to go this weekend!).
+- **Strategy C: 点单攻略型 (The Hack/Guide)**
+  - *Trigger:* Complex menus, customizability (e.g., hotpot, bubble tea), hidden items.
+  - *Focus:* Step-by-step ordering guide, "神仙吃法" (god-tier combinations).
+  - *CTA:* "先收藏这篇点单秘籍，下次去照着点！" (Save this cheat sheet for your next visit!).
+
+### 2. The Anatomy of a High-Converting RedNote Post
 
 ```
-[Opening — personal hook or scene-setting]
-真的被这碗面惊艳到了…
-
-[Dish details — specific, sensory, honest]
-名字：麻辣香锅 (Málà Xiāngguō)
-价格：$16.90
-份量：一个人吃刚好，两个人分可以再点个小菜
-
-[Honest assessment — pros and one honest caveat if any]
-辣度可以选择，建议第一次点中辣。汤汁拌饭绝了。
-
-[CTA or invitation]
-你们试过这个吗？评论区说说你们的必点菜单 👇
+[Title: MUST have keywords + emotional trigger, max 20 chars]
+[Empty Line]
+[The Hook: First sentence must deliver the core value or result]
+[Empty Line]
+[The Body: Emoji-bulleted list of specific details (taste, price, how to order)]
+[Empty Line]
+[The Honest Assessment: 1 pro + 1 minor con/tip for authenticity]
+[Empty Line]
+[The CTA: Drive comments by asking for their favorite order]
+[Empty Line]
+[Hashtags: 3-5 hyper-specific search keywords]
 ```
+
+### 2. Crafting the Perfect SEO Title & Hook
+Unlike Instagram, RedNote has a dedicated Title field. This is 80% of the battle for CTR.
+- **The Formula:** Target Audience + Problem/Desire + Solution + Emotional Trigger.
+- **Example:** "留学生必看！人均$15吃撑的隐藏版麻辣香锅🌶️" (Must read for international students! Hidden mala pot that fills you up for $15)
+- **The Hook:** The first line of the body must immediately validate the title. "这绝不是广，是我过去一周连吃三次的宝藏店铺..." (This isn't an ad, it's a treasure spot I've eaten at 3 times this past week...)
+
+### 3. The Body (Utility & Authenticity)
+- **First-Person Narrative ("我"):** Never sound like a corporate brand. Use "亲测" (personally tested), "我觉得" (I think), "真的好吃到哭" (literally crying it's so good).
+- **Deliver Utility:** RedNote users want actionable facts. Always include:
+  - Exact price
+  - Portion size
+  - Specific ordering hacks ("点单攻略：一定要加双份炸腐竹！" - Ordering hack: definitely add double fried yuba!)
+- **Formatting:** Use emojis heavily as bullet points. Keep paragraphs extremely short (1-2 lines max).
+
+### 4. Call to Action (CTA) & Algorithm Hacks
+RedNote's algorithm heavily prioritizes **Saves (收藏)** and **Comments (评论)**.
+- **For Saves:** Structure your post as a "攻略" (Guide) or "点单秘籍" (Ordering Cheat Sheet) that users will want to pull up later at the restaurant.
+- **For Comments:** Ask a polarizing but friendly foodie question: "微辣还是变态辣？在评论区告诉我你的极限🌶️👇" (Mild or insanely spicy? Tell me your limit in the comments).
 
 ---
 

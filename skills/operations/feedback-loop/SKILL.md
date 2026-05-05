@@ -58,9 +58,11 @@ For each confirmed pattern:
 | `[timing]` | `scheduling.md` | Posting windows, batch priorities |
 | `[platform]` | Platform-specific skill file | Platform guidance adjustments |
 
-**Rule: never overwrite brand-voice.md completely — only append or modify
+**Rule 1: never overwrite brand-voice.md completely — only append or modify
 specific sections. The original brand personality anchors remain unless
 explicitly changed by the team.**
+
+**Rule 2: Archive Processed Feedback.** Once feedback from `ownerreview.md` is absorbed into `brand-voice.md` or other core files, append `[PROCESSED - YYYY-MM-DD]` to those entries in `ownerreview.md`. This ensures the raw log acts as an inbox, while `brand-voice.md` acts as the true "Core Memory" used during content generation.
 
 ### Step 4 · Report to team
 
@@ -107,6 +109,7 @@ The team can force an immediate change at any time via Lark:
 
 | Command | Action |
 |---|---|
+| "立刻复盘" / "Process feedback now" | Immediately trigger the Weekly Self-Assessment process (Step 1 to 4). Read `ownerreview.md`, absorb into `brand-voice.md`, mark as `[PROCESSED]`, and send the summary report. |
 | "从现在起不要发[内容类型]" | Immediately stop that content type, update content-types.md |
 | "以后[词语]换成[词语]" | Update brand-voice.md vocabulary table immediately |
 | "暂停[平台]" | Move platform to pending_platforms, stop publishing there |
