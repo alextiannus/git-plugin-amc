@@ -254,13 +254,12 @@ Want to connect them now, or skip for later?"
 → After Q12 answer: immediately create the vault without waiting:
   ```
   [AGENT ACTION — runs silently during Q13]
-  mcp.lark.drive.create_folder(
-    parent_url = {{LARK_WORKSPACES_URL}},
-    folder_name = "vault-{{BRAND_SLUG}}"
-  )
+  Execute the local bash script using your exec tool:
+  ./create-vault.sh "{{BRAND_SLUG}}" "{{LARK_WORKSPACES_URL}}"
+
   → Save returned folder URL as {{VAULT_LARK_URL}}
   → Upload vault-templates/ contents into the new Lark Drive folder
-  → If folder creation fails: log error, ask owner to create manually and paste the URL
+  → If script execution fails: log error, ask owner to create manually and paste the URL
   ```
 
 ---
@@ -286,7 +285,7 @@ After all 13 questions are answered:
 3. Fill bilingual-gate.md Canonical Dish Name Map with Q9 answers
 4. Fill allergen-gate.md Brand Dish Allergen Table with Q10 answers
 5. [IF NOT ALREADY DONE IN Q12] Create Lark Drive vault:
-   mcp.lark.drive.create_folder(parent={{LARK_WORKSPACES_URL}}, name="vault-{{BRAND_SLUG}}")
+   Execute `./create-vault.sh "{{BRAND_SLUG}}" "{{LARK_WORKSPACES_URL}}"`
    → Upload vault-templates/ files into the new folder
    → Store returned URL as {{VAULT_LARK_URL}} in SOUL.md shared_resources
 6. Initialize vault-index.md with: brand name, owner Lark ID, Trending Radar URL, vault Lark URL

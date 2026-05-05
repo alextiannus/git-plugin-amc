@@ -6,7 +6,7 @@
 name: git-plugin-amc
 slug: git-plugin-amc          # matches GitHub repo name and openclaw extensions folder
 display_name: "F&B Content Engine"
-version: "0.7.5"
+version: "0.7.6"
 description: >
   A complete social media operations plugin for F&B brands.
   Manages content from idea to publish across 7 platforms,
@@ -57,6 +57,7 @@ skills:
     - owner-approval      # crisis protocol + compliance hard stops (no approval gate for regular posts)
     - feedback-loop       # team feedback collection, weekly self-assessment, self-improvement
     - vault-manager       # vault file creation and maintenance
+    - vault-creator       # handles 'create vault' command to manually trigger create-vault.sh
     - cron-jobs           # daily 06:30-23:45 automation schedule
     - reporting           # daily snapshot, weekly, monthly reports
     - update-plugin       # handles 'update plugin' command to manually trigger bash update.sh
