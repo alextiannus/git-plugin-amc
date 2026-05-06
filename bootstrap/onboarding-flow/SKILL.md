@@ -274,14 +274,24 @@ Want to connect them now, or skip for later?"
 
 ---
 
+**Q14 · Store Location & Hours**
+> "最后，请告诉我门店的具体中英文地址、营业时间以及联系电话。
+> 这很重要，因为我绝对不会在帖子里编造地址。如果没有可以跳过。
+> Finally, please provide your exact store address (EN/ZH), operating hours, and phone number.
+> This is important because I am strictly forbidden from hallucinating contact info."
+
+→ Notes added to: `brand-voice.md` under Contact Info
+
+---
+
 ## Post-Interview Actions
 
-After all 13 questions are answered:
+After all 14 questions are answered:
 
 ```
 1. Fill all {{PLACEHOLDER}} values directly in SOUL.md → overwrite in-place
    (write only to plugins.git-plugin-amc section, do not touch other sections)
-2. Update brand-voice.md with Q7/Q8 answers
+2. Update brand-voice.md with Q7/Q8/Q14 answers
 3. Fill bilingual-gate.md Canonical Dish Name Map with Q9 answers
 4. Fill allergen-gate.md Brand Dish Allergen Table with Q10 answers
 5. [IF NOT ALREADY DONE IN Q12] Create Lark Drive vault:
