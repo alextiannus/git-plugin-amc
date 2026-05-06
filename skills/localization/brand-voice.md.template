@@ -22,6 +22,21 @@ _Default: Warm · Honest · Generous_
 
 ---
 
+## Contact Info
+
+> Fill during Bootstrap Mode (Q14), or leave blank if omitted.
+
+**Store Address (EN/ZH):**
+{{STORE_ADDRESS}}
+
+**Operating Hours:**
+{{OPERATING_HOURS}}
+
+**Phone Number:**
+{{STORE_PHONE}}
+
+---
+
 ## Tone Markers
 
 These apply across all platforms (platform-specific tone shifts are in [[localization/bilingual-gate]]):

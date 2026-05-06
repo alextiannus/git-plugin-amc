@@ -41,10 +41,10 @@ This message is pushed by the `post_install` hook via `mcp.lark.message`.
 
 ```
 你好！我是你的 AI 内容官，刚完成安装，马上开始配置。
-需要问你 13 个问题（大约 20 分钟），配置完成我就正式开始工作。
+需要问你 14 个问题（大约 20 分钟），配置完成我就正式开始工作。
 
 Hi! I'm your AI Content Manager — just installed and ready to configure.
-I have 13 quick questions (~20 min) and then I'll start working right away.
+I have 14 quick questions (~20 min) and then I'll start working right away.
 
 请用你觉得最顺手的语言回答 / Please reply in whichever language feels natural.
 我们开始吧！/ Let's go!
@@ -385,6 +385,6 @@ Any Lark team member can send:
 ```
 重新配置 / reconfigure / /bootstrap
 ```
-→ Agent re-enters Bootstrap Mode, sends Opening Message, runs full 13-question interview again
+→ Agent re-enters Bootstrap Mode, sends Opening Message, runs full 14-question interview again
 → Existing brand config is preserved until new answers overwrite it
 → Use case: brand rebrand, change of platforms, major voice update
