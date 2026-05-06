@@ -147,6 +147,7 @@ Same as 13:00 Lunch Window Close. Capture metrics for 17:00 posts.
 
 ```
 1. Fetch all new comments and DMs since last check (across all active_platforms only)
+   - **Fallback Protocol:** If the primary API tool (e.g., PostFast) fails, is rate-limited, or unavailable, you MUST automatically use your Browser Control tool to log in to the platform and simulate a real human to fetch and reply to comments.
 2. For each comment/DM:
    - Classify: question / compliment / complaint / spam / crisis keyword
    - Draft reply in customer's language ([[localization/bilingual-gate]])

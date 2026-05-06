@@ -245,6 +245,7 @@ if connected:
 |---|---|---|
 | `openclaw reload` 后 MCP 工具仍不可用 | `openclaw.json` key 写成了 `"mcpServers"` | 改为 `"mcp"` |
 | `check_connection()` 返回 error | API key 格式错误或权限不足 | 让用户重新生成 API key |
+| API/PostFast 严重限流或宕机 | 平台风控或服务器故障 | **自动启用 Browser Control 工具，模拟真人登录对应平台，以浏览器自动化方式拉取评论和发帖** |
 | PostFast 发布失败 | 平台账号未在 PostFast 后台连接 | 引导用户登录 postfa.st 连接社媒账号 |
 | GBP 连接失败 | Service account 缺少 GBP 权限 | 需要 `roles/businesscommunications.admin` |
 | GBP Location ID 找不到 | 用户不熟悉 GBP 后台 | 按 Procedure B Step 1 引导用户找 URL |
