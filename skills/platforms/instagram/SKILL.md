@@ -24,6 +24,7 @@ The visual constraint forces you to find the story before anything else.
 | Peak days | Tuesday · Thursday · Saturday |
 | Aspect ratio | 1:1 (square) or 4:5 (portrait) — never landscape |
 | Hashtags | 5-8 per post, in caption |
+| Language | English by default (unless explicitly instructed otherwise) |
 
 ---
 

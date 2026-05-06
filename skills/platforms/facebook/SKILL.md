@@ -24,7 +24,7 @@ Facebook is about belonging. Every post should invite participation.
 | Peak days | Tuesday · Thursday · Saturday |
 | Post length | 100-300 words |
 | Images | 1-4 photos |
-| Language | EN primary; ZH secondary for Chinese-community posts |
+| Language | English by default (unless explicitly instructed otherwise) |
 
 ---
 
