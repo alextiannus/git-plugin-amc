@@ -1,0 +1,17 @@
+{
+  "name": "@alextiannus/mcp-gbp",
+  "version": "1.0.0",
+  "description": "Placeholder MCP Server for Google Business Profile (Coming Soon)",
+  "type": "module",
+  "bin": {
+    "mcp-gbp": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.1.1"
+  },
+  "author": "12eat AI Lab",
+  "license": "MIT"
+}

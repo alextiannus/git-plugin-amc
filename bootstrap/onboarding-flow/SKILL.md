@@ -174,7 +174,7 @@ Want to connect them now, or skip for later?"
    2. Wait for key. Validate it starts with "pk_" or "sk_" — if wrong format, ask again.
    3. Follow `mcp-setup` skill · Procedure A exactly:
       - Add to openclaw.json under "mcp" key (NOT "mcpServers")
-      - Run `openclaw reload`
+      - Run `openclaw gateway restart`
       - Re-run check_connection() per platform
       - Move verified platforms to active_platforms in SOUL.md
    4. Confirm to user which platforms are now active
@@ -300,10 +300,10 @@ After all 14 questions are answered:
    → Store returned URL as {{VAULT_LARK_URL}} in SOUL.md shared_resources
 6. Use your feishu_drive tool to update the uploaded `vault-index.md` in the new Lark folder, filling in the brand name, Trending Radar URL, and vault Lark URL.
 7. **Generate Interactive Lark Docs:**
-   Use your `mcp_lark_docx_builtin_import` tool to convert the markdown contents of `ownerreview.md` and `postschedule.md` into native Lark Docs (Docx).
-   → Keep the generated URLs ready to send to the owner.
+   Use your `mcp_lark_docx_builtin_import` tool to convert the markdown contents of `ownerreview.md` and `vault-index.md` into native Lark Docs (Docx).
+   → Keep the generated URL for ownerreview ready to send to the owner.
 8. Run global search for {{ in SOUL.md → must be ZERO before proceeding
-9. **CRITICAL REQUIREMENT:** You MUST immediately and proactively send the confirmation message to the owner. Do NOT wait for them to ask or prompt you. As soon as step 8 is complete, output the following message EXACTLY as written, filling in the URLs:
+9. **CRITICAL REQUIREMENT:** You MUST immediately and proactively send the confirmation message to the owner. Do NOT wait for them to ask or prompt you. As soon as step 8 is complete, output the following message EXACTLY as written, filling in the URLs. Extract the Content Schedule URL from the terminal output of step 5.
 
 **Confirmation message (Send this immediately):**
 ```
@@ -311,10 +311,10 @@ After all 14 questions are answered:
 
 设置概要：
 - 品牌：{BRAND_NAME}
+- 核心资产金库：{VAULT_LARK_URL}
 - 协作文档 (请点击打开并置顶)：
   - 待审与复盘区 (ownerreview)：{URL_FROM_STEP_7}
-  - 发帖排期表 (postschedule)：{URL_FROM_STEP_7}
-- 核心资产金库：{VAULT_LARK_URL}
+  - 发帖排期表 (Bitable)：{CONTENT_SCHEDULE_URL_FROM_STEP_5}
 - 自动发布平台：{ACTIVE_PLATFORMS}
 - 待连接平台：{PENDING_PLATFORMS}（连接账号后即可开启自动发布）
 - 每天工作时间：06:30 – 23:45（全自动）

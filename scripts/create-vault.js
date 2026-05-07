@@ -80,20 +80,99 @@ async function uploadFile(token, filePath, fileName, folderToken) {
   return data.data;
 }
 
-async function syncDirectory(token, localDir, remoteFolderToken) {
+// Maps local relative path to remote folder token
+const folderMap = new Map();
+
+async function syncDirectory(token, localDir, remoteFolderToken, baseDir) {
   const entries = await fs.readdir(localDir, { withFileTypes: true });
   for (const entry of entries) {
     if (entry.name.startsWith('.')) continue;
     const fullPath = path.join(localDir, entry.name);
+    const relPath = path.relative(baseDir, fullPath);
+    
     if (entry.isDirectory()) {
       console.log(`[+] Creating folder: ${entry.name}`);
       const newFolder = await createFolder(token, entry.name, remoteFolderToken);
-      await syncDirectory(token, fullPath, newFolder.token);
+      folderMap.set(relPath, newFolder.token);
+      await syncDirectory(token, fullPath, newFolder.token, baseDir);
     } else if (entry.isFile()) {
       console.log(`  -> Uploading file: ${entry.name}`);
       await uploadFile(token, fullPath, entry.name, remoteFolderToken);
     }
   }
+}
+
+async function createBitable(token, name, folderToken) {
+  const res = await fetch("https://open.larksuite.com/open-apis/bitable/v1/apps", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json; charset=utf-8"
+    },
+    body: JSON.stringify({ name, folder_token: folderToken })
+  });
+  const data = await res.json();
+  if (data.code !== 0) throw new Error("Failed to create Bitable: " + JSON.stringify(data));
+  return data.data.app;
+}
+
+async function addBitableField(token, appToken, tableId, fieldConfig) {
+  const res = await fetch(`https://open.larksuite.com/open-apis/bitable/v1/apps/${appToken}/tables/${tableId}/fields`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json; charset=utf-8"
+    },
+    body: JSON.stringify(fieldConfig)
+  });
+  const data = await res.json();
+  if (data.code !== 0) {
+    console.warn(`Warning: Failed to add field ${fieldConfig.field_name}:`, data.msg);
+  }
+}
+
+async function setupPostScheduleBitable(token, folderToken) {
+  console.log(`  -> Creating Content Schedule Bitable...`);
+  const app = await createBitable(token, "Content Schedule", folderToken);
+  
+  await addBitableField(token, app.app_token, app.default_table_id, { field_name: "Date", type: 5 });
+  await addBitableField(token, app.app_token, app.default_table_id, { field_name: "Time", type: 1 });
+  await addBitableField(token, app.app_token, app.default_table_id, { 
+    field_name: "Platform", 
+    type: 3, 
+    property: { options: [{name: "instagram"}, {name: "tiktok"}, {name: "rednote"}, {name: "facebook"}, {name: "youtube"}, {name: "x"}, {name: "googlemap"}] }
+  });
+  await addBitableField(token, app.app_token, app.default_table_id, { field_name: "Topic Slug", type: 1 });
+  await addBitableField(token, app.app_token, app.default_table_id, { field_name: "Format", type: 1 });
+  await addBitableField(token, app.app_token, app.default_table_id, { 
+    field_name: "Status", 
+    type: 3, 
+    property: { options: [{name: "draft"}, {name: "pending-approval"}, {name: "approved"}, {name: "published"}, {name: "rejected"}, {name: "held"}] }
+  });
+  await addBitableField(token, app.app_token, app.default_table_id, { field_name: "Post Record", type: 15 });
+  console.log(`    -> Content Schedule Bitable URL: ${app.url || `https://larksuite.com/base/${app.app_token}`}`);
+}
+
+async function setupMediaIndexBitable(token, folderToken) {
+  console.log(`  -> Creating Media Index Bitable...`);
+  const app = await createBitable(token, "Media Index", folderToken);
+  
+  await addBitableField(token, app.app_token, app.default_table_id, { field_name: "Date", type: 5 });
+  await addBitableField(token, app.app_token, app.default_table_id, { field_name: "Folder", type: 1 });
+  await addBitableField(token, app.app_token, app.default_table_id, { field_name: "Content", type: 1 });
+  await addBitableField(token, app.app_token, app.default_table_id, { 
+    field_name: "Source", 
+    type: 3, 
+    property: { options: [{name: "Brand-owned"}, {name: "Customer"}, {name: "Stock"}] }
+  });
+  await addBitableField(token, app.app_token, app.default_table_id, { field_name: "License", type: 1 });
+  await addBitableField(token, app.app_token, app.default_table_id, { 
+    field_name: "Used In", 
+    type: 4, 
+    property: { options: [{name: "instagram"}, {name: "tiktok"}, {name: "rednote"}, {name: "facebook"}, {name: "youtube"}, {name: "x"}, {name: "googlemap"}] }
+  });
+  await addBitableField(token, app.app_token, app.default_table_id, { field_name: "File", type: 17 });
+  console.log(`    -> Media Index Bitable URL: ${app.url || `https://larksuite.com/base/${app.app_token}`}`);
 }
 
 async function main() {
@@ -115,11 +194,22 @@ async function main() {
   }
 
   if (hasTemplates) {
-    console.log("Uploading templates...");
-    await syncDirectory(token, templatesDir, rootFolder.token);
+    console.log("Uploading templates and creating folders...");
+    await syncDirectory(token, templatesDir, rootFolder.token, templatesDir);
+    
+    // Generate native Bitables in the respective folders
+    const postFolderToken = folderMap.get('post');
+    if (postFolderToken) {
+      await setupPostScheduleBitable(token, postFolderToken);
+    }
+    
+    const mediaFolderToken = folderMap.get('media');
+    if (mediaFolderToken) {
+      await setupMediaIndexBitable(token, mediaFolderToken);
+    }
   }
 
-  console.log("✅ Vault folder created successfully!");
+  console.log("✅ Vault folder created successfully with native Bitables!");
   console.log(rootFolder.url);
 }
 

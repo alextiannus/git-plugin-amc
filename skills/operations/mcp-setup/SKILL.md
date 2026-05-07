@@ -71,7 +71,7 @@ OpenClaw stores MCP tool configuration in `openclaw.json` under the `"mcp"` key 
 
 After editing `openclaw.json`, always run:
 ```bash
-openclaw reload
+openclaw gateway restart
 ```
 
 ---
@@ -95,7 +95,7 @@ Please get it from postfa.st → Settings → API Keys.
 ```bash
 openclaw mcp add postfast \
   --command npx \
-  --args "-y,@postfast/mcp" \
+  --args "-y,postfast-mcp" \
   --env "POSTFAST_API_KEY=<KEY_FROM_USER>"
 ```
 
@@ -106,7 +106,7 @@ Or edit `openclaw.json` directly:
   "mcp": {
     "postfast": {
       "command": "npx",
-      "args": ["-y", "@postfast/mcp"],
+      "args": ["-y", "postfast-mcp"],
       "env": {
         "POSTFAST_API_KEY": "<KEY_FROM_USER>"
       }
@@ -117,7 +117,7 @@ Or edit `openclaw.json` directly:
 
 **Step 3 — Reload:**
 ```bash
-openclaw reload
+openclaw gateway restart
 ```
 
 **Step 4 — Verify connection per platform:**
@@ -194,7 +194,7 @@ Or skip for now — Google Maps reviews can be handled manually until then.
   "mcp": {
     "gbp": {
       "command": "npx",
-      "args": ["-y", "@12eat-ai/mcp-gbp"],
+      "args": ["-y", "@alextiannus/mcp-gbp"],
       "env": {
         "GOOGLE_APPLICATION_CREDENTIALS": "/path/to/service-account.json",
         "GBP_LOCATION_ID": "<LOCATION_ID_FROM_USER>"
@@ -205,7 +205,7 @@ Or skip for now — Google Maps reviews can be handled manually until then.
 ```
 
 ```bash
-openclaw reload
+openclaw gateway restart
 ```
 
 ### Step 4 — Verify and confirm
@@ -243,7 +243,7 @@ if connected:
 
 | 症状 | 原因 | 解决 |
 |---|---|---|
-| `openclaw reload` 后 MCP 工具仍不可用 | `openclaw.json` key 写成了 `"mcpServers"` | 改为 `"mcp"` |
+| `openclaw gateway restart` 后 MCP 工具仍不可用 | `openclaw.json` key 写成了 `"mcpServers"` | 改为 `"mcp"` |
 | `check_connection()` 返回 error | API key 格式错误或权限不足 | 让用户重新生成 API key |
 | API/PostFast 严重限流或宕机 | 平台风控或服务器故障 | **自动启用 Browser Control 工具，模拟真人登录对应平台，以浏览器自动化方式拉取评论和发帖** |
 | PostFast 发布失败 | 平台账号未在 PostFast 后台连接 | 引导用户登录 postfa.st 连接社媒账号 |

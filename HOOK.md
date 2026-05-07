@@ -39,7 +39,7 @@ This is the primary onboarding trigger — no manual steps required.
 
 3. Save SOUL.md
 
-4. Reload the agent: openclaw reload
+4. Reload the agent: openclaw gateway restart
    → Wait up to 10 seconds for reload to confirm
 
 5. IMMEDIATELY send Bootstrap Opening Message via mcp.lark.message

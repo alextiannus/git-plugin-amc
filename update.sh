@@ -72,7 +72,7 @@ NEW_VERSION=$(grep '^version:' plugin.yaml | awk '{print $2}' | tr -d '"')
 echo ""
 echo "🔄 Reloading OpenClaw to apply updated skills..."
 if command -v openclaw &>/dev/null; then
-  openclaw reload && echo "✅ OpenClaw reloaded." || echo "⚠️  openclaw reload failed — restart manually."
+  openclaw gateway restart && echo "✅ OpenClaw reloaded." || echo "⚠️  openclaw gateway restart failed — restart manually."
 else
   echo "⚠️  openclaw not found in PATH — restart the gateway manually."
 fi
