@@ -6,7 +6,7 @@
 name: git-plugin-amc
 slug: git-plugin-amc          # matches GitHub repo name and openclaw extensions folder
 display_name: "F&B Content Engine"
-version: "0.8.0"
+version: "0.8.1"
 description: >
   A complete social media operations plugin for F&B brands.
   Manages content from idea to publish across 7 platforms,
@@ -181,7 +181,6 @@ config_schema:
 # Cron: minute hour dom month dow (UTC). Suspended automatically during Bootstrap.
 schedule:
   daily:
-    - { cron: "30 6 * * *", task: trending-radar-refresh }
     - { cron: "0 8 * * *",  task: topic-discovery }
     - { cron: "0 10 * * *", task: google-maps-actions }
     - { cron: "0 11 * * *", task: lunch-publish-window }
@@ -189,9 +188,9 @@ schedule:
     - { cron: "0 17 * * *", task: dinner-publish-window }
     - { cron: "0 19 * * *", task: dinner-snapshot }
     - { cron: "0 20 * * *", task: comment-dm-reply }
-    - { cron: "30 23 * * *",task: daily-metrics-snapshot }
-    - { cron: "45 23 * * *",task: daily-mini-digest }
+    # - { cron: "30 23 * * *",task: daily-metrics-snapshot } # Paused: daily backup
   weekly:
+    - { cron: "30 6 * * 1,4", task: trending-radar-refresh }
     - { cron: "0 8 * * 1",  task: self-improvement-report }
     - { cron: "0 9 * * 1",  task: plugin-version-check }
     - { cron: "5 9 * * 1",  task: pending-platform-reminder }
@@ -199,7 +198,6 @@ schedule:
     - { cron: "0 10 * * 1", task: weekly-report }
     - { cron: "0 18 * * 5", task: weekly-performance-review }
     - { cron: "0 20 * * 0", task: weekly-content-batch }
-    - { cron: "0 22 * * 0", task: weekly-self-assessment }
   monthly:
     - { cron: "0 10 1 * *", task: monthly-report }
     - { cron: "5 10 1 * *", task: compliance-review }

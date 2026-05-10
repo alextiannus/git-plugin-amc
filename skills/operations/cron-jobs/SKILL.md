@@ -43,7 +43,6 @@ If any placeholder remains, no operational work executes — period.
 
 | Time | Job | Reads | Writes |
 |---|---|---|---|
-| 06:30 | Trending Radar refresh | Common Vault Lark Doc | Local cache |
 | 08:00 | Topic discovery | Trending radar cache + media-index | postschedule.md (status=draft) |
 | 10:00 | Google Maps actions | postschedule.md + GMB API | Post records + reply log |
 | 11:00 | Lunch publish window | postschedule.md (status=ready) | Post records (status=published) |
@@ -51,14 +50,13 @@ If any placeholder remains, no operational work executes — period.
 | 17:00 | Dinner publish window | postschedule.md (status=ready) | Post records (status=published) |
 | 19:00 | Dinner window close + snapshot | Platform Insights APIs | Post records |
 | 20:00 | Comment & DM batch reply | Platform Insights APIs + post records | Post records + ownerreview.md (escalations) |
-| 23:30 | Daily metrics snapshot | Platform Insights APIs | report/analytics/daily-YYYY-MM-DD.md |
-| 23:45 | Daily mini-digest | Daily metrics log | ownerreview.md (one-paragraph summary) |
+| 23:30 | Daily metrics snapshot (PAUSED) | Platform Insights APIs | report/analytics/daily-YYYY-MM-DD.md |
 
 ---
 
 ## Job Details
 
-### 06:30 · Trending Radar Refresh
+### 06:30 · Trending Radar Refresh (Mon/Thu)
 
 ```
 1. Fetch Common Vault Lark Doc (trending-radar URL from SOUL.md config)
@@ -169,19 +167,7 @@ Same as 13:00 Lunch Window Close. Capture metrics for 17:00 posts.
 4. Write raw data to report/analytics/daily-YYYY-MM-DD.md
 ```
 
----
 
-### 23:45 · Daily Mini-Digest
-
-```
-Write one paragraph to ownerreview.md:
-
-"[DATE] — Published [N] posts across [platforms].
-Top performer: [post slug] on [platform] with [metric].
-On hold: [N] drafts (compliance or allergen issue — see details in vault).
-Anomalies: [any flags, or 'none'].
-Tomorrow's schedule: [N] posts queued and ready to publish."
-```
 
 ---
 
@@ -189,12 +175,12 @@ Tomorrow's schedule: [N] posts queued and ready to publish."
 
 | Day/Time | Job | Output |
 |---|---|---|
-| Monday 08:00 | Self-improvement report | Send weekly feedback summary to team (see feedback-loop.md Step 4) |
+| Mon/Thu 06:30 | Trending radar refresh | Local cache |
+| Monday 08:00 | Self-improvement report | Send weekly feedback summary & self-assessment to team |
 | Monday 09:00 | Plugin version check | Check latest version; if update available → send Lark prompt; apply on team reply "更新插件" |
 | Monday 09:00 | Pending platform reminder | For each platform in pending_platforms: notify team "[Platform] 尚未连接账号，连接后即可开始自动运营" |
 | Monday 09:00 | Allergen pending check | Scan allergen-gate.md for [?PENDING] entries; if any found → Lark alert: "[菜品名] 过敏原信息未确认，涉及该菜品的帖子将暂停发布直到补全" |
 | Monday 10:00 | Weekly report generation | report/weekly/YYYY-Www.md + Lark notification to team |
-| Sunday 22:00 | Weekly self-assessment | Process all feedback tagged in ownerreview.md → apply changes (see feedback-loop.md) |
 | Sunday evening | Weekly content batch | Propose 2-3 themes → run repurpose chain → fill next week's postschedule |
 | Friday (any time) | Weekly performance review | Analyze engagement data → update hook-engine.md or scheduling.md if patterns found |
 
@@ -206,7 +192,7 @@ Tomorrow's schedule: [N] posts queued and ready to publish."
 |---|---|---|
 | 1st of month, 10:00 | Monthly report generation | report/monthly/YYYY-MM.md + Lark Doc notification |
 | 1st of month | Compliance review | Review platform-policies.md for any updates; update if needed |
-| 1st of month | Voice drift check | Compare last 30 posts against brand-voice.md; flag drift to owner |
+| 1st of month | Voice drift check | Compare a random sample of 5 posts against brand-voice.md; flag drift to owner |
 | 1st of month | KPI reset | Reset 30-day baseline metrics in report-rules.md |
 
 ---

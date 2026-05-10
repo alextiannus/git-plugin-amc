@@ -41,11 +41,6 @@ const GBP_PLATFORMS = new Set(["googlemap"]);
 const SCHEDULE = [
     // ── Daily ──────────────────────────────────────────────────
     {
-        cron: "30 6 * * *",
-        task: "trending-radar-refresh",
-        prompt: "执行 trending-radar-refresh：打开共享 Trending Radar 文档，搜索今日热门话题（美食、餐厅、本地生活），更新 Top 5 趋势条目，为今日内容生产做好素材准备。",
-    },
-    {
         cron: "0 8 * * *",
         task: "topic-discovery",
         prompt: "执行 topic-discovery：基于今日 Trending Radar 结果，为品牌选出 1–2 个最契合的话题，起草今日内容创作方向，记录到 vault postschedule.md。",
@@ -80,21 +75,16 @@ const SCHEDULE = [
         task: "comment-dm-reply",
         prompt: "执行 comment-dm-reply：检查所有平台的新评论和私信，按品牌 voice 回复，重点处理带问题或投诉的评论，记录无法处理的问题到 ownerreview.md。",
     },
-    {
-        cron: "30 23 * * *",
-        task: "daily-metrics-snapshot",
-        prompt: "执行 daily-metrics-snapshot：从所有已连接平台拉取今日数据（via mcp.analytics），保存到 vault report 文件夹的日快照文件。",
-    },
-    {
-        cron: "45 23 * * *",
-        task: "daily-mini-digest",
-        prompt: "执行 daily-mini-digest：生成今日运营简报（发布情况、互动亮点、待处理事项），通过 mcp.lark.message 发送给品牌团队。",
-    },
     // ── Weekly ─────────────────────────────────────────────────
+    {
+        cron: "30 6 * * 1,4",
+        task: "trending-radar-refresh",
+        prompt: "执行 trending-radar-refresh：打开共享 Trending Radar 文档，搜索近期热门话题（美食、餐厅、本地生活），更新 Top 5 趋势条目，为内容生产做好素材准备。",
+    },
     {
         cron: "0 8 * * 1",
         task: "self-improvement-report",
-        prompt: "执行 self-improvement-report：回顾上周内容表现，识别最高/最低效帖子，总结学习点，更新 feedback-loop 文件，提出下周内容优化建议。",
+        prompt: "执行 self-improvement-report：回顾上周内容表现，并对本周 AI 运营质量做自我评估（准时率、内容质量、合规情况），总结学习点，更新 feedback-loop 文件，提出下周内容优化建议和改进行动项。",
     },
     {
         cron: "0 9 * * 1",
@@ -126,11 +116,6 @@ const SCHEDULE = [
         task: "weekly-content-batch",
         prompt: "执行 weekly-content-batch：为下一周生成内容批次草稿（7天内容日历，涵盖所有 active 平台），存入 vault postschedule.md，通过 Lark 通知品牌团队审阅。",
     },
-    {
-        cron: "0 22 * * 0",
-        task: "weekly-self-assessment",
-        prompt: "执行 weekly-self-assessment：对本周 AI 运营质量做自我评估（准时率、内容质量、合规情况、用户反馈），记录到 vault ownerreview.md，提出改进行动项。",
-    },
     // ── Monthly ────────────────────────────────────────────────
     {
         cron: "0 10 1 * *",
@@ -145,7 +130,7 @@ const SCHEDULE = [
     {
         cron: "10 10 1 * *",
         task: "voice-drift-check",
-        prompt: "执行 voice-drift-check：对比上月内容与 brand-voice.md 定义的品牌声音，检测是否出现语气漂移，提出校正建议，更新品牌声音记录。",
+        prompt: "执行 voice-drift-check：随机抽取 5 篇上月内容，对比 brand-voice.md 定义的品牌声音，检测是否出现语气漂移，提出校正建议，更新品牌声音记录。",
     },
     {
         cron: "15 10 1 * *",

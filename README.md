@@ -1,5 +1,5 @@
 # F&B Content Engine
-### OpenClaw Plugin · v0.8.0
+### OpenClaw Plugin · v0.8.1
 
 A complete social media operations plugin for F&B brands.  
 Manages content from idea to publish across 7 platforms, with bilingual support,  
@@ -140,7 +140,7 @@ git-plugin-amc/
 
 ---
 
-## 💎 Native Vault 架构 (v0.8.0 升级)
+## 💎 Native Vault 架构 (v0.8.1 升级)
 
 本插件不再使用纯文本 Markdown 管理关键排期。在初始化 Vault 时，底层脚本会自动调用飞书 API 凭空创建原生高级资产：
 
@@ -213,7 +213,7 @@ openclaw skill-packs install \
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
-| **v0.8.0** | 2026-05 | **Native Vault 架构大升级**：初始化时脚本直接调用飞书接口生成原生多维表格（Bitable）和文档（Docx）；合规审批流全面升级为飞书 JSON 交互式卡片（Message Cards）；全面迁移至 NPM 极速安装与更新体系。 |
+| **v0.8.1** | 2026-05 | **Native Vault 架构大升级**：初始化时脚本直接调用飞书接口生成原生多维表格（Bitable）和文档（Docx）；合规审批流全面升级为飞书 JSON 交互式卡片（Message Cards）；全面迁移至 NPM 极速安装与更新体系。 |
 | v0.6.3 | 2026-05 | 完整自动更新链路：post_update hook + GitHub Actions Lark 广播 + 更新命令处理；22个定时任务程序化注册；运行时凭证检测（PostFast API Key + GBP Location ID） |
 | v0.6.2 | 2026-05 | Skill Packs 拆分为独立 repo；发布层重构 PostFast MCP + GBP MCP；修复 npm build |
 | v0.5.0 | 2026-05 | 架构重构：src/index.ts 程序化钩子，openclaw.plugin.json，23个技能目录结构 |
