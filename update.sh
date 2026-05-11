@@ -14,12 +14,12 @@
 #   - You need to force-update from CLI outside normal flow
 #   - OpenClaw native update is unavailable
 #
-# PROTECTED FILES (never touched by this script or git pull):
+# PROTECTED FILES (never touched by this script or npm update):
 #   skills/localization/brand-voice.md     ← brand voice, written by Bootstrap
 #   skills/compliance/allergen-gate.md     ← allergen table, written by Bootstrap
 #   skills/localization/bilingual-gate.md  ← dish name map, written by Bootstrap
 #
-#   These files are in .gitignore — git pull cannot overwrite them.
+#   These files are in .npmignore/.gitignore — npm update cannot overwrite them.
 #   Generic defaults live in the corresponding .template files.
 #
 # ─────────────────────────────────────────────────────────────
@@ -55,16 +55,24 @@ echo ""
 
 cd "$PLUGIN_DIR"
 
-# ── Pull latest ───────────────────────────────────────────────
-# Brand-customized files are in .gitignore — git pull cannot touch them.
-if [[ -n "$TARGET_VERSION" ]]; then
-  echo "🔄 Fetching version: $TARGET_VERSION..."
-  git fetch origin
-  git checkout "$TARGET_VERSION"
+# ── Update via NPM ──────────────────────────────────────────
+# Navigate to the project root if installed via npm
+if [[ "$PLUGIN_DIR" == *"node_modules"* ]]; then
+  cd "$PLUGIN_DIR/../.."
 else
-  echo "🔄 Pulling latest from main..."
-  git pull origin main
+  cd "$PLUGIN_DIR"
 fi
+
+if [[ -n "$TARGET_VERSION" ]]; then
+  echo "🔄 Fetching version: $TARGET_VERSION via NPM..."
+  npm install git-plugin-amc@"$TARGET_VERSION"
+else
+  echo "🔄 Updating git-plugin-amc via NPM..."
+  npm update git-plugin-amc
+fi
+
+# Navigate back to plugin dir to check the new version
+cd "$PLUGIN_DIR"
 
 NEW_VERSION=$(grep '^version:' plugin.yaml | awk '{print $2}' | tr -d '"')
 
@@ -82,7 +90,7 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  ✅ $CURRENT_VERSION → $NEW_VERSION"
 echo ""
-echo "  Updated (git-managed):"
+echo "  Updated (npm-managed):"
 echo "  ├── plugin.yaml, HOOK.md, SKILL.md"
 echo "  ├── skills/core/, skills/compliance/*.md (generic)"
 echo "  ├── skills/platforms/, skills/operations/"

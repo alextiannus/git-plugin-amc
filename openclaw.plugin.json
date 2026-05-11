@@ -50,6 +50,10 @@
       "vault_lark_url": {
         "type": "string",
         "description": "Created by Bootstrap via mcp.lark.drive"
+      },
+      "amc_kanban_api_key": {
+        "type": "string",
+        "description": "API Key for AMC Kanban integration"
       }
     }
   }

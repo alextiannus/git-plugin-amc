@@ -26,4 +26,4 @@ The team explicitly sends "更新插件", "update plugin", or "升级插件" in 
 4. If the command fails, read the error output from the terminal and report it back to the team via Lark so they can troubleshoot.
 
 ## Architectural Note
-Why do we do this? Because OpenClaw natively skips `openclaw plugins update` for plugins installed via a local directory path (treating them as local dev plugins). Calling `update.sh` forces a `git pull` and `openclaw gateway restart`, ensuring the F&B Content Engine stays perfectly up to date without the user needing to open an SSH terminal.
+Why do we do this? Because OpenClaw natively skips `openclaw plugins update` for plugins installed via a local directory path (treating them as local dev plugins). Calling `update.sh` forces an `npm update` and `openclaw gateway restart`, ensuring the F&B Content Engine stays perfectly up to date without the user needing to open an SSH terminal.

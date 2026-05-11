@@ -90,30 +90,15 @@ That key format looks incorrect. PostFast API Keys start with pk_ or sk_.
 Please get it from postfa.st → Settings → API Keys.
 ```
 
-**Step 2 — Add to openclaw.json:**
+**Step 2 — Install PostFast Skill:**
+
+Execute the following command to install the official PostFast skill. **Do not write your own custom MCP definitions or methods for PostFast.**
 
 ```bash
-openclaw mcp add postfast \
-  --command npx \
-  --args "-y,postfast-mcp" \
-  --env "POSTFAST_API_KEY=<KEY_FROM_USER>"
+openclaw skills install postfast
 ```
 
-Or edit `openclaw.json` directly:
-
-```json
-{
-  "mcp": {
-    "postfast": {
-      "command": "npx",
-      "args": ["-y", "postfast-mcp"],
-      "env": {
-        "POSTFAST_API_KEY": "<KEY_FROM_USER>"
-      }
-    }
-  }
-}
-```
+After installation, update the agent environment with the provided API key if necessary, or let the PostFast skill's setup script handle it.
 
 **Step 3 — Reload:**
 ```bash

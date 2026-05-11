@@ -32,6 +32,7 @@ Before executing any scheduled or on-demand job, check:
    → Log: "[YYYY-MM-DD HH:MM] Job '{job_name}' skipped — Bootstrap incomplete"
 3. If no {{PLACEHOLDER}} found:
    → Proceed with job normally
+   → **Kanban Logging**: You MUST create a task in the AMC Kanban system (status: `in_progress`) for this specific cron job. (e.g., "11:00 Lunch Publish Window"). See `kanban-integration.md`.
 ```
 
 This check is the single source of truth. If SOUL.md is clean, all jobs run.
@@ -55,6 +56,8 @@ If any placeholder remains, no operational work executes — period.
 ---
 
 ## Job Details
+
+**Important Kanban Requirement:** For every single job listed below, you must log your execution progress to the AMC Kanban. Create the task at the start, update the description as you progress through the steps, and mark it `done` when the job completes.
 
 ### 06:30 · Trending Radar Refresh (Mon/Thu)
 

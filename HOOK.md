@@ -64,6 +64,7 @@ When the agent starts (gateway start or reload):
    → Do NOT start cron jobs or any content operations
 4. If no {{PLACEHOLDER}}:
    → Load brand config (brand_name, brand_slug, active_platforms, etc.)
+   → Check AMC Kanban Integration: If `amc_kanban_api_key` is present, call Kanban API to register profile (agentId, nickname, avatar, etc.)
    → Start cron schedule per skills/operations/cron-jobs.md
    → Send "✅ 在线，开始今日运营" to Lark
 ```

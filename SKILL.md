@@ -68,7 +68,7 @@ Each skill lives in its own subdirectory with a `SKILL.md` file containing YAML 
 ## Brand-Customized Skills (never auto-updated)
 
 These 3 skills are written by Bootstrap Mode during onboarding and are in `.gitignore` —
-`git pull` and plugin updates cannot overwrite them. Generic defaults live in `.template` files.
+`npm update` and plugin updates cannot overwrite them. Generic defaults live in `.template` files.
 
 ```
 skills/localization/brand-voice/SKILL.md      ← gitignored, brand-specific

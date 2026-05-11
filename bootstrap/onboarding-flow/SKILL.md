@@ -41,10 +41,10 @@ This message is pushed by the `post_install` hook via `mcp.lark.message`.
 
 ```
 你好！我是你的 AI 内容官，刚完成安装，马上开始配置。
-需要问你 14 个问题（大约 20 分钟），配置完成我就正式开始工作。
+需要问你 15 个问题（大约 20 分钟），配置完成我就正式开始工作。
 
 Hi! I'm your AI Content Manager — just installed and ready to configure.
-I have 14 quick questions (~20 min) and then I'll start working right away.
+I have 15 quick questions (~20 min) and then I'll start working right away.
 
 请用你觉得最顺手的语言回答 / Please reply in whichever language feels natural.
 我们开始吧！/ Let's go!
@@ -173,7 +173,7 @@ Want to connect them now, or skip for later?"
            Please send me your PostFast API Key (postfa.st → Settings → API Keys)"
    2. Wait for key. Validate it starts with "pk_" or "sk_" — if wrong format, ask again.
    3. Follow `mcp-setup` skill · Procedure A exactly:
-      - Add to openclaw.json under "mcp" key (NOT "mcpServers")
+      - Run `openclaw skills install postfast`
       - Run `openclaw gateway restart`
       - Re-run check_connection() per platform
       - Move verified platforms to active_platforms in SOUL.md
@@ -284,9 +284,19 @@ Want to connect them now, or skip for later?"
 
 ---
 
+**Q15 · AMC Kanban API Key**
+> "最后，请提供你的 AMC Kanban 个人专属 API Key (以 'eyJ...' 开头或长字符串)。
+> 你可以在 AMC 看板系统中生成它。有了它我才能将我的工作日常同步到看板上。
+> Finally, please provide your personal AMC Kanban API Key.
+> You can generate this in the AMC Kanban system. I need this to log my daily operations to the board."
+
+→ Maps to: `{{AMC_KANBAN_API_KEY}}`
+
+---
+
 ## Post-Interview Actions
 
-After all 14 questions are answered:
+After all 15 questions are answered:
 
 ```
 1. Fill all {{PLACEHOLDER}} values directly in SOUL.md → overwrite in-place
@@ -317,6 +327,7 @@ After all 14 questions are answered:
   - 发帖排期表 (Bitable)：{CONTENT_SCHEDULE_URL_FROM_STEP_5}
 - 自动发布平台：{ACTIVE_PLATFORMS}
 - 待连接平台：{PENDING_PLATFORMS}（连接账号后即可开启自动发布）
+- AMC Kanban：已连接 (API Key 配置完成)
 - 每天工作时间：06:30 – 23:45（全自动）
 
 内容会直接发布到各平台，无需审批。
@@ -330,6 +341,7 @@ Summary:
 - Brand: {BRAND_NAME}
 - Auto-publish platforms: {ACTIVE_PLATFORMS}
 - Pending platforms: {PENDING_PLATFORMS} (connect credentials to enable auto-publish)
+- AMC Kanban: Connected
 - Daily schedule: 06:30 – 23:45 (fully automated)
 
 Content publishes directly — no approval needed.
@@ -392,6 +404,6 @@ Any Lark team member can send:
 ```
 重新配置 / reconfigure / /bootstrap
 ```
-→ Agent re-enters Bootstrap Mode, sends Opening Message, runs full 14-question interview again
+→ Agent re-enters Bootstrap Mode, sends Opening Message, runs full 15-question interview again
 → Existing brand config is preserved until new answers overwrite it
 → Use case: brand rebrand, change of platforms, major voice update

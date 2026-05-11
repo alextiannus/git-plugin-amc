@@ -95,6 +95,9 @@ plugins:
       workspaces_folder: "https://12eat-ai.sg.larksuite.com/drive/folder/PbugfutjllCDM0dqMiIlN0orgZd"
       vault_lark_folder: "{{VAULT_LARK_URL}}"   # created by Bootstrap via mcp.lark.drive
 
+    # ── AMC Kanban ──────────────────────────────────────────
+    amc_kanban_api_key:  "{{AMC_KANBAN_API_KEY}}"
+
     # ── Bootstrap ───────────────────────────────────────────
     bootstrap:
       enabled: true
@@ -124,5 +127,6 @@ plugins:
 | `{{TRENDING_RADAR_URL}}` | Shared Lark Doc (default pre-filled) | `https://12eat-ai.sg.larksuite.com/docx/...` |
 | `{{LARK_WORKSPACES_URL}}` | Vault parent folder (default pre-filled) | `https://12eat-ai.sg.larksuite.com/drive/...` |
 | `{{VAULT_LARK_URL}}` | Created by Bootstrap via mcp.lark.drive | `https://12eat-ai.sg.larksuite.com/drive/folder/...` |
+| `{{AMC_KANBAN_API_KEY}}` | AMC Kanban API Key | `eyJhbGciOiJIUzI1...` |
 
 # ── END OF SOUL.md.template (merge patch) ────────────────────
