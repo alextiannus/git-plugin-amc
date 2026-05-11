@@ -50,7 +50,7 @@
   "openclaw": {
     "type": "plugin",
     "extensions": [
-      "./src/index.ts"
+      "./dist/index.js"
     ],
     "runtimeExtensions": [
       "./dist/index.js"
