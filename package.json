@@ -1,6 +1,6 @@
 {
   "name": "git-plugin-amc",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "F&B Content Engine — OpenClaw plugin for restaurant social media operations across 7 platforms with bilingual support, compliance gates, and automated reporting.",
   "type": "module",
   "main": "dist/index.js",
