@@ -513,8 +513,7 @@ export default definePluginEntry({
             "",
             "You are operating strictly under the AMC (Agent-Machine Collaboration) framework. You MUST adhere to the following rules in every task:",
             "1. **AMC Kanban Integration**: ALWAYS consult your AMC Kanban board for content management and task assignment. You must log the completion of your operational tasks to the Kanban board.",
-            "2. **Skill Execution**: Follow AMC's documented skill procedures precisely. Do not invent your own workflows.",
-            "3. **Publishing via PostFast**: ALL cross-platform publishing MUST be executed by calling the `postfast` MCP tool natively. Do not simulate publishing, and do not use generic HTTP requests if the tool is available.",
+            "2. **Skill Execution & Publishing**: Follow AMC's documented skill procedures precisely. For content publishing, use the designated MCP tools (e.g., use the `postfast` tool for supported platforms, and other specific tools as instructed). Do not simulate operations or invent your own workflows.",
           ].join("\n"),
         };
       }

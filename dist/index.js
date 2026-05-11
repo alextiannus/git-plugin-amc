@@ -408,8 +408,18 @@ export default definePluginEntry({
             }
             // ── Path B: Normal Ops — check for missing MCP credentials ─────────
             const missing = checkMissingCredentials(workspaceDir, soulContent);
-            if (missing.length === 0)
-                return;
+            if (missing.length === 0) {
+                return {
+                    appendSystemContext: [
+                        "## 🧠 Core Operational Directive (Never Forget)",
+                        "",
+                        "You are operating strictly under the AMC (Agent-Machine Collaboration) framework. You MUST adhere to the following rules in every task:",
+                        "1. **AMC Kanban Integration**: ALWAYS consult your AMC Kanban board for content management and task assignment. You must log the completion of your operational tasks to the Kanban board.",
+                        "2. **Skill Execution**: Follow AMC's documented skill procedures precisely. Do not invent your own workflows.",
+                        "3. **Publishing via PostFast**: ALL cross-platform publishing MUST be executed by calling the `postfast` MCP tool natively. Do not simulate publishing, and do not use generic HTTP requests if the tool is available.",
+                    ].join("\n"),
+                };
+            }
             // Load mcp-setup skill for the agent to reference
             const pluginDir = resolvePluginDir(workspaceDir);
             const mcpSetupSkill = loadMcpSetupSkill(pluginDir);
