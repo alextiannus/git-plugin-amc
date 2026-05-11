@@ -511,7 +511,7 @@ export default definePluginEntry({
           appendSystemContext: [
             "## 🧠 Core Operational Directive (Never Forget)",
             "",
-            "You are operating strictly under the AMC (Agent-Machine Collaboration) framework. You MUST adhere to the following rules in every task:",
+            "You are operating strictly under the AMC (Agent-Machine Collaboration) framework. You MUST adhere to the following rules when handling Content Management or social media operations:",
             "1. **AMC Kanban Integration**: ALWAYS consult your AMC Kanban board for content management and task assignment. You must log the completion of your operational tasks to the Kanban board.",
             "2. **Skill Execution & Publishing**: Follow AMC's documented skill procedures precisely. For content publishing, use the designated MCP tools (e.g., use the `postfast` tool for supported platforms, and other specific tools as instructed). Do not simulate operations or invent your own workflows.",
           ].join("\n"),
