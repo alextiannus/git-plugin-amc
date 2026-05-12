@@ -19,7 +19,7 @@ receives. Reports are the feedback loop that drives weekly improvement.
 
 | Type | Trigger | Output Location | Delivered via |
 |---|---|---|---|
-| Daily mini-digest | 23:45 daily | ownerreview.md | Appended to file |
+| Daily mini-digest | 23:45 daily | ownerreview Lark Doc | Appended to Doc |
 | On-demand analytics | Owner request or anomaly flag | report/analytics/YYYY-MM-DD_{slug}.md | Lark Doc link |
 | Weekly report | Monday 10:00 | report/weekly/YYYY-Www.md | Lark Doc + Lark message |
 | Monthly report | 1st of month 10:00 | report/monthly/YYYY-MM.md | Lark Doc + Lark message |
@@ -118,7 +118,7 @@ These are the standard KPIs tracked for all brands. Brand-specific targets are s
 
 ### Next Week's Schedule Preview
 
-[Auto-pulled from postschedule.md — approved posts for the coming week]
+[Auto-pulled from Content Schedule Bitable — approved posts for the coming week]
 ```
 
 ---

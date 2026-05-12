@@ -28,7 +28,7 @@ Before executing any scheduled or on-demand job, check:
    → Send Bootstrap Opening Message via mcp.lark.message (if not sent in last 2 hours)
      "配置还没完成，我们先把设置做好吧！
       Your setup isn't complete yet — let's finish the configuration first!"
-   → Resume Bootstrap interview from the last answered question (check ownerreview.md)
+   → Resume Bootstrap interview from the last answered question (check ownerreview Lark Doc)
    → Log: "[YYYY-MM-DD HH:MM] Job '{job_name}' skipped — Bootstrap incomplete"
 3. If no {{PLACEHOLDER}} found:
    → Proceed with job normally
@@ -44,13 +44,14 @@ If any placeholder remains, no operational work executes — period.
 
 | Time | Job | Reads | Writes |
 |---|---|---|---|
-| 08:00 | Topic discovery | Trending radar cache + media-index | postschedule.md (status=draft) |
-| 10:00 | Google Maps actions | postschedule.md + GMB API | Post records + reply log |
-| 11:00 | Lunch publish window | postschedule.md (status=ready) | Post records (status=published) |
+| 07:00 | Daily Kanban Sync | Content Schedule Bitable | AMC Kanban (status=todo) |
+| 08:00 | Topic discovery | Trending radar cache + Media Index Bitable | Content Schedule Bitable (status=draft) |
+| 10:00 | Google Maps actions | Content Schedule Bitable + GMB API | Post records + reply log |
+| 11:00 | Lunch publish window | Content Schedule Bitable (status=ready) | Post records (status=published) |
 | 13:00 | Lunch window close + snapshot | Platform Insights APIs | Post records + daily-metrics log |
-| 17:00 | Dinner publish window | postschedule.md (status=ready) | Post records (status=published) |
+| 17:00 | Dinner publish window | Content Schedule Bitable (status=ready) | Post records (status=published) |
 | 19:00 | Dinner window close + snapshot | Platform Insights APIs | Post records |
-| 20:00 | Comment & DM batch reply | Platform Insights APIs + post records | Post records + ownerreview.md (escalations) |
+| 20:00 | Comment & DM batch reply | Platform Insights APIs + post records | Post records + ownerreview Lark Doc (escalations) |
 | 23:30 | Daily metrics snapshot (PAUSED) | Platform Insights APIs | report/analytics/daily-YYYY-MM-DD.md |
 
 ---
@@ -71,14 +72,25 @@ If any placeholder remains, no operational work executes — period.
 
 ---
 
+### 07:00 · Daily Kanban Sync
+
+```
+1. Read Content Schedule Bitable for all items scheduled for today.
+2. For each item, create a task in the AMC Kanban system assigned to your agentId.
+3. Set the task title to the post topic/slug and status to `todo`.
+4. This ensures the human team has full visibility of your planned daily output.
+```
+
+---
+
 ### 08:00 · Topic Discovery & Content Creation
 
 ```
 1. Read cached trending radar
-2. Read media-index.md for any new raw media uploaded by owner
-3. Cross-reference with postschedule.md for gaps in the coming 3 days
+2. Read Media Index Bitable for any new raw media uploaded by owner
+3. Cross-reference with Content Schedule Bitable for gaps in the coming 3 days
 4. Propose 1-3 new content ideas for the gaps
-5. Create full content drafts (not just ideas) in postschedule.md (status=ready)
+5. Create full content drafts (not just ideas) in Content Schedule Bitable (status=ready)
 6. Run Compliance Gate → Bilingual Gate on each draft
 7. Schedule for next available publishing window
    → No approval needed. Content publishes automatically per cron schedule.
@@ -98,7 +110,7 @@ If any placeholder remains, no operational work executes — period.
    - Crisis keywords (illness / poisoning / 食物中毒 / 异物)
                         → trigger full Crisis Mode, do NOT auto-reply
 4. Check for new Q&A questions → draft responses, auto-publish
-5. Log all actions in post records + ownerreview.md
+5. Log all actions in post records + ownerreview Lark Doc
 ```
 
 ---
@@ -106,13 +118,15 @@ If any placeholder remains, no operational work executes — period.
 ### 11:00 · Lunch Publish Window
 
 ```
-1. Read postschedule.md for items with time=11:00 and status=ready
+1. Read Content Schedule Bitable for items with time=11:00 and status=ready
 2. For each ready item:
+   - Update its corresponding AMC Kanban task status to `in_progress`
    - Verify Compliance Gate + Bilingual Gate still pass (content may have aged)
    - Publish via mcp.postfast (Instagram/Facebook/TikTok/YouTube/X/Threads)
      or mcp.gbp (Google Business Profile posts)
      or push draft to Lark for manual publish (RedNote + any pending_platforms)
    - Update post record status to "published"
+   - Update the AMC Kanban task status to `done`
    - Log publish timestamp and URL
 3. If Compliance Gate RED or allergen unverified at publish time:
    - Hold item, move to status=hold
@@ -126,7 +140,7 @@ If any placeholder remains, no operational work executes — period.
 ```
 1. Capture engagement metrics for all posts published in the 11:00 window
 2. Log to post records (likes, comments, shares, views, saves — per platform)
-3. Detect anomalies: if engagement is >50% below average for similar posts → flag in ownerreview.md
+3. Detect anomalies: if engagement is >50% below average for similar posts → flag in ownerreview Lark Doc
 4. Update daily-metrics log
 ```
 
@@ -156,7 +170,7 @@ Same as 13:00 Lunch Window Close. Capture metrics for 17:00 posts.
    - Complaint → auto-reply with empathetic tone; if crisis keyword detected → Crisis Mode
    - Spam → flag for deletion, do not reply
 3. Log all replies in post records
-4. Log any crisis triggers in ownerreview.md
+4. Log any crisis triggers in ownerreview Lark Doc
 ```
 
 ---

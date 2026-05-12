@@ -33,16 +33,7 @@ Authorization: Bearer {{AMC_KANBAN_API_KEY}}
 
 ## Agent Registration (Profile Sync)
 
-Whenever you start up (e.g., `on_startup` hook), and **ONLY AFTER** the Bootstrap phase is complete (no `{{PLACEHOLDER}}` strings in config), you must register or update your profile on the Kanban board.
-
-1. Call `POST https://amc-kanban.immedi.ai/api/agents/profile`
-2. Provide the following JSON payload:
-   - `agentId`: `{{BRAND_SLUG}}-content-manager` (A stable, reusable ID)
-   - `nickname`: `{{BRAND_NAME}} 内容官` (Your identity name)
-   - `introduction`: "Responsible for F&B content creation, publishing, and engagement across social platforms."
-   - `workflow`: "F&B Content Engine"
-   - `themeColor`: "#FF5733" (Or any brand-appropriate color)
-   - `insights`: "Fully automated operation from 06:30 to 23:45."
+*Note: The agent profile sync is now handled **automatically** by the plugin's native runtime on every startup. You do NOT need to manually register your profile.*
 
 ## Task Logging Rules (The Loop)
 

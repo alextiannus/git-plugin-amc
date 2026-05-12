@@ -95,11 +95,11 @@ Check [[compliance/allergen-gate]] for the brand's dish-specific allergen table.
 
 All photos used in posts must be one of:
 - (a) Shot by the brand (owned)
-- (b) Licensed (keep license documentation in vault/media/)
+- (b) Licensed (keep license documentation in Media Index Bitable (attachments))
 - (c) Re-posted with explicit written permission from the original poster
 
-**Customer photos:** Use ONLY with DM consent. Save consent screenshot in vault/media/.
-**Stock photos:** Only with commercial license. Note source in media-index.md.
+**Customer photos:** Use ONLY with DM consent. Save consent screenshot in Media Index Bitable (attachments).
+**Stock photos:** Only with commercial license. Note source in Media Index Bitable.
 **AI-generated images:** Only if brand owner has explicitly enabled mcp.image_gen in SOUL.md config.
 
 ---
@@ -142,6 +142,6 @@ No flag needed for any of the following:
 2. Scan for RED keywords (see R1 list above)
 3. Check structured fields: price verified? allergen disclosed? deal has end date?
 4. RED hit → block post + create Tier 1 entry in [[operations/owner-approval]]
-5. YELLOW hit → flag in vault, hold for owner sign-off (Tier 2)
+5. YELLOW hit → flag in ownerreview Lark Doc, hold for owner sign-off (Tier 2)
 6. GREEN → pass to [[localization/bilingual-gate]]
 ```

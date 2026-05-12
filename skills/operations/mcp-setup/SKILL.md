@@ -90,7 +90,7 @@ That key format looks incorrect. PostFast API Keys start with pk_ or sk_.
 Please get it from postfa.st → Settings → API Keys.
 ```
 
-**Step 2 — Install PostFast Skill:**
+**Step 2 — Install PostFast Skill & Save Key:**
 
 Execute the following command to install the official PostFast skill. **Do not write your own custom MCP definitions or methods for PostFast.**
 
@@ -98,7 +98,11 @@ Execute the following command to install the official PostFast skill. **Do not w
 openclaw skills install postfast
 ```
 
-After installation, update the agent environment with the provided API key if necessary, or let the PostFast skill's setup script handle it.
+Next, you MUST permanently save the provided API key to the configuration by running the native script:
+
+```bash
+node scripts/set-mcp-env.js postfast POSTFAST_API_KEY <THE_API_KEY_PROVIDED_BY_USER>
+```
 
 **Step 3 — Reload:**
 ```bash
@@ -174,20 +178,13 @@ Or skip for now — Google Maps reviews can be handled manually until then.
 
 ### Step 3 — Configure openclaw.json
 
-```json
-{
-  "mcp": {
-    "gbp": {
-      "command": "npx",
-      "args": ["-y", "@alextiannus/mcp-gbp"],
-      "env": {
-        "GOOGLE_APPLICATION_CREDENTIALS": "/path/to/service-account.json",
-        "GBP_LOCATION_ID": "<LOCATION_ID_FROM_USER>"
-      }
-    }
-  }
-}
+Run the native script to permanently save the GBP Location ID:
+
+```bash
+node scripts/set-mcp-env.js gbp GBP_LOCATION_ID <LOCATION_ID_FROM_USER>
 ```
+
+Then reload the gateway:
 
 ```bash
 openclaw gateway restart

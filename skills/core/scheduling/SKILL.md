@@ -79,8 +79,8 @@ Step 4 · Pass Gates
   → Compliance Gate + Bilingual Gate on every draft.
   Fix RED/YELLOW flags before moving on.
 
-Step 5 · Fill postschedule.md
-  → [[vault/post/postschedule.md]]
+Step 5 · Fill Content Schedule Bitable
+  → Content Schedule Bitable
   Assign each approved draft to a specific date + time slot.
   Target: 15-25 posts covering the full week across all active platforms.
 

@@ -19,14 +19,14 @@ Using unlicensed images is a RED compliance violation.
 
 ### ✅ Tier 1 · Brand-Owned (always safe)
 Photos or videos shot by the brand, its staff, or a photographer hired by the brand.
-- Store in `vault-{brand}/media/` with naming: `YYYY-MM-DD_dish-slug/`
+- Store as attachments in Media Index Bitable with naming: `YYYY-MM-DD_dish-slug/`
 - No additional documentation needed
-- Log in `vault-{brand}/media/media-index.md`
+- Log in Media Index Bitable
 
 ### ✅ Tier 2 · Licensed Stock
 Photos purchased from a licensed stock provider (Getty, Shutterstock, Unsplash Pro, etc.)
 - Must have commercial license (not just personal/editorial)
-- Log license details in `vault-{brand}/media/media-index.md`:
+- Log license details in Media Index Bitable:
   ```
   Source: Shutterstock
   Image ID: 123456789
@@ -38,14 +38,14 @@ Photos purchased from a licensed stock provider (Getty, Shutterstock, Unsplash P
 ### ✅ Tier 3 · Customer Photos (with explicit consent)
 Photos taken by customers and shared on social media.
 - MUST obtain explicit written consent from the original poster via DM
-- Save consent screenshot in `vault-{brand}/media/YYYY-MM-DD_consent-{username}.png`
+- Save consent screenshot as attachment in Media Index Bitable (`YYYY-MM-DD_consent-{username}.png`)
 - Credit the original poster in the caption (e.g., "📸 @username")
 - If customer later withdraws consent, immediately remove the post
 
 ### ✅ Tier 4 · Reposted Content (with explicit permission)
 Content created by third parties (food bloggers, influencers, media).
 - Same rules as Tier 3 — explicit DM consent required
-- Save consent in vault
+- Save consent in Media Index Bitable
 - Credit in caption
 
 ### ⚠️ Tier 5 · AI-Generated Images
@@ -67,10 +67,10 @@ Only permitted if `mcp.image_gen` is explicitly enabled in the brand's SOUL.md c
 
 ## Media Naming Convention
 
-All media stored in vault must follow this naming format:
+All media attachments stored in Media Index Bitable must follow this naming format:
 
 ```
-vault-{brand}/media/{YYYY-MM-DD}_{topic-slug}/
+{YYYY-MM-DD}_{topic-slug}/
   ├── raw/          ← original files, never edited
   ├── edited/       ← final versions used in posts
   └── consent/      ← consent screenshots (for Tier 3/4)
@@ -85,8 +85,8 @@ Example: `2026-05-01_malatangpot_01.jpg`
 
 ```
 □ Is the image brand-owned, or do I have documentation of the license / consent?
-□ Is the consent screenshot saved in vault/media/?
-□ Is the source logged in media-index.md?
+□ Is the consent screenshot saved in Media Index Bitable?
+□ Is the source logged in Media Index Bitable?
 □ If AI-generated, is mcp.image_gen enabled in SOUL.md?
 □ If customer photo, is the original poster credited in the caption?
 ```

@@ -20,7 +20,7 @@ Never copy-paste. Each platform version must feel native to that platform.
 ### Step 0 · Context, Memory & External Skills Injection
 Before drafting ANY content, you MUST complete this preparation step to ensure long-term learning and leverage all your capabilities.
 
-**1. Memory Check:** Silently read `vault/brand/brand-voice.md` and `vault/brand/owner-profile.md` to recall your consolidated core memory, brand positioning, and absorbed feedback. (Do NOT read the raw `ownerreview.md` log — rely on what has been distilled into `brand-voice.md`).
+**1. Memory Check:** Silently read the **local files** `vault/brand/brand-voice.md` and `vault/brand/owner-profile.md` from the local file system to recall your consolidated core memory, brand positioning, and absorbed feedback. (Do NOT use `mcp.lark.drive` or `mcp.lark.docs` to read these; read the local copies directly. Do NOT read the raw `ownerreview.md` log — rely on what has been distilled into `brand-voice.md`).
 **2. Cross-Skill Check:** Scan your active OpenClaw tools (e.g., `mcp.postfast`) and any installed external Skill Packs (e.g., `marketing`, `video-creation`, `copywriting`).
 **3. Decision Output:** At the very top of your response, BEFORE any platform drafts, output your memory and skill routing:
 > `[Memory Loaded] I noted recent feedback: [Brief Summary]. I will apply it here.`

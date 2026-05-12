@@ -45,10 +45,16 @@ const GBP_PLATFORMS = new Set(["googlemap"]);
 const SCHEDULE = [
   // ── Daily ──────────────────────────────────────────────────
   {
+    cron: "0 7 * * *",
+    task: "daily-kanban-sync",
+    prompt:
+      "执行 daily-kanban-sync：读取 Content Schedule Bitable 中今天计划发布的所有帖子，在 AMC Kanban 中为每一个帖子创建一条对应的任务，状态设为 todo。",
+  },
+  {
     cron: "0 8 * * *",
     task: "topic-discovery",
     prompt:
-      "执行 topic-discovery：基于今日 Trending Radar 结果，为品牌选出 1–2 个最契合的话题，起草今日内容创作方向，记录到 vault postschedule.md。",
+      "执行 topic-discovery：基于今日 Trending Radar 结果，为品牌选出 1–2 个最契合的话题，起草今日内容创作方向，记录到 Content Schedule Bitable。",
   },
   {
     cron: "0 10 * * *",
@@ -60,7 +66,7 @@ const SCHEDULE = [
     cron: "0 11 * * *",
     task: "lunch-publish-window",
     prompt:
-      "执行 lunch-publish-window：发布今日午餐时段内容（Instagram 主帖 / Stories / Facebook），确认发布成功，记录到 postschedule.md。",
+      "执行 lunch-publish-window：发布今日午餐时段内容。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。确认发布成功后，记录到 Content Schedule Bitable 并将 Kanban 任务状态更新为 done。",
   },
   {
     cron: "0 13 * * *",
@@ -72,7 +78,7 @@ const SCHEDULE = [
     cron: "0 17 * * *",
     task: "dinner-publish-window",
     prompt:
-      "执行 dinner-publish-window：发布今日晚餐时段内容（Instagram Reels / TikTok / Facebook），确认发布成功，记录到 postschedule.md。",
+      "执行 dinner-publish-window：发布今日晚餐时段内容。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。确认发布成功后，记录到 Content Schedule Bitable 并将 Kanban 任务状态更新为 done。",
   },
   {
     cron: "0 19 * * *",
@@ -84,7 +90,7 @@ const SCHEDULE = [
     cron: "0 20 * * *",
     task: "comment-dm-reply",
     prompt:
-      "执行 comment-dm-reply：检查所有平台的新评论和私信，按品牌 voice 回复，重点处理带问题或投诉的评论，记录无法处理的问题到 ownerreview.md。",
+      "执行 comment-dm-reply：检查所有平台的新评论和私信，按品牌 voice 回复，重点处理带问题或投诉的评论，记录无法处理的问题到 ownerreview Lark Doc。",
   },
   // ── Weekly ─────────────────────────────────────────────────
   {
@@ -133,7 +139,7 @@ const SCHEDULE = [
     cron: "0 20 * * 0",
     task: "weekly-content-batch",
     prompt:
-      "执行 weekly-content-batch：为下一周生成内容批次草稿（7天内容日历，涵盖所有 active 平台），存入 vault postschedule.md，通过 Lark 通知品牌团队审阅。",
+      "执行 weekly-content-batch：为下一周生成内容批次草稿（7天内容日历，涵盖所有 active 平台），存入 Content Schedule Bitable，通过 Lark 通知品牌团队审阅。",
   },
   // ── Monthly ────────────────────────────────────────────────
   {
@@ -470,6 +476,40 @@ export default definePluginEntry({
           );
         } else {
           console.log(`[${PLUGIN_ID}] ✅ Brand config complete — all credentials present — normal operations`);
+          
+          // Native AMC Kanban Profile Sync
+          const apiKeyMatch = soulContent.match(/AMC_KANBAN_API_KEY:\s*"?([^"\n]+)"?/);
+          const brandSlugMatch = soulContent.match(/brand_slug:\s*"?([^"\n]+)"?/);
+          const brandNameMatch = soulContent.match(/brand_name:\s*"?([^"\n]+)"?/);
+          
+          if (apiKeyMatch && brandSlugMatch && brandNameMatch) {
+            const apiKey = apiKeyMatch[1].trim();
+            if (apiKey && !apiKey.includes('{{')) {
+              const agentId = `${brandSlugMatch[1].trim()}-content-manager`;
+              const nickname = `${brandNameMatch[1].trim()} 内容官`;
+              
+              fetch("https://amc-kanban.immedi.ai/api/agents/profile", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                  agentId,
+                  nickname,
+                  introduction: "Responsible for F&B content creation, publishing, and engagement across social platforms.",
+                  workflow: "F&B Content Engine",
+                  themeColor: "#FF5733",
+                  insights: "Fully automated operation from 06:30 to 23:45."
+                })
+              }).then(res => {
+                if (res.ok) console.log(`[${PLUGIN_ID}] ✅ AMC Kanban profile synced successfully for ${agentId}`);
+                else console.warn(`[${PLUGIN_ID}] ⚠️ Failed to sync AMC Kanban profile. Status: ${res.status}`);
+              }).catch(err => {
+                console.error(`[${PLUGIN_ID}] ⚠️ Error syncing AMC Kanban profile:`, err.message);
+              });
+            }
+          }
         }
       }
     });
@@ -513,6 +553,7 @@ export default definePluginEntry({
             "",
             "You are operating strictly under the AMC (Agent-Machine Collaboration) framework. You MUST adhere to the following rules when handling Content Management or social media operations:",
             "1. **AMC Kanban Integration**: ALWAYS consult your AMC Kanban board for content management and task assignment. You must log the completion of your operational tasks to the Kanban board.",
+            "   - **MANDATORY**: For EVERY cron job or automated task you execute, you MUST use `mcp.bash` to call the AMC Kanban API to create and update your task progress. Invisible work is strictly forbidden.",
             "2. **Skill Execution & Publishing**: Follow AMC's documented skill procedures precisely. For content publishing, use the designated MCP tools (e.g., use the `postfast` tool for supported platforms, and other specific tools as instructed). Do not simulate operations or invent your own workflows.",
           ].join("\n"),
         };
