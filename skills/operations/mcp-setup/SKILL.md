@@ -78,7 +78,7 @@ openclaw gateway restart
 
 ---
 
-## Procedure A · Configure PostFast MCP
+## Procedure A · Configure PostFast Skill
 
 **When:** Brand provides a PostFast API key.
 
@@ -94,7 +94,7 @@ Please get it from postfa.st → Settings → API Keys.
 
 **Step 2 — Install PostFast Skill & Save Key:**
 
-Execute the following command to install the official PostFast skill. **Do not write your own custom MCP definitions or methods for PostFast.**
+Execute the following command to install the official PostFast skill.
 
 ```bash
 openclaw skills install postfast
@@ -112,12 +112,11 @@ openclaw gateway restart
 ```
 
 **Step 4 — Verify connection per platform:**
+Use `mcp.bash` to call the PostFast API to verify the connected accounts:
+```bash
+curl -s -H "pf-api-key: $POSTFAST_API_KEY" https://api.postfa.st/social-media/my-social-accounts
 ```
-for platform in [instagram, facebook, tiktok, youtube, x, threads]:
-    result = mcp.postfast.check_connection(platform)
-    if result == "connected":
-        → move platform from pending_platforms to active_platforms in SOUL.md
-```
+Check the returned list of connected accounts. For each account found in the response, move that platform from `pending_platforms` to `active_platforms` in SOUL.md.
 
 **Step 5 — Update SOUL.md:**
 Move verified platforms from `pending_platforms` to `active_platforms`.
