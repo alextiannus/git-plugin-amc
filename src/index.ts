@@ -314,8 +314,11 @@ function checkMissingCredentials(
   // Check PostFast API key
   const postfastPlatforms = activePlatforms.filter((p) => POSTFAST_PLATFORMS.has(p));
   if (postfastPlatforms.length > 0) {
-    const postfastConfig = mcpServers["postfast"] as Record<string, unknown> | undefined;
-    const env = postfastConfig?.["env"] as Record<string, string> | undefined;
+    const skillsConfig = (config["skills"] as Record<string, unknown>) || {};
+    const entries = (skillsConfig["entries"] as Record<string, unknown>) || {};
+    const postfastEntry = entries["postfast"] as Record<string, unknown> | undefined;
+    const pfConfig = postfastEntry?.["config"] as Record<string, unknown> | undefined;
+    const env = pfConfig?.["env"] as Record<string, string> | undefined;
     const apiKey = env?.["POSTFAST_API_KEY"];
     if (!apiKey) {
       missing.push({

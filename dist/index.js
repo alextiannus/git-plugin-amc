@@ -256,8 +256,11 @@ function checkMissingCredentials(workspaceDir, soulContent) {
     // Check PostFast API key
     const postfastPlatforms = activePlatforms.filter((p) => POSTFAST_PLATFORMS.has(p));
     if (postfastPlatforms.length > 0) {
-        const postfastConfig = mcpServers["postfast"];
-        const env = postfastConfig?.["env"];
+        const skillsConfig = config["skills"] || {};
+        const entries = skillsConfig["entries"] || {};
+        const postfastEntry = entries["postfast"];
+        const pfConfig = postfastEntry?.["config"];
+        const env = pfConfig?.["env"];
         const apiKey = env?.["POSTFAST_API_KEY"];
         if (!apiKey) {
             missing.push({
