@@ -56,18 +56,20 @@ OpenClaw stores MCP tool configuration in `openclaw.json` under the `"mcp"` key 
 ```json
 {
   "mcp": {
-    "tool-name": {
-      "command": "npx",
-      "args": ["-y", "@package/name"],
-      "env": {
-        "API_KEY": "value"
+    "servers": {
+      "tool-name": {
+        "command": "npx",
+        "args": ["-y", "@package/name"],
+        "env": {
+          "API_KEY": "value"
+        }
       }
     }
   }
 }
 ```
 
-**Never use `"mcpServers"` as the key — OpenClaw will reject it.**
+**Never use `"mcpServers"` as the root key — OpenClaw will reject it.**
 
 After editing `openclaw.json`, always run:
 ```bash

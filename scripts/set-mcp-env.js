@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
-import path from 'path';
-import os from 'os';
+import { execSync } from 'child_process';
 
 // Ensure correct number of arguments
 if (process.argv.length < 5) {
@@ -15,47 +13,14 @@ const toolName = process.argv[2];
 const envKey = process.argv[3];
 const envValue = process.argv[4];
 
-// Resolve path to openclaw.json
-const configPath = path.join(os.homedir(), '.openclaw', 'openclaw.json');
-
-let config = {};
-
-// Load existing config if it exists
-if (fs.existsSync(configPath)) {
-  try {
-    const rawData = fs.readFileSync(configPath, 'utf8');
-    config = JSON.parse(rawData);
-  } catch (err) {
-    console.error(`Error parsing ${configPath}:`, err.message);
-    process.exit(1);
-  }
-} else {
-  // Ensure directory exists
-  const dirPath = path.dirname(configPath);
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true });
-  }
-}
-
-// Ensure nested structure exists
-if (!config.mcp) {
-  config.mcp = {};
-}
-if (!config.mcp[toolName]) {
-  config.mcp[toolName] = {};
-}
-if (!config.mcp[toolName].env) {
-  config.mcp[toolName].env = {};
-}
-
-// Set the value
-config.mcp[toolName].env[envKey] = envValue;
-
-// Write back to file
 try {
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
-  console.log(`✅ Successfully updated ${envKey} for mcp.${toolName} in ${configPath}`);
+  // Use native openclaw config set to safely merge and avoid gateway race conditions
+  const command = `openclaw config set mcp.servers.${toolName}.env.${envKey} ${envValue}`;
+  console.log(`Executing: ${command}`);
+  const output = execSync(command, { encoding: 'utf8', stdio: 'inherit' });
+  console.log(`✅ Successfully updated ${envKey} for mcp.servers.${toolName} via native openclaw config.`);
+  console.log(`Please run 'openclaw gateway restart' to apply changes.`);
 } catch (err) {
-  console.error(`Error writing to ${configPath}:`, err.message);
+  console.error(`❌ Error updating configuration via openclaw config:`, err.message);
   process.exit(1);
 }

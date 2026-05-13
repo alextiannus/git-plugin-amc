@@ -307,13 +307,14 @@ function checkMissingCredentials(
   if (activePlatforms.length === 0) return [];
 
   const config = readOpenclawConfig(workspaceDir);
-  const mcp = (config["mcp"] as Record<string, unknown>) || {};
+  const mcpConfig = (config["mcp"] as Record<string, unknown>) || {};
+  const mcpServers = (mcpConfig["servers"] as Record<string, unknown>) || {};
   const missing: MissingCredential[] = [];
 
   // Check PostFast API key
   const postfastPlatforms = activePlatforms.filter((p) => POSTFAST_PLATFORMS.has(p));
   if (postfastPlatforms.length > 0) {
-    const postfastConfig = mcp["postfast"] as Record<string, unknown> | undefined;
+    const postfastConfig = mcpServers["postfast"] as Record<string, unknown> | undefined;
     const env = postfastConfig?.["env"] as Record<string, string> | undefined;
     const apiKey = env?.["POSTFAST_API_KEY"];
     if (!apiKey) {
@@ -329,7 +330,7 @@ function checkMissingCredentials(
   // Check GBP Location ID
   const gbpPlatforms = activePlatforms.filter((p) => GBP_PLATFORMS.has(p));
   if (gbpPlatforms.length > 0) {
-    const gbpConfig = mcp["gbp"] as Record<string, unknown> | undefined;
+    const gbpConfig = mcpServers["gbp"] as Record<string, unknown> | undefined;
     const env = gbpConfig?.["env"] as Record<string, string> | undefined;
     const locationId = env?.["GBP_LOCATION_ID"];
     if (!locationId) {

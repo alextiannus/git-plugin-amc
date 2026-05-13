@@ -250,12 +250,13 @@ function checkMissingCredentials(workspaceDir, soulContent) {
     if (activePlatforms.length === 0)
         return [];
     const config = readOpenclawConfig(workspaceDir);
-    const mcp = config["mcp"] || {};
+    const mcpConfig = config["mcp"] || {};
+    const mcpServers = mcpConfig["servers"] || {};
     const missing = [];
     // Check PostFast API key
     const postfastPlatforms = activePlatforms.filter((p) => POSTFAST_PLATFORMS.has(p));
     if (postfastPlatforms.length > 0) {
-        const postfastConfig = mcp["postfast"];
+        const postfastConfig = mcpServers["postfast"];
         const env = postfastConfig?.["env"];
         const apiKey = env?.["POSTFAST_API_KEY"];
         if (!apiKey) {
@@ -270,7 +271,7 @@ function checkMissingCredentials(workspaceDir, soulContent) {
     // Check GBP Location ID
     const gbpPlatforms = activePlatforms.filter((p) => GBP_PLATFORMS.has(p));
     if (gbpPlatforms.length > 0) {
-        const gbpConfig = mcp["gbp"];
+        const gbpConfig = mcpServers["gbp"];
         const env = gbpConfig?.["env"];
         const locationId = env?.["GBP_LOCATION_ID"];
         if (!locationId) {
