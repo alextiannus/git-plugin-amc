@@ -18,7 +18,7 @@ Run these procedures whenever a brand provides API credentials:
 
 The plugin automatically checks for missing credentials on every startup in normal ops mode.
 
-**When triggered:** Agent detects `POSTFAST_API_KEY` or `GBP_LOCATION_ID` missing from `openclaw.json`
+**When triggered:** Agent detects `POSTFAST_API_KEY` or `GBP_LOCATION_ID` missing from system environment variables and `openclaw.json`
 but the corresponding platforms are listed in `active_platforms` in SOUL.md.
 
 **What the agent does:**

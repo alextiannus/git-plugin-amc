@@ -319,7 +319,7 @@ function checkMissingCredentials(
     const postfastEntry = entries["postfast"] as Record<string, unknown> | undefined;
     const pfConfig = postfastEntry?.["config"] as Record<string, unknown> | undefined;
     const env = pfConfig?.["env"] as Record<string, string> | undefined;
-    const apiKey = env?.["POSTFAST_API_KEY"];
+    const apiKey = process.env.POSTFAST_API_KEY || env?.["POSTFAST_API_KEY"];
     if (!apiKey) {
       missing.push({
         tool: "postfast",
@@ -335,7 +335,7 @@ function checkMissingCredentials(
   if (gbpPlatforms.length > 0) {
     const gbpConfig = mcpServers["gbp"] as Record<string, unknown> | undefined;
     const env = gbpConfig?.["env"] as Record<string, string> | undefined;
-    const locationId = env?.["GBP_LOCATION_ID"];
+    const locationId = process.env.GBP_LOCATION_ID || env?.["GBP_LOCATION_ID"];
     if (!locationId) {
       missing.push({
         tool: "gbp",
@@ -576,7 +576,7 @@ export default definePluginEntry({
         appendSystemContext: [
           "## ⚠️ F&B Content Engine — Missing Platform Credentials",
           "",
-          "The following MCP credentials are not configured in openclaw.json:",
+          "The following MCP credentials are not configured in system environment variables or openclaw.json:",
           missingList,
           "",
           "**ACTION REQUIRED (execute immediately):**",
