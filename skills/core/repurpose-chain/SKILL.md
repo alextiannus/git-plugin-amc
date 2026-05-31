@@ -21,9 +21,11 @@ Never copy-paste. Each platform version must feel native to that platform.
 Before drafting ANY content, you MUST complete this preparation step to ensure long-term learning and leverage all your capabilities.
 
 **1. Memory Check:** Silently read the **local files** `vault/brand/brand-voice.md` and `vault/brand/owner-profile.md` from the local file system to recall your consolidated core memory, brand positioning, and absorbed feedback. (Do NOT use `mcp.lark.drive` or `mcp.lark.docs` to read these; read the local copies directly. Do NOT read the raw `ownerreview.md` log — rely on what has been distilled into `brand-voice.md`).
-**2. Cross-Skill Check:** Scan your active OpenClaw tools (e.g., `mcp.bash` for AMC Kanban publish calls) and any installed external Skill Packs (e.g., `marketing`, `video-creation`, `copywriting`).
-**3. Decision Output:** At the very top of your response, BEFORE any platform drafts, output your memory and skill routing:
+**2. Asset Check:** Silently check `vault/media/media-index.md` for any existing approved assets that match the current content topic. Note which assets are available before drafting.
+**3. Cross-Skill Check:** Scan your active OpenClaw tools (e.g., `mcp.bash` for AMC Kanban publish calls) and any installed external Skill Packs (e.g., `marketing`, `video-creation`, `copywriting`).
+**4. Decision Output:** At the very top of your response, BEFORE any platform drafts, output your memory and skill routing:
 > `[Memory Loaded] I noted recent feedback: [Brief Summary]. I will apply it here.`
+> `[Assets Available] Matching assets: [filenames or 'none found'].`
 > `[Skills Activated] For this task, I will additionally invoke: [Skill Name 1], [Skill Name 2].`
 
 ---
@@ -55,6 +57,8 @@ Write Instagram first. This forces you to find the visual story before anything 
 
 **Content format:** 7-10 slide carousel (preferred) OR single hero image + caption
 
+> 📷 **After drafting this platform's content, immediately output a Visual Brief** following `[[core/visual-brief]]` — Instagram format (1:1 or 4:5, carousel specs).
+
 ---
 
 ### Step 2 · TikTok (raw, native, movement-first)
@@ -83,6 +87,8 @@ Text overlays: [List any captions to overlay — keep to ≤5 words each]
 Sound direction: [Trending audio / natural kitchen sounds / voiceover — specify]
 ```
 
+> 📷 **After drafting this platform's content, immediately output a Visual Brief** following `[[core/visual-brief]]` — TikTok format (9:16 video, include Shot List).
+
 ---
 
 ### Step 3 · 小红书 RedNote (personal diary, not marketing copy)
@@ -110,6 +116,8 @@ Sound direction: [Trending audio / natural kitchen sounds / voiceover — specif
 
 **Length:** 300–500 characters (not words). Tight and scannable.
 
+> 📷 **After drafting this platform's content, immediately output a Visual Brief** following `[[core/visual-brief]]` — 小红书 format (3:4 carousel, cover must have large readable title).
+
 ---
 
 ### Step 4 · Facebook (community conversation, not broadcast)
@@ -133,6 +141,8 @@ Sound direction: [Trending audio / natural kitchen sounds / voiceover — specif
 
 Hashtags: 1–2 max
 ```
+
+> 📷 **Visual:** Reuse the Instagram carousel asset (note which files). Only output a new Visual Brief if Facebook needs a different crop or format.
 
 ---
 
@@ -161,6 +171,8 @@ Description (first 150 chars are visible): [SEO-rich, keyword-dense first senten
 Tags: [10–15 specific search terms]
 ```
 
+> 📷 **After drafting this platform's content, immediately output a Visual Brief** following `[[core/visual-brief]]` — YouTube format (16:9 video + thumbnail brief with text ≤5 words).
+
 ---
 
 ### Step 6 · X / Twitter (sharp take, not promotion)
@@ -187,6 +199,8 @@ Option B — Thread (if the angle needs depth):
 3/ [Counter-argument or nuance]
 4/ [Conclusion + CTA]
 ```
+
+> 📷 **Visual:** Reuse existing assets. If none available, a branded text-on-image card is sufficient — no new shoot needed.
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: onboarding-flow
-description: "12-question brand interview, self-configuring SOUL.md writer"
+description: "14-question brand interview, self-configuring SOUL.md writer"
 plugin: git-plugin-amc
 ---
 
@@ -41,10 +41,10 @@ This message is pushed by the `post_install` hook via `mcp.lark.message`.
 
 ```
 你好！我是你的 AI 内容官，刚完成安装，马上开始配置。
-需要问你 12 个问题（大约 15 分钟），配置完成我就正式开始工作。
+需要问你 14 个问题（大约 20 分钟），配置完成我就正式开始工作。
 
 Hi! I'm your AI Content Manager — just installed and ready to configure.
-I have 12 quick questions (~15 min) and then I'll start working right away.
+I have 14 quick questions (~20 min) and then I'll start working right away.
 
 请用你觉得最顺手的语言回答 / Please reply in whichever language feels natural.
 我们开始吧！/ Let's go!
@@ -113,15 +113,55 @@ Adapt language to match what the owner is using.
 
 ### Module 2 · Brand Voice (→ brand-voice.md)
 
-**Q6 · Brand personality**
-> "用三个词描述你们品牌的个性。
-> Three words that describe your brand's personality?"
+**Q6 · 数字触点 Digital Touchpoints**
+> "你们的官网或点单链接是什么？各平台的账号 @handle 分别是？（有哪个填哪个，没有的可以跳过）
+> What's your website or ordering link? And your @handles on each platform? (skip any you don't have yet)"
 
-→ Updates: `brand-voice.md` {{BRAND_PERSONALITY_WORDS}}
+→ 例如: `website: https://12eat.com | instagram: @12eat_official | tiktok: @12eat`
+→ Updates: `brand-voice.md` under Digital Touchpoints
+→ Used in: all platform CTAs, "link in bio", "follow us @...", caption sign-offs
 
 ---
 
-**Q7 · Forbidden words or topics**
+**Q7 · 品牌语调 Brand Tone of Voice**
+> "你希望内容的语调是怎样的？请选择最接近的一组——或直接用自己的话描述。
+> How should the content sound? Pick the closest options — or describe in your own words.
+>
+> 正式 / Formal ↔ 亲切随意 / Casual & warm
+> 诼幽活泼 / Playful & funny ↔ 专业严肥 / Expert & serious
+> 话不多说到点 / Punchy & direct ↔ 展开讲故事 / Storytelling & narrative
+>
+> 如果有你喜欢的品牌语调案例（平台、抛号、或参考帐号）也可以发给我。
+> Feel free to also share a brand whose tone you love as reference."
+
+→ Updates: `brand-voice.md` {{BRAND_TONE_OF_VOICE}}
+→ Rule: 将回答转化为具体写作准则，例如：“用第一人称、短句、常用emoji、避免行业术语”
+
+---
+
+**Q8 · 视觉身份 Visual Identity**
+> "你们品牌的视觉风格是怎样的？请提供以下信息（有哪个填哪个）——
+> What's your brand's visual style? Share any of the following:
+>
+> 1. 品牌主色调（hex 码或颜色描述，例如"温暖的红色和金色")
+>    Brand colors (hex codes or description, e.g. 'warm reds and golds')
+>
+> 2. 视觉风格关键词（三个词，例如"温暖、接地气、局部特写"或"极简、高级、白底")
+>    Visual style keywords (3 words, e.g. 'warm, rustic, close-up' or 'minimal, premium, white space')
+>
+> 3. 我喜欢这个账号的视觉风格（平台+账号名）
+>    A social account whose visual style I love (platform + @handle)
+>
+> 4. 已审批的图片/视频素材存在哪里？（Lark Drive 链接或说明）
+>    Where are your approved visual assets stored? (Lark Drive link or description)"
+
+→ Updates: `brand-voice.md` under Visual Identity section
+→ Fields: `BRAND_COLORS` / `BRAND_VISUAL_STYLE` / `VISUAL_REFERENCE` / `ASSETS_LOCATION`
+→ Used by: `visual-brief` skill for every piece of content
+
+---
+
+**Q9 · Forbidden words or topics**
 > "有没有你绝对不希望出现在内容里的词语、话题、或竞争对手名字？
 > Any words, topics, or competitor names that should never appear in our content?"
 
@@ -131,17 +171,17 @@ Adapt language to match what the owner is using.
 
 ### Module 3 · Compliance (→ bilingual-gate.md)
 
-**Q8 · Top dishes**
-> "你们最常推广的 5-10 道菜是哪些？请列出中文名和英文名。
-> What are your top 5-10 most-promoted dishes? Please give both Chinese and English names."
+**Q10 · Top products**
+> "你们最常推广的 5-10 个产品或服务是哪些？请列出中文名和英文名。
+> What are your top 5-10 most-promoted products or services? Please give both Chinese and English names."
 
-→ Starts filling: `bilingual-gate.md` Canonical Dish Name Map
+→ Starts filling: `bilingual-gate.md` Canonical Product Name Map
 
 ---
 
 ### Module 4 · Shared Resources
 
-**Q9 · Trending Radar URL**
+**Q11 · Trending Radar URL**
 > "我们有一个每日更新的热点雷达文档，所有品牌都共享。
 > 地址是：[read trending_radar from SOUL.md]
 > 这个地址对你的品牌适用吗？还是需要用其他地址？
@@ -153,7 +193,7 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q10 · AI Workspaces folder (vault parent)**
+**Q12 · AI Workspaces folder (vault parent)**
 > "我会在 Lark 云盘里为你创建专属的品牌档案夹。
 > 默认位置是 AI Workspaces 文件夹：[read workspaces_folder from SOUL.md]
 > 这个位置可以吗？如果你已经有一个偏好的位置，可以把链接给我。
@@ -177,7 +217,7 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q11 · Promotions and pricing**
+**Q13 · Promotions and pricing**
 > "你们有固定的优惠或套餐价格区间吗？
 > 比如午市套餐价格、家庭套餐范围等——帮助我在推广时确保价格准确。
 > Do you have standard promotions or price ranges?
@@ -187,7 +227,7 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q12 · Store Location & Hours**
+**Q14 · Store Location & Hours**
 > "最后，请告诉我门店的具体中英文地址、营业时间以及联系电话。
 > 这很重要，因为我绝对不会在帖子里编造地址。如果没有可以跳过。
 > Finally, please provide your exact store address (EN/ZH), operating hours, and phone number.
@@ -209,14 +249,19 @@ Adapt language to match what the owner is using.
 
 ## Post-Interview Actions
 
-After all 12 questions are answered:
+After all 14 questions are answered:
 
 ```
 1. Fill all {{PLACEHOLDER}} values directly in SOUL.md → overwrite in-place
    (write only to plugins.git-plugin-amc section, do not touch other sections)
-2. Update brand-voice.md with Q6/Q7/Q12 answers
-3. Fill bilingual-gate.md Canonical Dish Name Map with Q8 answers
-4. [IF NOT ALREADY DONE IN Q10] Create Lark Drive vault:
+2. Update brand-voice.md with Q6/Q7/Q8/Q9/Q14 answers
+   - Digital Touchpoints (Q6): website + handles
+   - Tone of Voice (Q7): verbal tone rules
+   - Visual Identity (Q8): colors, style keywords, reference, assets location
+   - Forbidden Words (Q9): do-not-use list
+   - Contact Info (Q14): address, hours, phone
+3. Fill bilingual-gate.md Canonical Product Name Map with Q10 answers
+4. [IF NOT ALREADY DONE IN Q12] Create Lark Drive vault:
    Execute `node scripts/create-vault.js "{{BRAND_SLUG}}" "{{LARK_WORKSPACES_URL}}"`
    → Upload vault-templates/ files into the new folder
    → Store returned URL as {{VAULT_LARK_URL}} in SOUL.md shared_resources
