@@ -101,6 +101,25 @@ else:              score = 4  # Viral
 
 # 写入 performance-log.md 对应记录
 update_post_record(post_id, score=score, vs_brand_avg=f"+{(ratio-1)*100:.0f}%")
+
+# 同时记录受众信号（audience-intelligence 集成）
+saves_rate  = metrics_48h.saves / metrics_48h.reach
+shares_rate = metrics_48h.shares / metrics_48h.reach
+comments_rate = metrics_48h.comments / metrics_48h.reach
+
+if saves_rate > 0.05:      primary_signal = "saves"    # Discoverer 活跃
+elif shares_rate > 0.03:   primary_signal = "shares"   # Considerer→Advocate
+elif comments_rate > 0.02: primary_signal = "comments" # Regular+Advocate
+else:                       primary_signal = "reach"    # 仅曝光，未深度互动
+
+inferred_audience = {
+  "saves":    "Discoverer",
+  "shares":   "Considerer",
+  "comments": "Regular",
+  "reach":    "Discoverer",
+}[primary_signal]
+
+update_post_record(post_id, primary_signal=primary_signal, inferred_audience=inferred_audience)
 ```
 
 ### 2B · 得分触发行为
@@ -213,14 +232,24 @@ update_post_record(post_id, score=score, vs_brand_avg=f"+{(ratio-1)*100:.0f}%")
   "[DATA] 含价格的内容互动率持续高于无价格内容 — 创作时优先考虑价格可见性"
 ```
 
-### 3C · 每月基准均值更新（每月第一天自动执行）
+### 3C · 每月基准均值 + 受众信号更新（每月第一天自动执行）
 
 ```
 1. 读取 performance-log.md 过去 30 天的所有 metrics_48h.engagement_rate
 2. 按平台分组，计算算术平均
-3. 更新 performance-log.md 的"品牌基准均值"表
+3. 更新 performance-log.md 的“品牌基准均值”表
 4. 如某平台均值环比下跌 >20%：
    → Lark 警告："[平台] 整体互动率下降 [N]%，可能原因：算法变化/内容老化/竞争加剧"
+
+5. [audience-intelligence] 分析过去 30 天 primary_signal 分布：
+   - 统计 saves/shares/comments/reach 各占比
+   - 写入 vault/brand/audience-profile.md 受众信号追踪表
+   - 若连续 2 个月 primary_signal = saves（Discoverer 主导）
+     → 自动将拉新内容比例建议上调至 60%
+     → Lark 通知："受众以新粉为主，建议增加 Discoverer 定向内容"
+   - 若连续 2 个月 primary_signal = comments（Regular 主导）
+     → 自动将留存内容比例建议上调至 60%
+     → Lark 通知："老客互动活跃，建议增加 Regular/Advocate 专属内容"
 ```
 
 ---

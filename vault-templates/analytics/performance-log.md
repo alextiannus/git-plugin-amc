@@ -66,6 +66,10 @@ score: [0|1|2|3|4]
 score_label: [Poor|Normal|Good|Winner|Viral]
 vs_brand_avg: +0%
 
+# ── 受众信号（48h 同步写入）──
+primary_signal: [saves|shares|comments|reach]
+inferred_audience: [Discoverer|Considerer|Regular|Advocate]
+
 # ── 学习备注（Agent 在打分后填写）──
 what_worked: ""
 what_didnt: ""

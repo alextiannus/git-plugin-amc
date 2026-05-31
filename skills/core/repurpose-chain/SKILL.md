@@ -22,11 +22,13 @@ Before drafting ANY content, you MUST complete this preparation step to ensure l
 
 **1. Memory Check:** Silently read the **local files** `vault/brand/brand-voice.md` and `vault/brand/owner-profile.md` from the local file system to recall your consolidated core memory, brand positioning, and absorbed feedback. (Do NOT use `mcp.lark.drive` or `mcp.lark.docs` to read these; read the local copies directly. Do NOT read the raw `ownerreview.md` log — rely on what has been distilled into `brand-voice.md`).
 **2. Asset Check:** Silently check `vault/media/media-index.md` for any existing approved assets that match the current content topic. Note which assets are available before drafting.
-**3. Winner Library Check:** Read `vault/analytics/winner-library.md`. Find any activated patterns matching the current platform(s) and product category. Note the recommended hook_type(s).
-**4. Cross-Skill Check:** Scan your active OpenClaw tools (e.g., `mcp.bash` for AMC Kanban publish calls) and any installed external Skill Packs (e.g., `marketing`, `video-creation`, `copywriting`).
-**5. Decision Output:** At the very top of your response, BEFORE any platform drafts, output your memory and skill routing:
+**3. Audience Check:** Read `vault/brand/audience-profile.md`. Note the current audience layer distribution, new-vs-returning ratio, and platform-specific audience defaults. Decide which audience layer this content should target.
+**4. Winner Library Check:** Read `vault/analytics/winner-library.md`. Find any activated patterns matching the current platform(s) and product category. Note the recommended hook_type(s).
+**5. Cross-Skill Check:** Scan your active OpenClaw tools (e.g., `mcp.bash` for AMC Kanban publish calls) and any installed external Skill Packs (e.g., `marketing`, `video-creation`, `copywriting`).
+**6. Decision Output:** At the very top of your response, BEFORE any platform drafts, output your memory and skill routing:
 > `[Memory Loaded] I noted recent feedback: [Brief Summary]. I will apply it here.`
 > `[Assets Available] Matching assets: [filenames or 'none found'].`
+> `[Audience Target] Layer: [Discoverer|Considerer|Regular|Advocate] | New/Return ratio this week: [X%/X%] | Recent signal: [saves|shares|comments].`
 > `[Winner Pattern] Recommended hook for this topic: [hook_type] — based on [N] winning posts.`
 > `[Pillar] This content belongs to: [Pillar Name] | Week ratio: [actual%] → target [target%] | Gap pillars this week: [pillar names or 'none'].`
 > `[Skills Activated] For this task, I will additionally invoke: [Skill Name 1], [Skill Name 2].`
