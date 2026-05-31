@@ -128,7 +128,7 @@ Adapt language to match what the owner is using.
 > How should the content sound? Pick the closest options — or describe in your own words.
 >
 > 正式 / Formal ↔ 亲切随意 / Casual & warm
-> 诼幽活泼 / Playful & funny ↔ 专业严肥 / Expert & serious
+> 诙谐活泼 / Playful & funny ↔ 专业严肃 / Expert & serious
 > 话不多说到点 / Punchy & direct ↔ 展开讲故事 / Storytelling & narrative
 >
 > 如果有你喜欢的品牌语调案例（平台、抛号、或参考帐号）也可以发给我。
@@ -237,16 +237,6 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q13 · AMC Kanban API Key** *(was Q15)*
-> "最后，请提供你的 AMC Kanban 个人专属 API Key (以 'eyJ...' 开头或长字符串)。
-> 你可以在 AMC 看板系统中生成它。有了它我才能将我的工作日常同步到看板上。
-> Finally, please provide your personal AMC Kanban API Key.
-> You can generate this in the AMC Kanban system. I need this to log my daily operations to the board."
-
-→ Maps to: `{{AMC_KANBAN_API_KEY}}`
-
----
-
 ## Post-Interview Actions
 
 After all 14 questions are answered:
@@ -265,12 +255,18 @@ After all 14 questions are answered:
    Execute `node scripts/create-vault.js "{{BRAND_SLUG}}" "{{LARK_WORKSPACES_URL}}"`
    → Upload vault-templates/ files into the new folder
    → Store returned URL as {{VAULT_LARK_URL}} in SOUL.md shared_resources
-6. Use your feishu_drive tool to update the uploaded `vault-index.md` in the new Lark folder, filling in the brand name, Trending Radar URL, and vault Lark URL.
-7. **Generate Interactive Lark Docs:**
+   → Extract Content Schedule Bitable URL from terminal output
+5. Use your feishu_drive tool to update the uploaded `vault-index.md` in the new Lark folder, filling in the brand name, Trending Radar URL, and vault Lark URL.
+5b. Initialize `vault/brand/audience-profile.md`:
+   → Fill {{BRAND_NICHE}} from Q3 answer
+   → Fill {{MARKETS}} from Q5 answer
+   → Agent infers initial audience age/language/decision-style from brand type
+   → Initialize `vault/brand/content-pillars.md` with default 40/25/15/12/8% ratios
+6. **Generate Interactive Lark Docs:**
    Use your `mcp_lark_docx_builtin_import` tool to convert the markdown contents of `ownerreview.md` and `vault-index.md` into native Lark Docs (Docx).
    → Keep the generated URL for ownerreview ready to send to the owner.
-8. Run global search for {{ in SOUL.md → must be ZERO before proceeding
-9. **CRITICAL REQUIREMENT:** You MUST immediately and proactively send the confirmation message to the owner. Do NOT wait for them to ask or prompt you. As soon as step 8 is complete, output the following message EXACTLY as written, filling in the URLs. Extract the Content Schedule URL from the terminal output of step 5.
+7. Run global search for {{ in SOUL.md → must be ZERO before proceeding
+8. **CRITICAL REQUIREMENT:** You MUST immediately and proactively send the confirmation message to the owner. Do NOT wait for them to ask or prompt you. As soon as step 7 is complete, output the following message EXACTLY as written, filling in the URLs.
 
 **Confirmation message (Send this immediately):**
 ```
@@ -280,8 +276,8 @@ After all 14 questions are answered:
 - 品牌：{BRAND_NAME}
 - 核心资产金库：{VAULT_LARK_URL}
 - 协作文档 (请点击打开并置顶)：
-  - 待审与复盘区 (ownerreview)：{URL_FROM_STEP_7}
-  - 发帖排期表 (Bitable)：{CONTENT_SCHEDULE_URL_FROM_STEP_5}
+  - 待审与复盘区 (ownerreview)：{URL_FROM_STEP_6}
+  - 发帖排期表 (Bitable)：{CONTENT_SCHEDULE_URL_FROM_STEP_4}
 - 自动发布平台：{ACTIVE_PLATFORMS}
 - 待连接平台：{PENDING_PLATFORMS}（连接账号后即可开启自动发布）
 - AMC Kanban：已连接 (API Key 配置完成)
@@ -361,6 +357,6 @@ Any Lark team member can send:
 ```
 重新配置 / reconfigure / /bootstrap
 ```
-→ Agent re-enters Bootstrap Mode, sends Opening Message, runs full 15-question interview again
+→ Agent re-enters Bootstrap Mode, sends Opening Message, runs full 14-question interview again
 → Existing brand config is preserved until new answers overwrite it
 → Use case: brand rebrand, change of platforms, major voice update

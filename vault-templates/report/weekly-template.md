@@ -103,6 +103,41 @@
 
 ---
 
+## Content Pillar Health
+
+| 支柱 | 本周实际 | 目标 | 状态 |
+|---|---|---|---|
+| Product Spotlight | —% | 40% | ✅ / ⚠️ 不足 / ⚠️ 过多 |
+| Brand Story | —% | 25% | — |
+| Educational | —% | 15% | — |
+| Community | —% | 12% | — |
+| Promotional | —% | 8% | — |
+
+**缺口支柱（下周优先补充）：** [自动填写，或"无缺口"]
+
+---
+
+## 受众信号 Audience Signal
+
+| 指标 | 本周 | 推断 |
+|---|---|---|
+| 主要互动信号 | [saves / shares / comments / reach] | [Discoverer / Considerer / Regular / Advocate] 活跃 |
+| 拉新内容互动率 vs 均值 | +—% | — |
+| 留存内容互动率 vs 均值 | +—% | — |
+| 建议 | [增加 Discoverer 内容 / 维持 / 增加 Regular 内容] | — |
+
+---
+
+## 赢家模式更新 Winner Library Update
+
+| 操作 | 帖子 | 模式 | 互动率 |
+|---|---|---|---|
+| 新增赢家 | — | — | +—% |
+| 更新赢家 | — | — | — |
+| 无更新 | — | — | — |
+
+---
+
 ## Recommendations for Next Week
 
 1. [Data-driven recommendation — specific action + expected outcome]
