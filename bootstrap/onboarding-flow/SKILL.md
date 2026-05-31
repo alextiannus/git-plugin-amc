@@ -111,9 +111,9 @@ Adapt language to match what the owner is using.
 
 ---
 
-### Module 3 · Brand Voice (→ brand-voice.md)
+### Module 2 · Brand Voice (→ brand-voice.md)
 
-**Q7 · Brand personality**
+**Q6 · Brand personality**
 > "用三个词描述你们品牌的个性。
 > Three words that describe your brand's personality?"
 
@@ -121,7 +121,7 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q8 · Forbidden words or topics**
+**Q7 · Forbidden words or topics**
 > "有没有你绝对不希望出现在内容里的词语、话题、或竞争对手名字？
 > Any words, topics, or competitor names that should never appear in our content?"
 
@@ -129,9 +129,9 @@ Adapt language to match what the owner is using.
 
 ---
 
-### Module 4 · Compliance (→ bilingual-gate.md)
+### Module 3 · Compliance (→ bilingual-gate.md)
 
-**Q9 · Top dishes**
+**Q8 · Top dishes**
 > "你们最常推广的 5-10 道菜是哪些？请列出中文名和英文名。
 > What are your top 5-10 most-promoted dishes? Please give both Chinese and English names."
 
@@ -139,9 +139,9 @@ Adapt language to match what the owner is using.
 
 ---
 
-### Module 5 · Shared Resources
+### Module 4 · Shared Resources
 
-**Q11 · Trending Radar URL**
+**Q9 · Trending Radar URL**
 > "我们有一个每日更新的热点雷达文档，所有品牌都共享。
 > 地址是：[read trending_radar from SOUL.md]
 > 这个地址对你的品牌适用吗？还是需要用其他地址？
@@ -153,7 +153,7 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q12 · AI Workspaces folder (vault parent)**
+**Q10 · AI Workspaces folder (vault parent)**
 > "我会在 Lark 云盘里为你创建专属的品牌档案夹。
 > 默认位置是 AI Workspaces 文件夹：[read workspaces_folder from SOUL.md]
 > 这个位置可以吗？如果你已经有一个偏好的位置，可以把链接给我。
@@ -177,7 +177,7 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q13 · Promotions and pricing**
+**Q11 · Promotions and pricing**
 > "你们有固定的优惠或套餐价格区间吗？
 > 比如午市套餐价格、家庭套餐范围等——帮助我在推广时确保价格准确。
 > Do you have standard promotions or price ranges?
@@ -187,7 +187,7 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q14 · Store Location & Hours**
+**Q12 · Store Location & Hours**
 > "最后，请告诉我门店的具体中英文地址、营业时间以及联系电话。
 > 这很重要，因为我绝对不会在帖子里编造地址。如果没有可以跳过。
 > Finally, please provide your exact store address (EN/ZH), operating hours, and phone number.
@@ -197,7 +197,7 @@ Adapt language to match what the owner is using.
 
 ---
 
-**Q15 · AMC Kanban API Key**
+**Q13 · AMC Kanban API Key** *(was Q15)*
 > "最后，请提供你的 AMC Kanban 个人专属 API Key (以 'eyJ...' 开头或长字符串)。
 > 你可以在 AMC 看板系统中生成它。有了它我才能将我的工作日常同步到看板上。
 > Finally, please provide your personal AMC Kanban API Key.
@@ -209,15 +209,14 @@ Adapt language to match what the owner is using.
 
 ## Post-Interview Actions
 
-After all 15 questions are answered:
+After all 12 questions are answered:
 
 ```
 1. Fill all {{PLACEHOLDER}} values directly in SOUL.md → overwrite in-place
    (write only to plugins.git-plugin-amc section, do not touch other sections)
-2. Update brand-voice.md with Q7/Q8/Q14 answers
-3. Fill bilingual-gate.md Canonical Dish Name Map with Q9 answers
-4. Fill allergen-gate.md Brand Dish Allergen Table with Q10 answers
-5. [IF NOT ALREADY DONE IN Q12] Create Lark Drive vault:
+2. Update brand-voice.md with Q6/Q7/Q12 answers
+3. Fill bilingual-gate.md Canonical Dish Name Map with Q8 answers
+4. [IF NOT ALREADY DONE IN Q10] Create Lark Drive vault:
    Execute `node scripts/create-vault.js "{{BRAND_SLUG}}" "{{LARK_WORKSPACES_URL}}"`
    → Upload vault-templates/ files into the new folder
    → Store returned URL as {{VAULT_LARK_URL}} in SOUL.md shared_resources
