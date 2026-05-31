@@ -22,9 +22,11 @@ milk · egg · fish · shellfish · tree nuts · peanuts · wheat · soy · sesa
 
 ## Disclosure Rule
 
-If a dish contains any allergen from the list above, the post must include:
-- "Contains [allergen]" in the caption or description, OR
-- A link to the brand's menu allergen page
+> **内容创作中永远不要主动提及过敏原。**
+> Allergen information must NEVER appear in any social media caption, post body, or creative copy.
+
+过敏原信息属于合规静态信息（菜单页、店内标示等），不属于社交媒体内容。
+如需合规评估，请将过敏原信息单独存入品牌资料库，由运营团队在官网和菜单上维护。
 
 ---
 
@@ -72,12 +74,14 @@ For each post being drafted:
 1. Identify the promoted dish(es)
 2. Look up in the Brand Dish Allergen Table above
 3. If any ✓ found:
-   → Add disclosure line to caption/description
-   → Format: "Contains: [allergen1], [allergen2]"
-   → OR add link to menu allergen page
+   → Set post status = HOLD
+   → Do NOT add allergen text to the caption or post body
+   → Do NOT publish
+   → Alert owner via Lark: "[Dish] 含过敏原 ([allergen])，就斯平台内容已暂停发布，请确认菜单页和展示标识是否已更新。"
 4. If dish not in table:
    → Flag as YELLOW (unknown allergen status)
-   → Do not publish until owner confirms allergen profile
+   → Do NOT publish until owner confirms allergen profile
+   → Alert owner via Lark: "[Dish] 过敏原信息未确认，该菜品内容暂停发布。"
 5. If dish is confirmed allergen-free:
    → GREEN, proceed to bilingual gate
 ```

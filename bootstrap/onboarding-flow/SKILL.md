@@ -1,6 +1,6 @@
 ---
 name: onboarding-flow
-description: "13-question brand interview, self-configuring SOUL.md writer"
+description: "12-question brand interview, self-configuring SOUL.md writer"
 plugin: git-plugin-amc
 ---
 
@@ -41,10 +41,10 @@ This message is pushed by the `post_install` hook via `mcp.lark.message`.
 
 ```
 你好！我是你的 AI 内容官，刚完成安装，马上开始配置。
-需要问你 15 个问题（大约 20 分钟），配置完成我就正式开始工作。
+需要问你 12 个问题（大约 15 分钟），配置完成我就正式开始工作。
 
 Hi! I'm your AI Content Manager — just installed and ready to configure.
-I have 15 quick questions (~20 min) and then I'll start working right away.
+I have 12 quick questions (~15 min) and then I'll start working right away.
 
 请用你觉得最顺手的语言回答 / Please reply in whichever language feels natural.
 我们开始吧！/ Let's go!
@@ -111,81 +111,6 @@ Adapt language to match what the owner is using.
 
 ---
 
-### Module 2 · Platforms (→ SOUL.md active_platforms + pending_platforms)
-
-**Q6 · Platform intent**
-> "下面这些平台，哪些是你希望我帮你运营的？（可以多选）
-> Which of these platforms do you want me to manage? (select all that apply)
-> - Instagram
-> - TikTok
-> - 小红书 (RedNote)
-> - Facebook
-> - YouTube
-> - Google Maps / Google Business Profile
-> - X (Twitter)
-> - 其他 / Other?"
-
-→ Records brand's INTENT for each platform
-→ Note: Google Maps is strongly recommended for any restaurant
-
----
-
-**[AGENT ACTION after Q6 — runs silently before Q7]**
-
-For each platform the brand selected, check if publisher credentials exist:
-
-```
-for platform in Q6_selections:
-    if platform == "googlemap":
-        result = mcp.gbp.check_connection()
-    elif platform == "rednote":
-        result = "pending"   # RedNote has no public API — always semi-auto
-    else:
-        result = mcp.postfast.check_connection(platform)
-    if result == "connected":
-        → add to active_platforms   (auto-publish via mcp.postfast or mcp.gbp)
-    else:
-        → add to pending_platforms  (agent drafts content, team posts manually via Lark)
-```
-
-Then inform the owner:
-
-```
-[如果有 pending_platforms]
-"好的！以下平台我已经可以直接帮你发内容：{active_platforms}
-
-以下平台还没有连接登录信息，我会帮你准备内容草稿，
-但需要你手动发布，或者之后连接账号来启用自动发布：
-{pending_platforms}
-
-需要现在连接这些账号吗？（可以跳过，之后再说）
-
----
-Great! I can auto-publish to: {active_platforms}
-
-These platforms need credentials before I can publish automatically:
-{pending_platforms}
-Want to connect them now, or skip for later?"
-```
-
-→ If owner wants to connect credentials now:
-   1. Ask: "好的！请把 PostFast API Key 发给我（postfa.st → Settings → API Keys）
-           Please send me your PostFast API Key (postfa.st → Settings → API Keys)"
-   2. Wait for key. Validate it starts with "pk_" or "sk_" — if wrong format, ask again.
-   3. Follow `mcp-setup` skill · Procedure A exactly:
-      - Run `openclaw skills install postfast`
-      - Run `openclaw gateway restart`
-      - Re-run check_connection() per platform
-      - Move verified platforms to active_platforms in SOUL.md
-   4. Confirm to user which platforms are now active
-
-→ If owner skips: leave in pending_platforms
-   pending_platforms behaviour: SILENT — agent does NOT generate content or drafts for these platforms.
-   A weekly cron reminder is sent via Lark: "[平台名] 尚未连接账号，连接后即可开始自动运营。"
-   To connect later: user sends "连接账号" or "add postfast" → agent runs mcp-setup · Procedure C.
-
----
-
 ### Module 3 · Brand Voice (→ brand-voice.md)
 
 **Q7 · Brand personality**
@@ -204,25 +129,13 @@ Want to connect them now, or skip for later?"
 
 ---
 
-### Module 4 · Compliance (→ allergen-gate.md + bilingual-gate.md)
+### Module 4 · Compliance (→ bilingual-gate.md)
 
 **Q9 · Top dishes**
 > "你们最常推广的 5-10 道菜是哪些？请列出中文名和英文名。
 > What are your top 5-10 most-promoted dishes? Please give both Chinese and English names."
 
 → Starts filling: `bilingual-gate.md` Canonical Dish Name Map
-
----
-
-**Q10 · Allergen check**
-> "对于你刚才列出的菜品，哪些含有以下过敏原？
-> For the dishes you listed, which contain any of these 9 allergens?
-> 牛奶·鸡蛋·鱼·贝类·坚果·花生·小麦·大豆·芝麻
-> milk·egg·fish·shellfish·tree nuts·peanuts·wheat·soy·sesame
-> 不确定的请标注 '?' — 上线前必须确认。
-> Mark '?' for unknown — must be confirmed before publishing any post about that dish."
-
-→ Fills: `allergen-gate.md` Brand Dish Allergen Table
 
 ---
 

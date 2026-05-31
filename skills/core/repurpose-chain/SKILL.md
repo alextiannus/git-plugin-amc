@@ -31,89 +31,171 @@ Before drafting ANY content, you MUST complete this preparation step to ensure l
 ### Step 1 · Instagram (write FIRST — visual hook)
 
 Write Instagram first. This forces you to find the visual story before anything else.
-**CRITICAL RULE:** You MUST strictly follow the "Content Writing & Caption Best Practices" and the "So What? Test" defined in [[platforms/instagram]].
 
-**Output:** 7-10 slide carousel + caption, OR single dish hero + caption
-- Slide 1: bold hook / mouth-watering image (the one frame that stops the scroll)
-- Caption: Must follow the exact Anatomy of a High-Converting Caption (< 125 char hook, blank lines, storytelling body, specific CTA).
-- Hashtags: 5-8, mix of broad (#chinesefood) and local (#[city]eats)
+**Platform DNA:** Aspirational, polished, aesthetic-driven. Audience scrolls fast — you have 0.5 seconds to stop them.
 
-**Why first:** Instagram's visual constraint eliminates weak ideas before you invest in other platforms.
+**DO NOT:**
+- Start with "Introducing..." or "We are proud to present..."
+- Use generic filler like "Delicious food awaits!" or "Come and try!"
+- Write more than 125 characters before the first line break
+- Use more than 8 hashtags
 
----
-
-### Step 2 · TikTok (raw & short)
-
-Take the Instagram concept, make it move. Raw is better than polished.
-
-**Output:** 15-60s video script
-- Hook in first 2 seconds: sizzle, pour, unwrap, steam rising — pick one
-- No intro, no "hey guys" — start with the food
-- End with price or CTA on screen
-
-**Format:**
+**Output format:**
 ```
-[0:00-0:02] Hook (visual or sound)
-[0:02-0:20] The story / process / reveal
-[0:20-0:30] CTA + price overlay
+[HOOK — ≤125 chars, must be scroll-stopping. Options: bold claim, surprising fact, sensory description, or question]
+
+[1-2 lines of blank space]
+
+[Body — 2-4 short paragraphs. Sensory details: colour, texture, smell, temperature. Tell a micro-story.]
+
+[Soft CTA — one line, conversational. "Link in bio to order." / "DM us to book your table."]
+
+[Hashtags — 5-8 only. Mix: 2 broad (#chinesefood), 2 niche (#[city]eats), 1-2 brand-specific]
 ```
 
----
-
-### Step 3 · RedNote 小红书 (personal & detailed)
-
-Expand the Instagram concept with richer storytelling. More personal, more honest.
-
-**Output:** 300-600 character post with 3-5 hashtags
-- Add prices, portions, honest opinions
-- Personal experience tone ("我点了这个之后...")
-- Details other platforms skip: texture, smell, value-for-money
-- Dish name in Chinese + English transliteration on first mention
+**Content format:** 7-10 slide carousel (preferred) OR single hero image + caption
 
 ---
 
-### Step 4 · Facebook (community)
+### Step 2 · TikTok (raw, native, movement-first)
 
-Frame the same content as a community conversation, not a broadcast.
+Do NOT adapt the Instagram caption. Start from scratch with a video-native brain.
 
-**Output:** Post with a discussion question at the end
-- Add: "What's your go-to order?" or "Tag someone who needs to try this"
-- Longer caption OK (Facebook readers tolerate text more)
-- Tag local community groups when relevant
+**Platform DNA:** Raw > polished. Authentic > branded. Fast-paced, sound-on, native editing style. If it looks like an ad, it loses.
+
+**DO NOT:**
+- Write a script that starts with the brand name
+- Use formal or marketing language ("premium quality", "authentic experience")
+- Plan a shot longer than 3 seconds without a new angle
+- Include text overlays that cover the food
+
+**Output format:**
+```
+HOOK (0:00–0:02): [One-word or one-action hook — sizzle sound, sauce pour, steam rising, crunch reveal]
+
+BUILD (0:02–0:15): [The "how" or "wow" — process, transformation, or unexpected detail]
+
+PEAK (0:15–0:22): [The money shot — final dish, portion reveal, or reaction]
+
+CTA (0:22–0:30): [Price on screen + one-line text: "Order at [link]" or "DM us 🔥"]
+
+Text overlays: [List any captions to overlay — keep to ≤5 words each]
+Sound direction: [Trending audio / natural kitchen sounds / voiceover — specify]
+```
 
 ---
 
-### Step 5 · YouTube (deep — IF APPLICABLE)
+### Step 3 · 小红书 RedNote (personal diary, not marketing copy)
 
-Only create YouTube content if the idea benefits from longer treatment.
-Not every idea needs YouTube. Skip if it doesn't add depth.
+**Platform DNA:** 小红书 users trust peer reviews, not brand accounts. Write as if a real person is sharing their genuine experience — not as a brand promoting itself.
 
-**Qualifying topics:** recipes, kitchen tours, chef stories, dish origin stories, "how it's made"
+**DO NOT:**
+- Write in third person ("The restaurant offers...")
+- Use promotional superlatives ("best", "most authentic", "must-try")
+- Ignore emoji — they are native to the platform
+- Forget to include prices (users expect them)
+
+**Output format:**
+```
+标题 Title (≤20 chars, emoji optional): [Hook — question, bold claim, or personal confession]
+
+正文 Body:
+第一段 Para 1: [Personal hook — "上周去吃了这家..."] 
+第二段 Para 2: [Sensory experience — taste, texture, portion size, value]
+第三段 Para 3: [Honest opinion — what's great, what could be better]
+第四段 Para 4: [Practical info — price per dish, address, hours]
+
+话题标签 Tags (3-5): [Mix of broad 美食 and local 城市美食]
+```
+
+**Length:** 300–500 characters (not words). Tight and scannable.
+
+---
+
+### Step 4 · Facebook (community conversation, not broadcast)
+
+**Platform DNA:** Facebook feeds community, not trend. Users are older, more conversational, and respond to nostalgia, belonging, and discussion questions.
+
+**DO NOT:**
+- Copy-paste the Instagram caption
+- Use hashtags heavily (2 max on Facebook)
+- Post without a conversation hook at the end
+
+**Output format:**
+```
+[Opening — 1 sentence that feels like you're talking to a friend, not an audience]
+
+[Body — 3-5 sentences. Context, story, or memory trigger. More text is OK here.]
+
+[Question CTA — must invite a real response. "What's your go-to order?" / "Tag the person you'd bring here 👇"]
+
+[Optional: Tag a local community group or page if relevant]
+
+Hashtags: 1–2 max
+```
+
+---
+
+### Step 5 · YouTube (deep storytelling — IF APPLICABLE)
+
+Only create YouTube content if the idea genuinely benefits from longer treatment. Skip if it doesn't.
+
+**Qualifying topics:** recipes, kitchen tours, chef stories, dish origin stories, supplier visits, "how it's made"
 **Skip for:** deal alerts, lunch specials, single-dish promos
 
-**Output:** Full video outline (8-12 min)
-- SEO-optimized title (include dish name + location keyword)
-- Chapter timestamps
-- Description with full menu link + ordering CTA
+**Platform DNA:** YouTube is search-driven. Title and thumbnail are 80% of the battle. Write for someone searching "best [dish] in [city]" — not for existing fans.
+
+**Output format:**
+```
+Title (SEO): [Dish name + location keyword + hook — e.g., "How We Make Authentic Dan Dan Noodles | [City] Chinese Food"]
+Thumbnail text: [3–5 bold words max]
+
+Outline:
+[0:00–0:30] Hook — what's the payoff? Show the finished dish first.
+[0:30–2:00] Context — brand story or dish origin in ≤90 seconds
+[2:00–6:00] Core content — process, interview, or deep-dive
+[6:00–7:30] Taste/reaction moment
+[7:30–8:00] CTA — subscribe, order link, next video
+
+Description (first 150 chars are visible): [SEO-rich, keyword-dense first sentence]
+Tags: [10–15 specific search terms]
+```
 
 ---
 
-### Step 6 · X / Twitter (distill — IF APPLICABLE)
+### Step 6 · X / Twitter (sharp take, not promotion)
 
-Only post to X if there's a contrarian or industry angle worth a sharp, opinionated line.
-Skip if the content is purely promotional.
+Only post to X if there's a contrarian, witty, or industry angle worth a sharp line. Skip purely promotional content entirely.
 
-**Qualifying angles:** "delivery doesn't mean soggy", "you don't need $30 for great Chinese food"
-**Output:** One tweet ≤280 chars, OR long-form thread (1-2k words) for deep topics
+**Platform DNA:** X rewards opinions, not announcements. If it sounds like a press release, delete it.
+
+**DO NOT:**
+- Post "We're excited to announce..."
+- Restate what's already on Instagram
+- Use more than 2 hashtags
+
+**Qualifying angles:** Industry observation / hot take / behind-the-scenes fact / price transparency / cultural commentary
+
+**Output format:**
+```
+Option A — Single tweet (≤280 chars):
+[Sharp observation or hot take — state it plain, no fluff]
+
+Option B — Thread (if the angle needs depth):
+1/ [Hook tweet — the thesis, ≤280 chars]
+2/ [Evidence or story]
+3/ [Counter-argument or nuance]
+4/ [Conclusion + CTA]
+```
 
 ---
 
 ### Step 7 · Google Maps (reputation layer — implicit)
 
-Not part of the publish chain. But always ask:
-> "Does this content highlight something worth a review?"
-Surface those moments to organically encourage Google reviews.
-Never explicitly ask for reviews in exchange for anything (FTC + Google violation).
+Not part of the content publish chain. After every piece of content, ask:
+> "Does this content highlight something worth a Google review?"
+
+Surface those moments naturally. Never explicitly ask for reviews in exchange for anything (FTC + Google Terms violation).
 
 ---
 
