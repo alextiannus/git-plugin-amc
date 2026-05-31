@@ -145,6 +145,13 @@ If any placeholder remains, no operational work executes — period.
 2. Log to post records (likes, comments, shares, views, saves — per platform)
 3. Detect anomalies: if engagement is >50% below average for similar posts → flag in ownerreview Lark Doc
 4. Update daily-metrics log
+5. [performance-learning] For any post now at 24h age:
+   → Write metrics_24h fields to vault/analytics/performance-log.md
+6. [performance-learning] For any post now at 48h age:
+   → Write metrics_48h.engagement_rate
+   → Calculate score vs. brand baseline
+   → If score ≥ 3 (Winner): trigger winner extraction + Lark notify
+   → If score = 0 (Poor): write failure analysis to what_didnt field
 ```
 
 ---
@@ -158,6 +165,7 @@ Same as 11:00 Lunch Publish Window. Publish items with time=17:00 and status=rea
 ### 19:00 · Dinner Window Close + Snapshot
 
 Same as 13:00 Lunch Window Close. Capture metrics for 17:00 posts.
+Also includes performance-learning 24h/48h scoring for dinner-window posts.
 
 ---
 
@@ -196,7 +204,8 @@ Same as 13:00 Lunch Window Close. Capture metrics for 17:00 posts.
 | Day/Time | Job | Output |
 |---|---|---|
 | Mon/Thu 06:30 | Trending radar refresh | Local cache |
-| Monday 08:00 | Self-improvement report | Send weekly feedback summary & self-assessment to team |
+| Monday 08:00 | Self-improvement report | Send weekly feedback summary & self-assessment to team (merges human feedback + performance-learning data insights) |
+| Monday 08:00 | **7d metrics batch update** | Read performance-log.md, fetch 7d data for all posts ≥7 days old, update metrics_7d fields, refresh winner-library.md platform rankings |
 | Monday 09:00 | Plugin version check | Check latest version; if update available → send Lark prompt; apply on team reply "更新插件" |
 | Monday 09:00 | Pending platform reminder | For each platform in pending_platforms: notify team "[Platform] 尚未连接账号，连接后即可开始自动运营" |
 | Monday 09:00 | Allergen pending check | Scan allergen-gate.md for [?PENDING] entries; if any found → Lark alert: "[菜品名] 过敏原信息未确认，涉及该菜品的帖子将暂停发布直到补全" |

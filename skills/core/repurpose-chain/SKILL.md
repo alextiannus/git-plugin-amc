@@ -22,10 +22,12 @@ Before drafting ANY content, you MUST complete this preparation step to ensure l
 
 **1. Memory Check:** Silently read the **local files** `vault/brand/brand-voice.md` and `vault/brand/owner-profile.md` from the local file system to recall your consolidated core memory, brand positioning, and absorbed feedback. (Do NOT use `mcp.lark.drive` or `mcp.lark.docs` to read these; read the local copies directly. Do NOT read the raw `ownerreview.md` log — rely on what has been distilled into `brand-voice.md`).
 **2. Asset Check:** Silently check `vault/media/media-index.md` for any existing approved assets that match the current content topic. Note which assets are available before drafting.
-**3. Cross-Skill Check:** Scan your active OpenClaw tools (e.g., `mcp.bash` for AMC Kanban publish calls) and any installed external Skill Packs (e.g., `marketing`, `video-creation`, `copywriting`).
-**4. Decision Output:** At the very top of your response, BEFORE any platform drafts, output your memory and skill routing:
+**3. Winner Library Check:** Read `vault/analytics/winner-library.md`. Find any activated patterns matching the current platform(s) and product category. Note the recommended hook_type(s).
+**4. Cross-Skill Check:** Scan your active OpenClaw tools (e.g., `mcp.bash` for AMC Kanban publish calls) and any installed external Skill Packs (e.g., `marketing`, `video-creation`, `copywriting`).
+**5. Decision Output:** At the very top of your response, BEFORE any platform drafts, output your memory and skill routing:
 > `[Memory Loaded] I noted recent feedback: [Brief Summary]. I will apply it here.`
 > `[Assets Available] Matching assets: [filenames or 'none found'].`
+> `[Winner Pattern] Recommended hook for this topic: [hook_type] — based on [N] winning posts.`
 > `[Skills Activated] For this task, I will additionally invoke: [Skill Name 1], [Skill Name 2].`
 
 ---
