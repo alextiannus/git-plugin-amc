@@ -69,7 +69,7 @@ Each skill lives in its own subdirectory with a `SKILL.md` file containing YAML 
 
 | Skill | Directory | Description |
 |---|---|---|
-| `onboarding-flow` | bootstrap/onboarding-flow/ | 13-question brand interview, self-configuring SOUL.md writer |
+| `onboarding-flow` | bootstrap/onboarding-flow/ | 14-question brand interview, self-configuring SOUL.md writer |
 
 ---
 

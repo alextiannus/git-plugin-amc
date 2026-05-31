@@ -361,3 +361,39 @@ Any Lark team member can send:
 → Agent re-enters Bootstrap Mode, sends Opening Message, runs full 14-question interview again
 → Existing brand config is preserved until new answers overwrite it
 → Use case: brand rebrand, change of platforms, major voice update
+
+---
+
+### Case 5 · Onboarding keyword trigger (message-based detection)
+
+When a Lark message contains any of the following keywords:
+```
+ZH: 品牌访问, 品牌调查, 品牌访谈, 品牌配置, 开始配置, 重新配置, 开始品牌访谈
+EN: brand interview, brand survey, brand setup, onboarding, /bootstrap, reconfigure
+```
+
+Agent MUST:
+```
+1. Immediately read SOUL.md → plugins.git-plugin-amc section
+2. Check for {{PLACEHOLDER}}:
+
+   └─ {{PLACEHOLDER}} found (Bootstrap incomplete):
+       → Reply:
+          "检测到品牌配置尚未完成，马上开始！
+           Detected incomplete setup — starting brand interview now!"
+       → If ownerreview.md contains partial interview log:
+           Resume from last answered question (see Case 2)
+       → If no partial log:
+           Send Opening Message, begin from Q1
+
+   └─ No {{PLACEHOLDER}} (Bootstrap already complete):
+       → Reply:
+          "品牌配置已完成 ✅
+           品牌：{BRAND_NAME} | 已开通平台：{ACTIVE_PLATFORMS}
+           如需重新配置（品牌调整、平台更改等），请发送 '重新配置'。
+           Brand setup complete ✅
+           Brand: {BRAND_NAME} | Platforms: {ACTIVE_PLATFORMS}
+           To reconfigure, send '重新配置'."
+```
+
+> **重要：** Case 5 是所有消息的第一检查项。关键词匹配优先于其他所有逻辑。

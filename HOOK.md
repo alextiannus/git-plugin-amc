@@ -45,7 +45,7 @@ This is the primary onboarding trigger — no manual steps required.
 5. IMMEDIATELY send Bootstrap Opening Message via mcp.lark.message
    → Do not wait for user to message first
    → Load and send the Opening Message from bootstrap/onboarding-flow.md
-   → Begin the 13-question interview on first reply
+   → Begin the 14-question interview on first reply
 ```
 
 ---
@@ -121,10 +121,28 @@ Triggered when any team member sends one of these Lark messages:
 When a Lark message is received:
 
 ```
-If Bootstrap Mode active:
+# ── Step 1: Onboarding keyword gate (ALWAYS check first) ──
+Onboarding trigger keywords (any language, case-insensitive):
+  ZH: 品牌访问, 品牌调查, 品牌访谈, 品牌配置, 开始配置, 重新配置, 开始品牌访谈
+  EN: brand interview, brand survey, brand setup, onboarding, /bootstrap, reconfigure
+
+If message matches any keyword above:
+  → Read SOUL.md plugins.git-plugin-amc section
+  → If any {{PLACEHOLDER}} found (Bootstrap incomplete):
+      → Reply: "检测到品牌配置尚未完成，马上开始！
+                Detected incomplete setup — starting brand interview now!"
+      → Immediately send Bootstrap Opening Message
+      → Enter Bootstrap Mode, begin from Q1 (or resume from last answered Q if partial)
+  → If NO {{PLACEHOLDER}} (Bootstrap already complete):
+      → Reply: "品牌配置已完成 ✅。如需重新配置，请发送 '重新配置' 确认。
+                Brand setup already complete ✅. Send '重新配置' to restart."
+
+# ── Step 2: Bootstrap Mode routing ──
+If Bootstrap Mode active ({{PLACEHOLDER}} present, already in interview flow):
   → Route message to onboarding-flow.md interview handler
 
-Else:
+# ── Step 3: Normal operations ──
+Else (Bootstrap complete, normal mode):
   → Check for command keywords (CRISIS, CRISIS-CLEAR, 恢复, 暂停, etc.)
   → If command: execute immediately (see owner-approval.md)
   → If feedback: log to ownerreview.md (see feedback-loop.md)
