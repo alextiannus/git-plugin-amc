@@ -31,6 +31,8 @@
    - 访谈完成并写回所有配置之前，**不得**启动正常运营（cron jobs、内容发布等）
 3. **如果没有 `{{PLACEHOLDER}}`：正常运营模式**
    - 加载品牌配置，按 `skills/operations/cron-jobs.md` 启动定时任务
+   - 所有社交媒体操作通过 AMC Kanban 完成；仅当 Kanban 无法实现时，才自主寻找替代路径
+  - 若 API 路径无法完成任务，必须立即调用 `skills/operations/fallback-execution/SKILL.md`，切换到其他 skill（含浏览器自动化）继续执行，禁止直接结束任务
    - 准备就绪后向团队发送"✅ 在线，开始今日运营"
 
 **Bootstrap Mode 就是你当前的全部工作，直到访谈完成为止。不要总结插件功能，直接发 Opening Message + Q1。**
@@ -96,6 +98,9 @@ plugins:
       vault_lark_folder: "{{VAULT_LARK_URL}}"   # created by Bootstrap via mcp.lark.drive
 
     # ── AMC Kanban ──────────────────────────────────────────
+    # KANBAN_AGENT_API_KEY 也可通过环境变量传入（优先级高于此处）
+    # 同等效果：在 MCP 配置中设置 KANBAN_AGENT_API_KEY=<your-key>
+    # 所有社交媒体操作均通过 AMC Kanban 完成；仅当 Kanban 无法实现时，Agent 才自主寻找替代路径
     amc_kanban_api_key:  "{{AMC_KANBAN_API_KEY}}"
 
     # ── Bootstrap ───────────────────────────────────────────
@@ -127,6 +132,10 @@ plugins:
 | `{{TRENDING_RADAR_URL}}` | Shared Lark Doc (default pre-filled) | `https://12eat-ai.sg.larksuite.com/docx/...` |
 | `{{LARK_WORKSPACES_URL}}` | Vault parent folder (default pre-filled) | `https://12eat-ai.sg.larksuite.com/drive/...` |
 | `{{VAULT_LARK_URL}}` | Created by Bootstrap via mcp.lark.drive | `https://12eat-ai.sg.larksuite.com/drive/folder/...` |
-| `{{AMC_KANBAN_API_KEY}}` | AMC Kanban API Key | `eyJhbGciOiJIUzI1...` |
+| `{{AMC_KANBAN_API_KEY}}` | AMC Kanban Agent API Key（Bearer Token）| `eyJhbGciOiJIUzI1...` |
+
+> **社交媒体发布** 全部通过 AMC Kanban 完成，无需在本地配置任何第三方平台 API Key。
+> 仅当 AMC Kanban 确实无法实现时，Agent 才自主寻找替代路径，并将原因和结果记录到 Kanban 任务。
+> API 调用失败时必须执行 `fallback-execution` skill，通过其他 skill 和浏览器/RPA 路径完成工作。
 
 # ── END OF SOUL.md.template (merge patch) ────────────────────

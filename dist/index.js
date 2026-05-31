@@ -26,11 +26,15 @@ const SOUL_TEMPLATE_FILE = "SOUL.md.template";
 const ONBOARDING_FLOW_FILE = "bootstrap/onboarding-flow/SKILL.md";
 const MCP_SETUP_SKILL_FILE = "skills/operations/mcp-setup/SKILL.md";
 const PLACEHOLDER_REGEX = /\{\{[A-Z_]+\}\}/g;
-// Platforms handled by PostFast MCP (unified publishing)
-const POSTFAST_PLATFORMS = new Set([
-    "instagram", "facebook", "tiktok", "youtube", "x", "threads", "linkedin",
-]);
+const KANBAN_BASE_URL = process.env.KANBAN_BASE_URL || "https://amc-kanban.immedi.ai";
+// Mandatory runtime fallback rule appended to execution prompts.
+const FALLBACK_RULE_PROMPT = " 如遇 API 调用无法完成任务，必须立即调用 skills/operations/fallback-execution/SKILL.md，切换到其他 skill（含浏览器自动化/RPA）继续执行，并把失败原因、切换路径和结果证据写回 Kanban 任务。";
+function withFallback(prompt) {
+    return prompt + FALLBACK_RULE_PROMPT;
+}
 // Platforms handled by GBP MCP (Google Business Profile)
+// All social platforms are managed via AMC Kanban.
+// If Kanban cannot complete an operation, Agent autonomously finds an alternative path.
 const GBP_PLATFORMS = new Set(["googlemap"]);
 // ── Cron Schedule Definitions ──────────────────────────────────
 // Source of truth: skills/operations/cron-jobs.md
@@ -43,104 +47,104 @@ const SCHEDULE = [
     {
         cron: "0 7 * * *",
         task: "daily-kanban-sync",
-        prompt: "执行 daily-kanban-sync：读取 Content Schedule Bitable 中今天计划发布的所有帖子，在 AMC Kanban 中为每一个帖子创建一条对应的任务，状态设为 todo。",
+        prompt: withFallback("执行 daily-kanban-sync：读取 Content Schedule Bitable 中今天计划发布的所有帖子，在 AMC Kanban 中为每一个帖子创建一条对应的任务，状态设为 todo。"),
     },
     {
         cron: "0 8 * * *",
         task: "topic-discovery",
-        prompt: "执行 topic-discovery：基于今日 Trending Radar 结果，为品牌选出 1–2 个最契合的话题，起草今日内容创作方向，记录到 Content Schedule Bitable。",
+        prompt: withFallback("执行 topic-discovery：基于今日 Trending Radar 结果，为品牌选出 1–2 个最契合的话题，起草今日内容创作方向，记录到 Content Schedule Bitable。"),
     },
     {
         cron: "0 10 * * *",
         task: "google-maps-actions",
-        prompt: "执行 google-maps-actions：检查 Google Business Profile 新评论，按品牌 voice 回复所有未回复评论（24h SLA），发布今日 GBP 帖子（如有排期）。",
+        prompt: withFallback("执行 google-maps-actions：检查 Google Business Profile 新评论，按品牌 voice 回复所有未回复评论（24h SLA），发布今日 GBP 帖子（如有排期）。"),
     },
     {
         cron: "0 11 * * *",
         task: "lunch-publish-window",
-        prompt: "执行 lunch-publish-window：发布今日午餐时段内容。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。确认发布成功后，记录到 Content Schedule Bitable 并将 Kanban 任务状态更新为 done。",
+        prompt: withFallback("执行 lunch-publish-window：发布今日午餐时段内容。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。确认发布成功后，记录到 Content Schedule Bitable 并将 Kanban 任务状态更新为 done。"),
     },
     {
         cron: "0 13 * * *",
         task: "lunch-snapshot",
-        prompt: "执行 lunch-snapshot：抓取今日午餐帖子发布后 2 小时的初始数据（likes、reach、comments），记录到 vault report 文件夹。",
+        prompt: withFallback("执行 lunch-snapshot：抓取今日午餐帖子发布后 2 小时的初始数据（likes、reach、comments），记录到 vault report 文件夹。"),
     },
     {
         cron: "0 17 * * *",
         task: "dinner-publish-window",
-        prompt: "执行 dinner-publish-window：发布今日晚餐时段内容。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。确认发布成功后，记录到 Content Schedule Bitable 并将 Kanban 任务状态更新为 done。",
+        prompt: withFallback("执行 dinner-publish-window：发布今日晚餐时段内容。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。确认发布成功后，记录到 Content Schedule Bitable 并将 Kanban 任务状态更新为 done。"),
     },
     {
         cron: "0 19 * * *",
         task: "dinner-snapshot",
-        prompt: "执行 dinner-snapshot：抓取今日晚餐帖子发布后 2 小时的初始数据，记录到 vault report 文件夹。",
+        prompt: withFallback("执行 dinner-snapshot：抓取今日晚餐帖子发布后 2 小时的初始数据，记录到 vault report 文件夹。"),
     },
     {
         cron: "0 20 * * *",
         task: "comment-dm-reply",
-        prompt: "执行 comment-dm-reply：检查所有平台的新评论和私信，按品牌 voice 回复，重点处理带问题或投诉的评论，记录无法处理的问题到 ownerreview Lark Doc。",
+        prompt: withFallback("执行 comment-dm-reply：检查所有平台的新评论和私信，按品牌 voice 回复，重点处理带问题或投诉的评论，记录无法处理的问题到 ownerreview Lark Doc。"),
     },
     // ── Weekly ─────────────────────────────────────────────────
     {
         cron: "30 6 * * 1,4",
         task: "trending-radar-refresh",
-        prompt: "执行 trending-radar-refresh：打开共享 Trending Radar 文档，搜索近期热门话题（美食、餐厅、本地生活），更新 Top 5 趋势条目，为内容生产做好素材准备。",
+        prompt: withFallback("执行 trending-radar-refresh：打开共享 Trending Radar 文档，搜索近期热门话题（美食、餐厅、本地生活），更新 Top 5 趋势条目，为内容生产做好素材准备。"),
     },
     {
         cron: "0 8 * * 1",
         task: "self-improvement-report",
-        prompt: "执行 self-improvement-report：回顾上周内容表现，并对本周 AI 运营质量做自我评估（准时率、内容质量、合规情况），总结学习点，更新 feedback-loop 文件，提出下周内容优化建议和改进行动项。",
+        prompt: withFallback("执行 self-improvement-report：回顾上周内容表现，并对本周 AI 运营质量做自我评估（准时率、内容质量、合规情况），总结学习点，更新 feedback-loop 文件，提出下周内容优化建议和改进行动项。"),
     },
     {
         cron: "0 9 * * 1",
         task: "plugin-version-check",
-        prompt: "执行 plugin-version-check：检查 git-plugin-amc 是否有新版本可用（openclaw plugins check git-plugin-amc），如有新版本通过 Lark 通知品牌团队。",
+        prompt: withFallback("执行 plugin-version-check：检查 git-plugin-amc 是否有新版本可用（openclaw plugins check git-plugin-amc），如有新版本通过 Lark 通知品牌团队。"),
     },
     {
         cron: "5 9 * * 1",
         task: "pending-platform-reminder",
-        prompt: "执行 pending-platform-reminder：检查 SOUL.md 中的 pending_platforms 列表，如非空则通过 Lark 提醒品牌团队连接剩余平台账号。",
+        prompt: withFallback("执行 pending-platform-reminder：检查 SOUL.md 中的 pending_platforms 列表，如非空则通过 Lark 提醒品牌团队连接剩余平台账号。"),
     },
     {
         cron: "10 9 * * 1",
         task: "allergen-pending-check",
-        prompt: "执行 allergen-pending-check：检查 allergen-gate.md 中是否有标记为 PENDING 的菜品，如有则通过 Lark 请品牌确认过敏原信息。",
+        prompt: withFallback("执行 allergen-pending-check：检查 allergen-gate.md 中是否有标记为 PENDING 的菜品，如有则通过 Lark 请品牌确认过敏原信息。"),
     },
     {
         cron: "0 10 * * 1",
         task: "weekly-report",
-        prompt: "执行 weekly-report：生成上周完整运营报告（内容数量、互动率、最佳帖子、平台对比、下周计划），保存到 vault report 文件夹，通过 Lark 发送给品牌团队。",
+        prompt: withFallback("执行 weekly-report：生成上周完整运营报告（内容数量、互动率、最佳帖子、平台对比、下周计划），保存到 vault report 文件夹，通过 Lark 发送给品牌团队。"),
     },
     {
         cron: "0 18 * * 5",
         task: "weekly-performance-review",
-        prompt: "执行 weekly-performance-review：对本周所有帖子做绩效复盘，找出 Top 3 和 Bottom 3，分析原因，更新内容策略建议。",
+        prompt: withFallback("执行 weekly-performance-review：对本周所有帖子做绩效复盘，找出 Top 3 和 Bottom 3，分析原因，更新内容策略建议。"),
     },
     {
         cron: "0 20 * * 0",
         task: "weekly-content-batch",
-        prompt: "执行 weekly-content-batch：为下一周生成内容批次草稿（7天内容日历，涵盖所有 active 平台），存入 Content Schedule Bitable，通过 Lark 通知品牌团队审阅。",
+        prompt: withFallback("执行 weekly-content-batch：为下一周生成内容批次草稿（7天内容日历，涵盖所有 active 平台），存入 Content Schedule Bitable，通过 Lark 通知品牌团队审阅。"),
     },
     // ── Monthly ────────────────────────────────────────────────
     {
         cron: "0 10 1 * *",
         task: "monthly-report",
-        prompt: "执行 monthly-report：生成上月完整运营月报（KPI 达成、内容总量、各平台表现、粉丝增长、最佳内容精选），保存到 vault report，通过 Lark 发送给品牌团队。",
+        prompt: withFallback("执行 monthly-report：生成上月完整运营月报（KPI 达成、内容总量、各平台表现、粉丝增长、最佳内容精选），保存到 vault report，通过 Lark 发送给品牌团队。"),
     },
     {
         cron: "5 10 1 * *",
         task: "compliance-review",
-        prompt: "执行 compliance-review：审查上月所有发布内容是否符合 fda-ftc-rules 和平台政策，记录任何合规风险，建议下月注意事项。",
+        prompt: withFallback("执行 compliance-review：审查上月所有发布内容是否符合 fda-ftc-rules 和平台政策，记录任何合规风险，建议下月注意事项。"),
     },
     {
         cron: "10 10 1 * *",
         task: "voice-drift-check",
-        prompt: "执行 voice-drift-check：随机抽取 5 篇上月内容，对比 brand-voice.md 定义的品牌声音，检测是否出现语气漂移，提出校正建议，更新品牌声音记录。",
+        prompt: withFallback("执行 voice-drift-check：随机抽取 5 篇上月内容，对比 brand-voice.md 定义的品牌声音，检测是否出现语气漂移，提出校正建议，更新品牌声音记录。"),
     },
     {
         cron: "15 10 1 * *",
         task: "kpi-reset",
-        prompt: "执行 kpi-reset：重置本月 KPI 追踪计数器，在 vault report 文件夹创建新月份报告文件，确认本月内容日历和发布计划就位。",
+        prompt: withFallback("执行 kpi-reset：重置本月 KPI 追踪计数器，在 vault report 文件夹创建新月份报告文件，确认本月内容日历和发布计划就位。"),
     },
 ];
 // Plugin root = one level above dist/ where this file compiles to
@@ -235,6 +239,30 @@ function readOpenclawConfig(workspaceDir) {
     }
     return {};
 }
+/**
+ * Extract the AMC Kanban API key from SOUL.md content.
+ */
+function extractKanbanApiKey(soulContent) {
+    const match = soulContent.match(/amc_kanban_api_key:\s*"?([^"\n{]+)"?/);
+    if (!match)
+        return null;
+    const key = match[1].trim().replace(/["']/g, "");
+    if (!key || key.startsWith("{{"))
+        return null;
+    return key;
+}
+/**
+ * Extract the brand slug from SOUL.md content.
+ */
+function extractBrandId(soulContent) {
+    const slugMatch = soulContent.match(/brand_slug:\s*"?([^"\n{]+)"?/);
+    if (slugMatch) {
+        const v = slugMatch[1].trim().replace(/["']/g, "");
+        if (v && !v.startsWith("{{"))
+            return v;
+    }
+    return null;
+}
 function extractActivePlatforms(soulContent) {
     // Match: active_platforms:  [instagram, facebook] or ["instagram", "facebook"]
     const match = soulContent.match(/active_platforms:\s*\[([^\]]*)\]/);
@@ -253,25 +281,25 @@ function checkMissingCredentials(workspaceDir, soulContent) {
     const mcpConfig = config["mcp"] || {};
     const mcpServers = mcpConfig["servers"] || {};
     const missing = [];
-    // Check PostFast API key
-    const postfastPlatforms = activePlatforms.filter((p) => POSTFAST_PLATFORMS.has(p));
-    if (postfastPlatforms.length > 0) {
-        const skillsConfig = config["skills"] || {};
-        const entries = skillsConfig["entries"] || {};
-        const postfastEntry = entries["postfast"];
-        const pfConfig = postfastEntry?.["config"];
-        const env = pfConfig?.["env"];
-        const apiKey = process.env.POSTFAST_API_KEY || env?.["POSTFAST_API_KEY"];
-        if (!apiKey) {
+    // ── Social platform publishing: ALL go through AMC Kanban first ────────
+    // If Kanban cannot complete the operation, Agent autonomously finds another path.
+    // Agent only needs KANBAN_AGENT_API_KEY — no third-party publishing keys required.
+    const socialPlatforms = activePlatforms.filter((p) => !GBP_PLATFORMS.has(p));
+    if (socialPlatforms.length > 0) {
+        const kanbanKey = process.env.KANBAN_AGENT_API_KEY || extractKanbanApiKey(soulContent);
+        if (!kanbanKey) {
             missing.push({
-                tool: "postfast",
-                reason: "POSTFAST_API_KEY 未配置 — 这些平台无法自动发布",
-                platforms: postfastPlatforms,
-                hint: "获取方式：postfa.st → Settings → API Keys（以 pk_ 或 sk_ 开头）\nHow to get: postfa.st → Settings → API Keys (starts with pk_ or sk_)",
+                tool: "kanban",
+                reason: "KANBAN_AGENT_API_KEY 未配置 — 无法通过 AMC Kanban 执行社交媒体操作",
+                platforms: socialPlatforms,
+                hint: [
+                    "配置方式：在 MCP 环境变量中设置 KANBAN_AGENT_API_KEY=<your-key>",
+                    "所有社交媒体操作均通过 AMC Kanban 完成；仅当 Kanban 无法实现时，Agent 才自主寻找替代路径",
+                ].join("\n"),
             });
         }
     }
-    // Check GBP Location ID
+    // ── GBP Location ID (Google Business Profile) ──────────────────────────
     const gbpPlatforms = activePlatforms.filter((p) => GBP_PLATFORMS.has(p));
     if (gbpPlatforms.length > 0) {
         const gbpConfig = mcpServers["gbp"];
@@ -289,19 +317,19 @@ function checkMissingCredentials(workspaceDir, soulContent) {
     return missing;
 }
 function buildCredentialCheckMessage(missing) {
-    const postfastMissing = missing.find((m) => m.tool === "postfast");
+    const kanbanMissing = missing.find((m) => m.tool === "kanban");
     const gbpMissing = missing.find((m) => m.tool === "gbp");
     const larkLines = [
-        "⚠️ 发现平台账号未连接 / Platform credentials missing",
+        "⚠️ 发现配置缺失 / Configuration missing",
         "",
     ];
-    if (postfastMissing) {
-        larkLines.push(`📱 PostFast API Key 缺失`, `   影响平台 / Platforms affected: ${postfastMissing.platforms.join(", ")}`, `   ${postfastMissing.hint}`, "");
+    if (kanbanMissing) {
+        larkLines.push(`🔑 AMC Kanban API Key 缺失`, `   影响平台 / Platforms affected: ${kanbanMissing.platforms.join(", ")}`, `   ${kanbanMissing.hint}`, "");
     }
     if (gbpMissing) {
         larkLines.push(`🗺️ Google Business Profile ID 缺失`, `   影响平台 / Platforms affected: Google Maps`, `   ${gbpMissing.hint}`, "");
     }
-    larkLines.push("请把对应的 key / ID 发给我，我来帮你立即配置并重新连接。", "Please send me the API key / Location ID and I'll configure it right away.");
+    larkLines.push("请把对应的 key / ID 发给我，我来帮你立即配置。", "Please send me the API key / Location ID and I'll configure it right away.");
     return larkLines.join("\n");
 }
 function loadMcpSetupSkill(pluginDir) {
@@ -364,7 +392,7 @@ export default definePluginEntry({
             api.registerSchedule([...SCHEDULE]);
             console.log(`[${PLUGIN_ID}] ✅ Registered ${SCHEDULE.length} scheduled tasks (daily/weekly/monthly)`);
         });
-        // ── session_start: Detect Bootstrap Mode or missing credentials ──────
+        // ── session_start: Detect Bootstrap Mode, sync profile to Kanban ──────
         api.on("session_start", async (_event, ctx) => {
             const workspaceDir = ctx.workspaceDir || process.cwd();
             const soulPath = resolveSoulPath(workspaceDir);
@@ -375,49 +403,53 @@ export default definePluginEntry({
                 return;
             if (hasPlaceholders(soulContent)) {
                 console.log(`[${PLUGIN_ID}] 🔔 Bootstrap Mode detected — {{PLACEHOLDER}} found in SOUL.md`);
+                return;
+            }
+            // ── Sync Agent Profile to Kanban ─────────────────────────────────────
+            // Agent identity only needs KANBAN_AGENT_API_KEY.
+            // All social media operations go through AMC Kanban;
+            // Agent only self-routes autonomously when Kanban cannot complete the task.
+            const kanbanApiKey = process.env.KANBAN_AGENT_API_KEY || extractKanbanApiKey(soulContent);
+            const brandId = extractBrandId(soulContent);
+            if (kanbanApiKey && brandId) {
+                const brandNameMatch = soulContent.match(/brand_name:\s*"?([^"\n{]+)"?/);
+                const agentId = `${brandId}-content-manager`;
+                const nickname = brandNameMatch
+                    ? `${brandNameMatch[1].trim().replace(/["']/g, "")} 内容官`
+                    : "AMC 内容官";
+                fetch(`${KANBAN_BASE_URL}/api/agents/profile`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${kanbanApiKey}`,
+                    },
+                    body: JSON.stringify({
+                        agentId,
+                        nickname,
+                        introduction: "Responsible for F&B content creation, publishing, and engagement across social platforms.",
+                        workflow: "F&B Content Engine",
+                        themeColor: "#FF5733",
+                        insights: "All social media ops via AMC Kanban. Autonomous fallback only when Kanban cannot complete. Operates 06:30-23:45.",
+                    }),
+                }).then((res) => {
+                    if (res.ok)
+                        console.log(`[${PLUGIN_ID}] ✅ AMC Kanban profile synced for ${agentId}`);
+                    else
+                        console.warn(`[${PLUGIN_ID}] ⚠️ Kanban profile sync failed: HTTP ${res.status}`);
+                }).catch((err) => {
+                    console.warn(`[${PLUGIN_ID}] ⚠️ Kanban profile sync error:`, err.message);
+                });
             }
             else {
-                // Check for missing MCP credentials in normal ops mode
-                const missing = checkMissingCredentials(workspaceDir, soulContent);
-                if (missing.length > 0) {
-                    console.log(`[${PLUGIN_ID}] ⚠️ Missing credentials: ${missing.map((m) => m.tool).join(", ")} — agent will request via Lark`);
-                }
-                else {
-                    console.log(`[${PLUGIN_ID}] ✅ Brand config complete — all credentials present — normal operations`);
-                    // Native AMC Kanban Profile Sync
-                    const apiKeyMatch = soulContent.match(/AMC_KANBAN_API_KEY:\s*"?([^"\n]+)"?/);
-                    const brandSlugMatch = soulContent.match(/brand_slug:\s*"?([^"\n]+)"?/);
-                    const brandNameMatch = soulContent.match(/brand_name:\s*"?([^"\n]+)"?/);
-                    if (apiKeyMatch && brandSlugMatch && brandNameMatch) {
-                        const apiKey = apiKeyMatch[1].trim();
-                        if (apiKey && !apiKey.includes('{{')) {
-                            const agentId = `${brandSlugMatch[1].trim()}-content-manager`;
-                            const nickname = `${brandNameMatch[1].trim()} 内容官`;
-                            fetch("https://amc-kanban.immedi.ai/api/agents/profile", {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "Authorization": `Bearer ${apiKey}`
-                                },
-                                body: JSON.stringify({
-                                    agentId,
-                                    nickname,
-                                    introduction: "Responsible for F&B content creation, publishing, and engagement across social platforms.",
-                                    workflow: "F&B Content Engine",
-                                    themeColor: "#FF5733",
-                                    insights: "Fully automated operation from 06:30 to 23:45."
-                                })
-                            }).then(res => {
-                                if (res.ok)
-                                    console.log(`[${PLUGIN_ID}] ✅ AMC Kanban profile synced successfully for ${agentId}`);
-                                else
-                                    console.warn(`[${PLUGIN_ID}] ⚠️ Failed to sync AMC Kanban profile. Status: ${res.status}`);
-                            }).catch(err => {
-                                console.error(`[${PLUGIN_ID}] ⚠️ Error syncing AMC Kanban profile:`, err.message);
-                            });
-                        }
-                    }
-                }
+                console.warn(`[${PLUGIN_ID}] ⚠️ KANBAN_AGENT_API_KEY or brand_slug missing — Kanban profile sync skipped`);
+            }
+            // ── Check for any remaining missing credentials ───────────────────────
+            const missing = checkMissingCredentials(workspaceDir, soulContent);
+            if (missing.length > 0) {
+                console.log(`[${PLUGIN_ID}] ⚠️ Missing credentials: ${missing.map((m) => m.tool).join(", ")} — agent will request via Lark`);
+            }
+            else {
+                console.log(`[${PLUGIN_ID}] ✅ AMC Kanban configured — all social media ops ready — normal operations`);
             }
         });
         // ── before_prompt_build: Inject context for Bootstrap OR credential check
@@ -455,10 +487,25 @@ export default definePluginEntry({
                     appendSystemContext: [
                         "## 🧠 Core Operational Directive (Never Forget)",
                         "",
-                        "You are operating strictly under the AMC (Agent-Machine Collaboration) framework. You MUST adhere to the following rules when handling Content Management or social media operations:",
-                        "1. **AMC Kanban Integration**: ALWAYS consult your AMC Kanban board for content management and task assignment. You must log the completion of your operational tasks to the Kanban board.",
-                        "   - **MANDATORY**: For EVERY cron job or automated task you execute, you MUST use `mcp.bash` to call the AMC Kanban API to create and update your task progress. Invisible work is strictly forbidden.",
-                        "2. **Skill Execution & Publishing**: Follow AMC's documented skill procedures precisely. For content publishing, use the designated skills/tools (e.g., use the `postfast` skill for supported platforms, and other specific tools as instructed). Do not simulate operations or invent your own workflows.",
+                        "You are operating strictly under the AMC (Agent-Machine Collaboration) framework. You MUST adhere to the following rules at ALL times:",
+                        "",
+                        "### 1. AMC Kanban is your PRIMARY tool for ALL social media operations",
+                        "- Every social media action (publishing, scheduling, replying to comments/DMs, fetching analytics) MUST be attempted via AMC Kanban first.",
+                        "- MANDATORY: For EVERY cron job or automated task, use `mcp.bash` to call the AMC Kanban API to create and update task progress. Invisible work is strictly forbidden.",
+                        "- Do NOT use any third-party publishing tools or credentials directly — route everything through Kanban.",
+                        "",
+                        "### 2. Credential storage — ALWAYS store in AMC Kanban brand-config first",
+                        "- If you receive ANY third-party platform credential (API key, OAuth token, account password, Location ID, etc.), your FIRST action is to store it in AMC Kanban brand-config via PATCH /api/agent/brand-config.",
+                        "- Do NOT write credentials to local config as the primary action. Kanban is the canonical credential store.",
+                        "- Only fall back to local config (openclaw.json / env) if the write to AMC Kanban explicitly fails — and retry saving to Kanban as soon as it recovers.",
+                        "",
+                        "### 3. Autonomous fallback — ONLY when Kanban cannot complete the task",
+                        "- If and ONLY IF AMC Kanban genuinely cannot accomplish a specific operation (e.g., a platform not yet integrated, a Kanban API outage, or a feature not yet supported), you MAY autonomously find an alternative path.",
+                        "- Fallback options (in order): browser automation → direct platform API → manual draft for human review.",
+                        "- Always log the reason why Kanban was bypassed and what fallback method was used, in the Kanban task description.",
+                        "",
+                        "### 4. Never simulate or fabricate operations",
+                        "- Follow AMC's documented skill procedures precisely. Do not invent workflows or pretend operations succeeded without evidence.",
                     ].join("\n"),
                 };
             }

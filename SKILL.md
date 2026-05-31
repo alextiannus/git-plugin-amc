@@ -2,8 +2,8 @@
 # OpenClaw skill discovery manifest · v0.6.3
 # ─────────────────────────────────────────────
 
-This file is a human-readable index of all 23 skills in the F&B Content Engine plugin.
-OpenClaw discovers skills automatically via the `skills` directories declared in `openclaw.plugin.json`.
+This file is a human-readable index of all 30 skills in the F&B Content Engine plugin.
+OpenClaw discovers skills automatically via the `skills` directories declared in `plugin.yaml`.
 Each skill lives in its own subdirectory with a `SKILL.md` file containing YAML frontmatter.
 
 ---
@@ -19,7 +19,7 @@ Each skill lives in its own subdirectory with a `SKILL.md` file containing YAML 
 | `scheduling` | skills/core/scheduling/ | Posting windows, batch workflow, optimal timing |
 | `content-types` | skills/core/content-types/ | Format specs per platform (carousel, reels, short video, etc.) |
 
-### Compliance (4 skills)
+### Compliance (6 skills)
 
 | Skill | Directory | Description |
 |---|---|---|
@@ -27,6 +27,8 @@ Each skill lives in its own subdirectory with a `SKILL.md` file containing YAML 
 | `allergen-gate` | skills/compliance/allergen-gate/ | 9 major allergens checker — BRAND-CUSTOMIZED |
 | `platform-policies` | skills/compliance/platform-policies/ | Meta / TikTok / GMB / RedNote specific content rules |
 | `image-rights` | skills/compliance/image-rights/ | Photo licensing, consent, source tiers |
+| `de-ai-gate` | skills/compliance/de-ai-gate/ | Scrubs robotic phrasing and AI-isms |
+| `vision-gate` | skills/compliance/vision-gate/ | Visual compliance gate for image/video outputs |
 
 ### Localization (2 skills)
 
@@ -35,27 +37,33 @@ Each skill lives in its own subdirectory with a `SKILL.md` file containing YAML 
 | `brand-voice` | skills/localization/brand-voice/ | Personality, vocabulary, tone rules — BRAND-CUSTOMIZED |
 | `bilingual-gate` | skills/localization/bilingual-gate/ | EN/ZH decision tree, canonical dish name map — BRAND-CUSTOMIZED |
 
-### Platforms (7 skills)
+### Platforms (8 skills)
 
 | Skill | Directory | Description |
 |---|---|---|
 | `instagram` | skills/platforms/instagram/ | PRIMARY — carousel specs, reels, caption formula |
 | `tiktok` | skills/platforms/tiktok/ | Raw video, 15–60s, 2-second hook rule |
 | `rednote` | skills/platforms/rednote/ | Authentic storytelling, 300–600 chars ZH |
+| `xiaohongshu` | skills/platforms/xiaohongshu/ | Execution layer: search/detail/publish/comment workflows |
 | `facebook` | skills/platforms/facebook/ | Community-focused, discussion questions mandatory |
 | `youtube` | skills/platforms/youtube/ | SEO-optimised, 8–12 min long-form |
 | `googlemap` | skills/platforms/googlemap/ | Reputation layer, 24h review response SLA |
 | `x` | skills/platforms/x/ | Contrarian angle, 280 chars |
 
-### Operations (5 skills)
+### Operations (10 skills)
 
 | Skill | Directory | Description |
 |---|---|---|
+| `kanban-integration` | skills/operations/kanban-integration/ | AMC Kanban system-level operating contract |
+| `mcp-setup` | skills/operations/mcp-setup/ | Credential setup and runtime missing-config recovery |
+| `fallback-execution` | skills/operations/fallback-execution/ | Mandatory API-failure fallback via browser/RPA/manual paths |
 | `owner-approval` | skills/operations/owner-approval/ | Crisis protocol + compliance hard stops |
 | `feedback-loop` | skills/operations/feedback-loop/ | Team feedback collection + weekly self-improvement |
 | `vault-manager` | skills/operations/vault-manager/ | Vault file creation and maintenance |
+| `vault-creator` | skills/operations/vault-creator/ | Manual trigger path for vault creation workflow |
 | `cron-jobs` | skills/operations/cron-jobs/ | Daily 06:30–23:45 automation schedule |
 | `reporting` | skills/operations/reporting/ | Daily digest, weekly, monthly reports |
+| `update-plugin` | skills/operations/update-plugin/ | Manual trigger path for plugin update workflow |
 
 ### Bootstrap (1 skill)
 

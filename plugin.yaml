@@ -6,7 +6,7 @@
 name: git-plugin-amc
 slug: git-plugin-amc          # matches GitHub repo name and openclaw extensions folder
 display_name: "F&B Content Engine"
-version: "0.9.6"
+version: "0.9.12"
 description: >
   A complete social media operations plugin for F&B brands.
   Manages content from idea to publish across 7 platforms,
@@ -39,6 +39,7 @@ skills:
     - platform-policies   # TikTok/Meta/GMB specific rules
     - image-rights        # photo licensing and consent rules
     - de-ai-gate          # scrubs robotic phrasing and AI-isms
+    - vision-gate         # visual compliance for image/video outputs
 
   localization:
     - bilingual-gate      # EN/ZH decision tree + canonical dish map
@@ -48,12 +49,16 @@ skills:
     - instagram           # PRIMARY — 7-slide carousel, reels
     - tiktok              # raw video, 15-60s, hook in 2s
     - rednote             # authentic storytelling, 300-600 chars
+    - xiaohongshu         # RedNote execution layer: search/detail/publish/comment workflow
     - facebook            # community-focused, discussion questions
     - youtube             # SEO-optimized, 8-12 min long-form
     - googlemap           # reputation layer, 24h review response
     - x                   # contrarian angle, 280 chars
 
   operations:
+    - kanban-integration  # AMC Kanban system-level operating contract
+    - mcp-setup           # credential/bootstrap setup for Kanban + GBP paths
+    - fallback-execution  # mandatory API failure fallback via browser/RPA/manual paths
     - owner-approval      # crisis protocol + compliance hard stops (no approval gate for regular posts)
     - feedback-loop       # team feedback collection, weekly self-assessment, self-improvement
     - vault-manager       # vault file creation and maintenance
@@ -107,9 +112,6 @@ tools_required:
   - mcp.calendar
 
 tools_optional:
-  - mcp.postfast            # unified publishing: Instagram, Facebook, TikTok, YouTube, X, Threads, LinkedIn
-                            # native MCP Server — zero wrapper code required
-                            # RedNote: semi-auto (agent drafts → team posts manually via Lark)
   - mcp.gbp                 # Google Business Profile: posts + review replies + insights
                             # lightweight custom MCP wrapping free GBP API
   - mcp.analytics           # cross-platform metrics aggregation (Metricool API)
@@ -148,14 +150,14 @@ config_schema:
   active_platforms:
     type: array
     required: false
-    items: [instagram, tiktok, rednote, facebook, youtube, googlemap, x]
+    items: [instagram, tiktok, rednote, xiaohongshu, facebook, youtube, googlemap, x]
     description: "Platforms with confirmed credentials — agent can auto-publish"
 
   pending_platforms:
     type: array
     required: false
     default: []
-    items: [instagram, tiktok, rednote, facebook, youtube, googlemap, x]
+    items: [instagram, tiktok, rednote, xiaohongshu, facebook, youtube, googlemap, x]
     description: "Platforms brand wants but credentials not yet connected — agent plans content, manual publish"
 
   # owner_lark_id: REMOVED

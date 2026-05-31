@@ -194,10 +194,10 @@ monthly:
 ## tools_optional
 
 ```yaml
-- mcp.postfast       # unified publishing across Instagram, Facebook, TikTok, YouTube, X, Threads, LinkedIn
-                     # PostFast native MCP Server — no wrapper code needed
-                     # RedNote: semi-auto (agent drafts content → team posts via Lark)
 - mcp.gbp            # Google Business Profile: posts, review replies, insights (free GBP API)
 - mcp.analytics      # cross-platform metrics aggregation (Metricool API)
 - mcp.image_gen      # AI-generated visuals (enable if brand permits)
+# NOTE: All social media publishing (Instagram, Facebook, TikTok, YouTube, X, etc.)
+# goes through AMC Kanban. Only KANBAN_AGENT_API_KEY is required.
+# Agent autonomously finds alternative paths (browser, direct API) when Kanban cannot complete.
 ```

@@ -122,9 +122,12 @@ If any placeholder remains, no operational work executes — period.
 2. For each ready item:
    - Update its corresponding AMC Kanban task status to `in_progress`
    - Verify Compliance Gate + Bilingual Gate still pass (content may have aged)
-   - Publish via mcp.postfast (Instagram/Facebook/TikTok/YouTube/X/Threads)
+   - Publish via AMC Kanban (primary path — covers all major platforms)
      or mcp.gbp (Google Business Profile posts)
      or push draft to Lark for manual publish (RedNote + any pending_platforms)
+   - If AMC Kanban publish fails: autonomously attempt the next available path
+     (platform direct API → browser automation → Lark manual draft)
+     and log the reason + method used in the Kanban task description
    - Update post record status to "published"
    - Update the AMC Kanban task status to `done`
    - Log publish timestamp and URL
@@ -162,7 +165,7 @@ Same as 13:00 Lunch Window Close. Capture metrics for 17:00 posts.
 
 ```
 1. Fetch all new comments and DMs since last check (across all active_platforms only)
-   - **Fallback Protocol:** If the primary API tool (e.g., PostFast) fails, is rate-limited, or unavailable, you MUST automatically use your Browser Control tool to log in to the platform and simulate a real human to fetch and reply to comments.
+   - **Fallback Protocol:** If the AMC Kanban comment/DM API is unavailable or rate-limited, you MUST automatically use your Browser Control tool to log in to the platform and simulate a real human to fetch and reply to comments. Log the reason in the Kanban task.
 2. For each comment/DM:
    - Classify: question / compliment / complaint / spam / crisis keyword
    - Draft reply in customer's language ([[localization/bilingual-gate]])

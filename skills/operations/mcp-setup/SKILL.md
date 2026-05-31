@@ -1,133 +1,91 @@
 ---
 name: mcp-setup
-description: "Configure mcp.postfast (PostFast API Key) and mcp.gbp (GBP Location ID) in OpenClaw — used during Bootstrap Q6, after Bootstrap via Lark command, and automatically when missing credentials are detected at startup"
-plugin: fb-content-engine
+description: "配置 GBP Location ID — 所有社交媒体操作通过 AMC Kanban 完成；仅 GBP 需要本地配置"
+plugin: git-plugin-amc
 ---
 
-# MCP Setup — PostFast + GBP
+# MCP Setup — 平台凭证配置
 
-This skill provides the exact configuration steps for connecting publishing tools.
-Run these procedures whenever a brand provides API credentials:
-- During Bootstrap Q6 (first-time setup)
-- Any time via Lark command (`连接账号`, `add postfast`, `add google`)
-- **Automatically at startup** when credentials are detected missing (see Runtime Detection below)
+> **架构说明**：安装插件后，用户所有社交媒体操作均通过 **AMC Kanban** 完成。
+> Agent 只需持有 `KANBAN_AGENT_API_KEY`，无需在本地配置任何第三方发布平台 API Key。
+> 仅当 AMC Kanban 确实无法完成某项操作时，Agent 才自主寻找替代路径（浏览器自动化、直接平台 API 等）。
 
----
-
-## Runtime Credential Detection (Automatic)
-
-The plugin automatically checks for missing credentials on every startup in normal ops mode.
-
-**When triggered:** Agent detects `POSTFAST_API_KEY` or `GBP_LOCATION_ID` missing from system environment variables and `openclaw.json`
-but the corresponding platforms are listed in `active_platforms` in SOUL.md.
-
-**What the agent does:**
-1. Immediately sends a Lark message to the brand team requesting the missing credentials
-2. Waits for the team to reply
-3. On receipt, validates and configures via Procedures A / B below
-4. Suspends all cron jobs and platform operations until credentials are configured
-
-**Lark message template (sent automatically):**
-```
-⚠️ 发现平台账号未连接 / Platform credentials missing
-
-[For PostFast missing:]
-📱 PostFast API Key 缺失
-   影响平台: instagram / facebook / tiktok / ...
-   获取方式：postfa.st → Settings → API Keys（以 pk_ 或 sk_ 开头）
-
-[For GBP missing:]
-🗺️ Google Business Profile ID 缺失
-   影响平台: Google Maps
-   获取方式：Google Business Profile 后台 → 商家资料 URL 中的数字 ID
-
-请把对应的 key / ID 发给我，我来帮你立即配置并重新连接。
-Please send me the API key / Location ID and I'll configure it right away.
-```
-
-**When team replies with credentials:** Go directly to Procedure A (PostFast) or Procedure B (GBP).
+运行以下 Procedure 的时机：
+- Bootstrap Q6 首次配置
+- Lark 命令触发（`连接账号`、`add google`）
+- 启动时自动检测到凭证缺失（见运行时检测）
 
 ---
 
-## OpenClaw MCP Config Format
+## 运行时凭证检测（自动）
 
-OpenClaw stores MCP tool configuration in `openclaw.json` under the `"mcp"` key (NOT `"mcpServers"`).
+插件在每次启动的 normal ops 模式下自动检查：
 
-```json
-{
-  "mcp": {
-    "servers": {
-      "tool-name": {
-        "command": "npx",
-        "args": ["-y", "@package/name"],
-        "env": {
-          "API_KEY": "value"
-        }
-      }
-    }
-  }
-}
+**触发条件：** `KANBAN_AGENT_API_KEY` 未配置，但 `active_platforms` 包含社交媒体平台。
+
+**自动行为：**
+1. 立即通过 Lark 发送告警消息给品牌团队
+2. 等待团队回复
+3. 收到 API Key 后，执行 Procedure A 配置
+4. 凭证配置完成前挂起所有 cron job 和平台操作
+
+**自动发送的 Lark 消息模板：**
+```
+⚠️ AMC Kanban 凭证未配置 / AMC Kanban credentials missing
+
+🔑 KANBAN_AGENT_API_KEY 缺失
+   影响平台：所有已激活社交媒体平台
+   获取方式：联系 AMC Kanban 管理员获取 Agent API Key
+   配置方式：在 OpenClaw MCP 环境变量中设置 KANBAN_AGENT_API_KEY=<key>
+
+请把 API Key 发给我，我来帮你立即配置。
+Please send me the API key and I'll configure it right away.
 ```
 
-**Never use `"mcpServers"` as the root key — OpenClaw will reject it.**
-
-After editing `openclaw.json`, always run:
-```bash
-openclaw gateway restart
-```
+**收到凭证后：** 直接执行 Procedure A。
 
 ---
 
-## Procedure A · Configure PostFast Skill
+## Procedure A · 配置 AMC Kanban Agent API Key
 
-**When:** Brand provides a PostFast API key.
+> **触发规则（必须遵守）**：收到任何第三方平台凭证（API Key、OAuth Token、账号密码、Location ID 等），**第一动作是存入 AMC Kanban brand-config**，无需确认，直接调用，完成后再告知结果。**只有写入 Kanban 失败时**，才将凭证保存到本地配置（openclaw.json）作为兜底，并在 Kanban 恢复后重试写入。
 
-**Step 1 — Validate key format:**
-PostFast API keys start with `pk_` or `sk_`. If the key doesn't match this pattern, reply:
-```
-这个 key 格式不对，PostFast API Key 应该以 pk_ 或 sk_ 开头。
-请到 postfa.st → Settings → API Keys 重新获取。
-
-That key format looks incorrect. PostFast API Keys start with pk_ or sk_.
-Please get it from postfa.st → Settings → API Keys.
-```
-
-**Step 2 — Install PostFast Skill & Save Key:**
-
-Execute the following command to install the official PostFast skill.
+**Step 1 — 优先写入 AMC Kanban brand-config：**
 
 ```bash
-openclaw skills install postfast
+curl -s -X PATCH https://amc-kanban.immedi.ai/api/agent/brand-config \
+  -H "Authorization: Bearer $KANBAN_AGENT_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"brandId\": \"$BRAND_ID\",
+    \"<credentialField>\": \"<value>\"
+  }"
+# 常用字段：googlePlaceId / googleApiKey / larkAppId / larkAppSecret 等
 ```
 
-Next, you MUST permanently save the provided API key to the configuration by running the native script:
+> 如果上述 curl 返回非 2xx 状态码（写入失败），执行 Step 1b。
+
+**Step 1b — 仅当 Kanban 写入失败时，保存到本地配置（兜底）：**
 
 ```bash
-node scripts/set-mcp-env.js postfast POSTFAST_API_KEY <THE_API_KEY_PROVIDED_BY_USER>
+node scripts/set-mcp-env.js <tool> <KEY_NAME> <value>
+# 并在 Kanban 任务中记录：Kanban 写入失败，已临时保存到本地，待 Kanban 恢复后重试
 ```
 
-**Step 3 — Reload:**
+**Step 2 — 验证连接：**
+
 ```bash
-openclaw gateway restart
+curl -s -H "Authorization: Bearer $KANBAN_AGENT_API_KEY" \
+  "https://amc-kanban.immedi.ai/api/agent/tasks?limit=1"
 ```
 
-**Step 4 — Verify connection per platform:**
-Use `mcp.bash` to call the PostFast API to verify the connected accounts:
-```bash
-curl -s -H "pf-api-key: $POSTFAST_API_KEY" https://api.postfa.st/social-media/my-social-accounts
+**Step 3 — 完成后告知结果：**
 ```
-Check the returned list of connected accounts. For each account found in the response, move that platform from `pending_platforms` to `active_platforms` in SOUL.md.
+✅ 凭证已安全存入 AMC Kanban brand-config。
+   所有 Agent 自动共享，无需再次配置。
 
-**Step 5 — Update SOUL.md:**
-Move verified platforms from `pending_platforms` to `active_platforms`.
-
-**Step 6 — Confirm to user via Lark:**
-```
-✅ PostFast 已连接！以下平台现在可以自动发布：
-{newly_active_platforms}
-
-✅ PostFast connected. Auto-publish enabled for:
-{newly_active_platforms}
+✅ Credential saved to AMC Kanban brand-config.
+   All agents inherit it automatically.
 ```
 
 ---
@@ -204,21 +162,40 @@ if connected:
 ## Procedure C · Connect Platform After Bootstrap (via Lark command)
 
 **Triggered by:** Lark message containing any of:
-`连接账号` / `connect account` / `add postfast` / `add api key` / `配置PostFast` / `add google` / `配置GBP`
+`连接账号` / `connect account` / `add api key` / `配置看板` / `add google` / `配置GBP`
 
 **Script:**
 
 ```
 1. Ask which credential is needed (if ambiguous):
-   "需要配置哪个？PostFast API Key（用于 Instagram/Facebook/TikTok）还是 Google Business Profile ID（用于 Google Maps）？
-    Which do you need to set up? PostFast API Key (for Instagram/Facebook/TikTok) or Google Business Profile ID (for Google Maps)?"
+   "需要配置哪个？AMC Kanban API Key 还是 Google Business Profile ID（用于 Google Maps）？
+    Which do you need to set up? AMC Kanban API Key or Google Business Profile ID (for Google Maps)?"
 
-2. For PostFast:
-   → Ask for API Key → validate pk_/sk_ prefix → run Procedure A
+2. For AMC Kanban:
+   → Ask for API Key → run Procedure A
 
 3. For GBP:
    → Guide user to find Location ID (Procedure B Step 1) → run Procedure B Steps 3-4
 ```
+
+---
+
+## Autonomous Fallback — When Kanban Cannot Complete
+
+> **核心原则**：AMC Kanban 是所有社交媒体操作的首选工具。只有在 Kanban 确实无法完成时，才启用自主替代路径。
+> **强制规则**：一旦 API 路径失败，必须立即调用 `skills/operations/fallback-execution/SKILL.md`，并改走其他 skill（含浏览器自动化）继续执行。
+
+| 情况 | 首选路径 | 替代路径（Kanban 失败时） |
+|---|---|---|
+| 发布 Instagram/Facebook/TikTok 等 | AMC Kanban 发布端点 | 平台直接 API → 浏览器自动化 |
+| 回复评论/私信 | AMC Kanban 评论管理 | 浏览器自动化模拟回复 |
+| Google Maps 评论回复 | GBP MCP | 浏览器自动化 |
+| 数据抓取/分析 | AMC Kanban 数据端点 | 平台直接 API → 浏览器抓取 |
+
+**无论使用哪种替代路径，都必须在 Kanban 任务 description 中记录：**
+1. Kanban 为何无法完成（错误信息、不支持的功能等）
+2. 实际使用的替代路径
+3. 执行结果证据（链接、截图描述、API 返回值）
 
 ---
 
@@ -227,9 +204,8 @@ if connected:
 | 症状 | 原因 | 解决 |
 |---|---|---|
 | `openclaw gateway restart` 后 MCP 工具仍不可用 | `openclaw.json` key 写成了 `"mcpServers"` | 改为 `"mcp"` |
-| `check_connection()` 返回 error | API key 格式错误或权限不足 | 让用户重新生成 API key |
-| API/PostFast 严重限流或宕机 | 平台风控或服务器故障 | **自动启用 Browser Control 工具，模拟真人登录对应平台，以浏览器自动化方式拉取评论和发帖** |
-| PostFast 发布失败 | 平台账号未在 PostFast 后台连接 | 引导用户登录 postfa.st 连接社媒账号 |
+| Kanban API 返回 401 | API Key 格式错误或过期 | 联系管理员重新生成 Key |
+| Kanban 发布失败（平台不支持） | Kanban 尚未集成该平台的发布通道 | **自主启用替代路径（浏览器自动化或平台直接 API），并在 Kanban 任务中记录原因** |
 | GBP 连接失败 | Service account 缺少 GBP 权限 | 需要 `roles/businesscommunications.admin` |
 | GBP Location ID 找不到 | 用户不熟悉 GBP 后台 | 按 Procedure B Step 1 引导用户找 URL |
-| 启动后自动发 Lark 消息索要 key | 正常行为 — credentials 缺失 | 提供对应 key 后自动消失 |
+| 启动后自动发 Lark 消息索要 key | 正常行为 — KANBAN_AGENT_API_KEY 缺失 | 提供 API Key 后自动消失 |
