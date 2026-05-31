@@ -327,10 +327,8 @@ export default definePluginEntry({
                 appendSystemContext: [
                     "## 🧠 AMC Content Engine — Core Directive",
                     "",
-                    "All social media publishing, scheduling, commenting, and engagement tasks",
-                    "MUST be executed through AMC Kanban. Do NOT publish to any platform directly.",
+                    "所有社交媒体发布、调度、评论、互动任务，必须通过 AMC Kanban 执行。具体方法参见 amc-kanban skill。",
                     "",
-                    "For how to use AMC Kanban, refer to the skill below:",
                     kanbanSkill ?? "See: skills/operations/kanban-integration/SKILL.md",
                 ].join("\n"),
             };
