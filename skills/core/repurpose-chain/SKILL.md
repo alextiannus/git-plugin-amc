@@ -28,6 +28,7 @@ Before drafting ANY content, you MUST complete this preparation step to ensure l
 > `[Memory Loaded] I noted recent feedback: [Brief Summary]. I will apply it here.`
 > `[Assets Available] Matching assets: [filenames or 'none found'].`
 > `[Winner Pattern] Recommended hook for this topic: [hook_type] — based on [N] winning posts.`
+> `[Pillar] This content belongs to: [Pillar Name] | Week ratio: [actual%] → target [target%] | Gap pillars this week: [pillar names or 'none'].`
 > `[Skills Activated] For this task, I will additionally invoke: [Skill Name 1], [Skill Name 2].`
 
 ---

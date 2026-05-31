@@ -88,13 +88,19 @@ If any placeholder remains, no operational work executes — period.
 ```
 1. Read cached trending radar
 2. Read Media Index Bitable for any new raw media uploaded by owner
-3. Cross-reference with Content Schedule Bitable for gaps in the coming 3 days
-4. Propose 1-3 new content ideas for the gaps
-5. Create full content drafts (not just ideas) in Content Schedule Bitable (status=ready)
-6. Run Compliance Gate → Bilingual Gate on each draft
-7. Schedule for next available publishing window
+3. [content-pillars] Read vault/brand/content-pillars.md:
+   - Calculate this week's actual pillar distribution (from published + scheduled content)
+   - Identify gap pillars (actual% < target% by >5%)
+   - Prioritise idea generation for gap pillars first
+4. Cross-reference with Content Schedule Bitable for gaps in the coming 3 days
+5. Propose 1-3 new content ideas, each labelled with its pillar:
+   "[Pillar: Brand Story] 幕后故事: 师傅手拉面的 30 年..."
+6. Create full content drafts (not just ideas) in Content Schedule Bitable (status=ready)
+7. Run Compliance Gate → Bilingual Gate on each draft
+8. Schedule for next available publishing window
    → No approval needed. Content publishes automatically per cron schedule.
    → If Compliance Gate RED or allergen unconfirmed: hold + Lark alert (see owner-approval.md)
+9. Update vault/brand/content-pillars.md weekly health summary
 ```
 
 ---
