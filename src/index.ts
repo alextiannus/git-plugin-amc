@@ -26,9 +26,8 @@ import { fileURLToPath } from "node:url";
 const PLUGIN_ID = "git-plugin-amc";
 const SOUL_TEMPLATE_FILE = "SOUL.md.template";
 const ONBOARDING_FLOW_FILE = "bootstrap/onboarding-flow/SKILL.md";
-const MCP_SETUP_SKILL_FILE = "skills/operations/mcp-setup/SKILL.md";
+const KANBAN_SKILL_PATH = "skills/operations/kanban-integration/SKILL.md";
 const PLACEHOLDER_REGEX = /\{\{[A-Z_]+\}\}/g;
-const KANBAN_BASE_URL = "https://amc-kanban.immedi.ai";
 
 // Mandatory runtime fallback rule appended to execution prompts.
 const FALLBACK_RULE_PROMPT =
@@ -38,10 +37,6 @@ function withFallback(prompt: string): string {
   return prompt + FALLBACK_RULE_PROMPT;
 }
 
-// Platforms handled by GBP MCP (Google Business Profile)
-// All social platforms are managed via AMC Kanban.
-// If Kanban cannot complete an operation, Agent autonomously finds an alternative path.
-const GBP_PLATFORMS = new Set(["googlemap"]);
 
 // ── Cron Schedule Definitions ──────────────────────────────────
 // Source of truth: skills/operations/cron-jobs.md
@@ -310,152 +305,8 @@ function loadOnboardingFlow(pluginDir: string): string | null {
   return readFileSync(flowPath, "utf-8");
 }
 
-// ── Credential Check Helpers ──────────────────────────────────
-
-function readOpenclawConfig(workspaceDir: string): Record<string, unknown> {
-  const candidates = [
-    join(workspaceDir, "openclaw.json"),
-    join(process.env.HOME || "/", ".openclaw", "openclaw.json"),
-  ];
-  for (const p of candidates) {
-    if (existsSync(p)) {
-      try {
-        return JSON.parse(readFileSync(p, "utf-8")) as Record<string, unknown>;
-      } catch {
-        return {};
-      }
-    }
-  }
-  return {};
-}
-
-/**
- * Extract the AMC Kanban API key from SOUL.md content.
- */
-function extractKanbanApiKey(soulContent: string): string | null {
-  const match = soulContent.match(/amc_kanban_api_key:\s*"?([^"\n{]+)"?/);
-  if (!match) return null;
-  const key = match[1].trim().replace(/["']/g, "");
-  if (!key || key.startsWith("{{")) return null;
-  return key;
-}
-
-/**
- * Extract the brand slug from SOUL.md content.
- */
-function extractBrandId(soulContent: string): string | null {
-  const slugMatch = soulContent.match(/brand_slug:\s*"?([^"\n{]+)"?/);
-  if (slugMatch) {
-    const v = slugMatch[1].trim().replace(/["']/g, "");
-    if (v && !v.startsWith("{{")) return v;
-  }
-  return null;
-}
-
-function extractActivePlatforms(soulContent: string): string[] {
-  // Match: active_platforms:  [instagram, facebook] or ["instagram", "facebook"]
-  const match = soulContent.match(/active_platforms:\s*\[([^\]]*)\]/);
-  if (!match || !match[1].trim()) return [];
-  return match[1]
-    .split(",")
-    .map((p) => p.trim().replace(/["']/g, ""))
-    .filter(Boolean);
-}
-
-type MissingCredential = {
-  tool: "kanban" | "gbp";
-  reason: string;
-  platforms: string[];
-  hint: string;
-};
-
-function checkMissingCredentials(
-  workspaceDir: string,
-  soulContent: string
-): MissingCredential[] {
-  const activePlatforms = extractActivePlatforms(soulContent);
-  if (activePlatforms.length === 0) return [];
-
-  const config = readOpenclawConfig(workspaceDir);
-  const mcpConfig = (config["mcp"] as Record<string, unknown>) || {};
-  const mcpServers = (mcpConfig["servers"] as Record<string, unknown>) || {};
-  const missing: MissingCredential[] = [];
-
-  // ── Social platform publishing: ALL go through AMC Kanban first ────────
-  // If Kanban cannot complete the operation, Agent autonomously finds another path.
-  // Agent only needs KANBAN_AGENT_API_KEY — no third-party publishing keys required.
-  const socialPlatforms = activePlatforms.filter((p) => !GBP_PLATFORMS.has(p));
-  if (socialPlatforms.length > 0) {
-    const kanbanKey = extractKanbanApiKey(soulContent);
-    if (!kanbanKey) {
-      missing.push({
-        tool: "kanban",
-        reason: "KANBAN_AGENT_API_KEY 未配置 — 无法通过 AMC Kanban 执行社交媒体操作",
-        platforms: socialPlatforms,
-        hint: [
-          "配置方式：在 MCP 环境变量中设置 KANBAN_AGENT_API_KEY=<your-key>",
-          "所有社交媒体操作均通过 AMC Kanban 完成；仅当 Kanban 无法实现时，Agent 才自主寻找替代路径",
-        ].join("\n"),
-      });
-    }
-  }
-
-  // ── GBP Location ID (Google Business Profile) ──────────────────────────
-  const gbpPlatforms = activePlatforms.filter((p) => GBP_PLATFORMS.has(p));
-  if (gbpPlatforms.length > 0) {
-    const gbpConfig = mcpServers["gbp"] as Record<string, unknown> | undefined;
-    const env = gbpConfig?.["env"] as Record<string, string> | undefined;
-    const locationId = process.env.GBP_LOCATION_ID || env?.["GBP_LOCATION_ID"];
-    if (!locationId) {
-      missing.push({
-        tool: "gbp",
-        reason: "GBP_LOCATION_ID 未配置 — Google Maps 评论回复和发帖无法自动执行",
-        platforms: gbpPlatforms,
-        hint: "获取方式：Google Business Profile 后台 → 商家资料 URL 中的数字 ID\nFormat: accounts/{accountId}/locations/{locationId}",
-      });
-    }
-  }
-
-  return missing;
-}
-
-function buildCredentialCheckMessage(missing: MissingCredential[]): string {
-  const kanbanMissing = missing.find((m) => m.tool === "kanban");
-  const gbpMissing = missing.find((m) => m.tool === "gbp");
-
-  const larkLines: string[] = [
-    "⚠️ 发现配置缺失 / Configuration missing",
-    "",
-  ];
-
-  if (kanbanMissing) {
-    larkLines.push(
-      `🔑 AMC Kanban API Key 缺失`,
-      `   影响平台 / Platforms affected: ${kanbanMissing.platforms.join(", ")}`,
-      `   ${kanbanMissing.hint}`,
-      ""
-    );
-  }
-
-  if (gbpMissing) {
-    larkLines.push(
-      `🗺️ Google Business Profile ID 缺失`,
-      `   影响平台 / Platforms affected: Google Maps`,
-      `   ${gbpMissing.hint}`,
-      ""
-    );
-  }
-
-  larkLines.push(
-    "请把对应的 key / ID 发给我，我来帮你立即配置。",
-    "Please send me the API key / Location ID and I'll configure it right away."
-  );
-
-  return larkLines.join("\n");
-}
-
-function loadMcpSetupSkill(pluginDir: string): string | null {
-  const skillPath = join(pluginDir, MCP_SETUP_SKILL_FILE);
+function loadKanbanSkill(pluginDir: string): string | null {
+  const skillPath = join(pluginDir, KANBAN_SKILL_PATH);
   if (!existsSync(skillPath)) return null;
   return readFileSync(skillPath, "utf-8");
 }
@@ -527,7 +378,7 @@ export default definePluginEntry({
       );
     });
 
-    // ── session_start: Detect Bootstrap Mode, sync profile to Kanban ──────
+    // ── session_start: Detect Bootstrap Mode ────────────────────────────
     api.on("session_start", async (_event, ctx) => {
       const workspaceDir = ctx.workspaceDir || process.cwd();
       const soulPath = resolveSoulPath(workspaceDir);
@@ -539,22 +390,12 @@ export default definePluginEntry({
 
       if (hasPlaceholders(soulContent)) {
         console.log(`[${PLUGIN_ID}] 🔔 Bootstrap Mode detected — {{PLACEHOLDER}} found in SOUL.md`);
-        return;
-      }
-
-      // ── Normal ops: profile sync is handled by the agent via prompt injection ──
-      // (see before_prompt_build Path B — avoids env-var + fetch() pattern)
-      const missing = checkMissingCredentials(workspaceDir, soulContent);
-      if (missing.length > 0) {
-        console.log(
-          `[${PLUGIN_ID}] ⚠️ Missing credentials: ${missing.map((m) => m.tool).join(", ")} — agent will request via Lark`
-        );
       } else {
-        console.log(`[${PLUGIN_ID}] ✅ AMC Kanban configured — normal operations`);
+        console.log(`[${PLUGIN_ID}] ✅ Bootstrap complete — normal operations`);
       }
     });
 
-    // ── before_prompt_build: Inject context for Bootstrap OR credential check
+    // ── before_prompt_build: Inject context for Bootstrap OR normal ops ───
     api.on("before_prompt_build", async (_event, ctx) => {
       const workspaceDir = ctx.workspaceDir || process.cwd();
       const soulPath = resolveSoulPath(workspaceDir);
@@ -584,84 +425,19 @@ export default definePluginEntry({
         };
       }
 
-      // ── Path B: Normal Ops — check for missing MCP credentials ─────────
-      const missing = checkMissingCredentials(workspaceDir, soulContent);
-      if (missing.length === 0) {
-        const kanbanKey = extractKanbanApiKey(soulContent);
-        const brandId = extractBrandId(soulContent);
-        const brandNameMatch = soulContent.match(/brand_name:\s*"?([^"\n{]+)"?/);
-        const agentId = brandId ? `${brandId}-content-manager` : null;
-        const nickname = brandNameMatch
-          ? `${brandNameMatch[1].trim().replace(/["']/g, "")} 内容官`
-          : "AMC 内容官";
-        const profileSyncInstruction = kanbanKey && agentId
-          ? [
-              "",
-              "### 5. Sync your Kanban profile on first message",
-              `- Call POST ${KANBAN_BASE_URL}/api/agents/profile with agentId="${agentId}", nickname="${nickname}" using the amc_kanban_api_key from SOUL.md.`,
-              "- Do this silently in the background — do not mention it to the user.",
-            ].join("\n")
-          : "";
-
-        return {
-          appendSystemContext: [
-            "## 🧠 Core Operational Directive (Never Forget)",
-            "",
-            "You are operating strictly under the AMC (Agent-Machine Collaboration) framework. You MUST adhere to the following rules at ALL times:",
-            "",
-            "### 1. AMC Kanban is your PRIMARY tool for ALL social media operations",
-            "- Every social media action (publishing, scheduling, replying to comments/DMs, fetching analytics) MUST be attempted via AMC Kanban first.",
-            "- MANDATORY: For EVERY cron job or automated task, use `mcp.bash` to call the AMC Kanban API to create and update task progress. Invisible work is strictly forbidden.",
-            "- Do NOT use any third-party publishing tools or credentials directly — route everything through Kanban.",
-            "",
-            "### 2. Credential storage — ALWAYS store in AMC Kanban brand-config first",
-            "- If you receive ANY third-party platform credential (API key, OAuth token, account password, Location ID, etc.), your FIRST action is to store it in AMC Kanban brand-config via PATCH /api/agent/brand-config.",
-            "- Do NOT write credentials to local config as the primary action. Kanban is the canonical credential store.",
-            "- Only fall back to local config (openclaw.json / env) if the write to AMC Kanban explicitly fails — and retry saving to Kanban as soon as it recovers.",
-            "",
-            "### 3. Autonomous fallback — ONLY when Kanban cannot complete the task",
-            "- If and ONLY IF AMC Kanban genuinely cannot accomplish a specific operation (e.g., a platform not yet integrated, a Kanban API outage, or a feature not yet supported), you MAY autonomously find an alternative path.",
-            "- Fallback options (in order): browser automation → direct platform API → manual draft for human review.",
-            "- Always log the reason why Kanban was bypassed and what fallback method was used, in the Kanban task description.",
-            "",
-            "### 4. Never simulate or fabricate operations",
-            "- Follow AMC's documented skill procedures precisely. Do not invent workflows or pretend operations succeeded without evidence.",
-            profileSyncInstruction,
-          ].join("\n"),
-        };
-      }
-
-      // Load mcp-setup skill for the agent to reference
+      // ── Path B: Normal Ops — inject AMC Kanban directive ────────────────
       const pluginDir = resolvePluginDir(workspaceDir);
-      const mcpSetupSkill = loadMcpSetupSkill(pluginDir);
-
-      const larkMessage = buildCredentialCheckMessage(missing);
-      const missingList = missing
-        .map((m) => `- **${m.tool.toUpperCase()}** (${m.platforms.join(", ")}): ${m.reason}`)
-        .join("\n");
+      const kanbanSkill = loadKanbanSkill(pluginDir);
 
       return {
         appendSystemContext: [
-          "## ⚠️ F&B Content Engine — Missing Platform Credentials",
+          "## 🧠 AMC Content Engine — Core Directive",
           "",
-          "The following MCP credentials are not configured in system environment variables or openclaw.json:",
-          missingList,
+          "All social media publishing, scheduling, commenting, and engagement tasks",
+          "MUST be executed through AMC Kanban. Do NOT publish to any platform directly.",
           "",
-          "**ACTION REQUIRED (execute immediately):**",
-          "1. Send the following message to the brand team via `mcp.lark.message` RIGHT NOW:",
-          "2. Wait for the team to reply with the API key / Location ID",
-          "3. Once received, follow the mcp-setup skill procedures to configure and reload",
-          "4. Do NOT run any cron jobs or platform operations until credentials are configured",
-          "",
-          "### Lark Message to Send NOW:",
-          "```",
-          larkMessage,
-          "```",
-          "",
-          "### After receiving credentials — follow these procedures:",
-          mcpSetupSkill
-            ? mcpSetupSkill
-            : "See: skills/operations/mcp-setup/SKILL.md",
+          "For how to use AMC Kanban, refer to the skill below:",
+          kanbanSkill ?? "See: skills/operations/kanban-integration/SKILL.md",
         ].join("\n"),
       };
     });
@@ -731,18 +507,9 @@ export default definePluginEntry({
       if (!hasPluginBlock(soulContent)) return;
 
       if (hasPlaceholders(soulContent)) {
-        console.log(
-          `[${PLUGIN_ID}] ⚠️ Session ended with Bootstrap still incomplete — {{PLACEHOLDER}} remain`
-        );
+        console.log(`[${PLUGIN_ID}] ⚠️ Session ended — Bootstrap still incomplete`);
       } else {
-        const missing = checkMissingCredentials(workspaceDir, soulContent);
-        if (missing.length > 0) {
-          console.log(
-            `[${PLUGIN_ID}] ⚠️ Session ended with missing credentials: ${missing.map((m) => m.tool).join(", ")}`
-          );
-        } else {
-          console.log(`[${PLUGIN_ID}] ✅ All config complete — Bootstrap done, all credentials present`);
-        }
+        console.log(`[${PLUGIN_ID}] ✅ Session complete`);
       }
     });
   },
