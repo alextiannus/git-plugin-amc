@@ -140,7 +140,7 @@ Adapt language to match what the owner is using.
 ---
 
 **Q8 · 视觉身份 Visual Identity**
-> "你们品牌的视觉风格是怎样的？请提供以下信息（有哪个填哪个）——
+> "你们品牌的视觉风格是怎样的？（有哪个填哪个）——
 > What's your brand's visual style? Share any of the following:
 >
 > 1. 品牌主色调（hex 码或颜色描述，例如"温暖的红色和金色")
@@ -150,18 +150,49 @@ Adapt language to match what the owner is using.
 >    Visual style keywords (3 words, e.g. 'warm, rustic, close-up' or 'minimal, premium, white space')
 >
 > 3. 我喜欢这个账号的视觉风格（平台+账号名）
->    A social account whose visual style I love (platform + @handle)
->
-> 4. 已审批的图片/视频素材存在哪里？（Lark Drive 链接或说明）
->    Where are your approved visual assets stored? (Lark Drive link or description)"
+>    A social account whose visual style I love (platform + @handle)"
 
 → Updates: `brand-voice.md` under Visual Identity section
-→ Fields: `BRAND_COLORS` / `BRAND_VISUAL_STYLE` / `VISUAL_REFERENCE` / `ASSETS_LOCATION`
+→ Fields: `BRAND_COLORS` / `BRAND_VISUAL_STYLE` / `VISUAL_REFERENCE`
 → Used by: `visual-brief` skill for every piece of content
 
 ---
 
-**Q9 · Forbidden words or topics**
+**Q9 · 现成素材 Existing Assets**
+> "你们现在有没有可以马上用的图片或视频素材？
+> 比如历史拍摄照片、产品图、门店照片、宣传物料等。
+> 如果有，请分享 Lark Drive / Google Drive 链接，或告诉我大约有多少。
+> 如果目前没有也没关系，我会为你安排首次拍摄计划。
+>
+> Do you have any photos or videos ready to use?
+> E.g. past shoots, product images, store photos, or marketing materials.
+> Share a Drive link, or describe what you have. If nothing yet, no problem."
+
+→ Updates: `vault/media/media-index.md` with initial asset inventory
+→ If assets exist: creates entries with location link + rough count
+→ If no assets: flags 'first-shoot needed' in media-index.md, prepares shoot brief after onboarding
+→ Also fills: `ASSETS_LOCATION` in `brand-voice.md` Visual Identity section
+
+---
+
+**Q10 · 期待发布周期 Publishing Cadence**
+> "你希望每周大约发多少条内容？哪个平台对你最重要？
+> 例如：“每周 5-7 条，Instagram 和小红书最重要”
+> 不确定的话，用我的默认方案：每天 2-3 条，全平台均匀分配。
+>
+> How many posts per week do you want, and which platform matters most to you?
+> E.g. '5-7 per week, Instagram and RedNote are priority'
+> Not sure? I'll use my default: 2-3 posts/day across all platforms."
+
+→ Maps to: `{{POSTING_FREQUENCY}}` and `{{PRIORITY_PLATFORMS}}` in SOUL.md
+→ Updates: `scheduling.md` posting windows and batch priorities
+→ Default if skipped: 2-3 posts/day, all active platforms weighted equally
+
+---
+
+### Module 3 · Compliance (→ bilingual-gate.md)
+
+**Q11 · Forbidden words or topics**
 > "有没有你绝对不希望出现在内容里的词语、话题、或竞争对手名字？
 > Any words, topics, or competitor names that should never appear in our content?"
 
@@ -169,9 +200,7 @@ Adapt language to match what the owner is using.
 
 ---
 
-### Module 3 · Compliance (→ bilingual-gate.md)
-
-**Q10 · Top products**
+**Q12 · Top products**
 > "你们最常推广的 5-10 个产品或服务是哪些？请列出中文名和英文名。
 > What are your top 5-10 most-promoted products or services? Please give both Chinese and English names."
 
@@ -179,43 +208,9 @@ Adapt language to match what the owner is using.
 
 ---
 
-### Module 4 · Shared Resources
+### Module 4 · Operations
 
-**Q11 · Trending Radar URL**
-> "我们有一个每日更新的热点雷达文档，所有品牌都共享。
-> 地址是：[read trending_radar from SOUL.md]
-> 这个地址对你的品牌适用吗？还是需要用其他地址？
-> We have a shared daily Trending Radar document.
-> The default URL is: [url]. Does this apply to your brand, or do you need a different one?"
-
-→ Maps to: `trending_radar` in SOUL.md
-→ If unchanged: keep default
-
----
-
-**Q12 · AI Workspaces folder (vault parent)**
-> "我会在 Lark 云盘里为你创建专属的品牌档案夹。
-> 默认位置是 AI Workspaces 文件夹：[read workspaces_folder from SOUL.md]
-> 这个位置可以吗？如果你已经有一个偏好的位置，可以把链接给我。
->
-> I'll create your brand's vault folder in Lark Drive.
-> Default location is the AI Workspaces folder: [url]. Is that OK?
-> If you have a preferred parent folder, paste the Lark Drive link."
-
-→ Maps to: `{{LARK_WORKSPACES_URL}}` (parent folder)
-→ If unchanged: keep default
-→ After Q12 answer: immediately create the vault without waiting:
-  ```
-  [AGENT ACTION — runs silently during Q13]
-  Execute the local Node.js script using your exec tool:
-  node scripts/create-vault.js "{{BRAND_SLUG}}" "{{LARK_WORKSPACES_URL}}"
-
-  → Save returned folder URL as {{VAULT_LARK_URL}}
-  → Upload vault-templates/ contents into the new Lark Drive folder
-  → If script execution fails: log error, ask owner to create manually and paste the URL
-  ```
-
----
+> 热点雷达 URL 和 AI 工作區文件夹地址已从访谈中移除。Agent 在安装后自动从 SOUL.md 读取默认地址，无需回答。
 
 **Q13 · Promotions and pricing**
 > "你们有固定的优惠或套餐价格区间吗？
@@ -244,14 +239,20 @@ After all 14 questions are answered:
 ```
 1. Fill all {{PLACEHOLDER}} values directly in SOUL.md → overwrite in-place
    (write only to plugins.git-plugin-amc section, do not touch other sections)
-2. Update brand-voice.md with Q6/Q7/Q8/Q9/Q14 answers
+2. Update brand-voice.md with Q6/Q7/Q8/Q9/Q11/Q14 answers
    - Digital Touchpoints (Q6): website + handles
    - Tone of Voice (Q7): verbal tone rules
-   - Visual Identity (Q8): colors, style keywords, reference, assets location
-   - Forbidden Words (Q9): do-not-use list
+   - Visual Identity (Q8): colors, style keywords, reference
+   - Existing Assets (Q9): ASSETS_LOCATION + initial media-index.md entries
+   - Forbidden Words (Q11): do-not-use list
    - Contact Info (Q14): address, hours, phone
-3. Fill bilingual-gate.md Canonical Product Name Map with Q10 answers
-4. [IF NOT ALREADY DONE IN Q12] Create Lark Drive vault:
+2b. Apply Q10 (Publishing Cadence) to scheduling.md:
+   - Set POSTING_FREQUENCY and PRIORITY_PLATFORMS in SOUL.md
+   - Adjust posting windows in scheduling.md if non-default
+3. Fill bilingual-gate.md Canonical Product Name Map with Q12 answers
+4. Auto-apply SOUL.md defaults for Trending Radar URL and Workspaces folder
+   (no user input needed — read trending_radar and workspaces_folder from SOUL.md)
+4b. Create Lark Drive vault using the default LARK_WORKSPACES_URL:
    Execute `node scripts/create-vault.js "{{BRAND_SLUG}}" "{{LARK_WORKSPACES_URL}}"`
    → Upload vault-templates/ files into the new folder
    → Store returned URL as {{VAULT_LARK_URL}} in SOUL.md shared_resources
