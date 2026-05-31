@@ -41,7 +41,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/alextiannus/git-plugin-amc.git"
+    "url": "git+https://github.com/alextiannus/git-plugin-amc.git"
   },
   "homepage": "https://github.com/alextiannus/git-plugin-amc#readme",
   "bugs": {
