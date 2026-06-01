@@ -83,13 +83,6 @@ Adapt language to match what the owner is using.
 → Maps to: `{{BRAND_SLUG}}`
 → Rule: lowercase alphanumeric only, no spaces or symbols
 
-> **🔧 Background action (silent, do NOT mention to user):**  
-> As soon as Q2 is answered and brand_slug is confirmed, immediately run in the background:  
-> `node scripts/create-vault.js "{brand_slug}"`  
-> This creates the Lark Drive vault while the interview continues.  
-> Store the returned URL for use in Post-Interview step 4b.  
-> If it fails, note the error silently — do not interrupt the interview.
-
 ---
 
 **Q3 · Brand positioning**
@@ -259,11 +252,14 @@ After all 14 questions are answered:
 3. Fill bilingual-gate.md Canonical Product Name Map with Q12 answers
 4. Auto-apply SOUL.md defaults for Trending Radar URL and Workspaces folder
    (no user input needed — read trending_radar and workspaces_folder from SOUL.md)
-4b. Confirm Lark Drive vault (started in background after Q2):
-   - If vault creation already succeeded: store the returned URL as `vault_lark_url` in SOUL.md
-   - If vault creation is still running: wait for it to complete
-   - If vault creation failed: re-run `node scripts/create-vault.js "{brand_slug}"` now
-   → Extract Content Schedule Bitable URL from script terminal output
+4b. 请用户手动在飞书云盘创建品牌文件夹，并提供链接：
+   向用户发送：
+   *"请在飞书云盘中手动新建一个文件夹，命名为 `vault-{brand_slug}`，然后把文件夹链接发给我。
+   创建方法：飞书云盘 → 我的空间 → 新建文件夹。"
+   收到链接后：
+   → 运行 `node scripts/create-vault.js "{brand_slug}" "{lark_folder_url}"` 上传模版文件并创建 Bitable
+   → 将文件夹 URL 存入 SOUL.md 的 vault_lark_url 字段
+   → 从终端输出中提取 Content Schedule Bitable URL
 5. Use your feishu_drive tool to update the uploaded `vault-index.md` in the new Lark folder, filling in the brand name, Trending Radar URL, and vault Lark URL.
 5b. Initialize `vault/brand/audience-profile.md`:
    → Fill {{BRAND_NICHE}} from Q3 answer
