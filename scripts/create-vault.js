@@ -3,18 +3,14 @@ import path from 'path';
 import os from 'os';
 
 const BRAND_SLUG = process.argv[2];
-let PARENT_URL = process.argv[3];
+const PARENT_URL = process.argv[3]; // optional — if omitted, vault goes to Lark Drive root
 
 if (!BRAND_SLUG) {
   console.error("Error: Brand slug is required. Usage: node scripts/create-vault.js <brand_slug> [parent_folder_url]");
   process.exit(1);
 }
 
-if (!PARENT_URL || PARENT_URL === 'null') {
-  PARENT_URL = "https://12eat-ai.sg.larksuite.com/drive/folder/PbugfutjllCDM0dqMiIlN0orgZd";
-}
-
-const PARENT_TOKEN = PARENT_URL.split('?')[0].split('/').pop();
+// PARENT_TOKEN is resolved at runtime inside main() — see getRootFolderToken()
 
 async function getCredentials() {
   const configPath = path.join(os.homedir(), '.openclaw', 'openclaw.json');
@@ -40,6 +36,32 @@ async function getTenantAccessToken(appId, appSecret) {
   const data = await res.json();
   if (data.code !== 0) throw new Error("Failed to get token: " + JSON.stringify(data));
   return data.tenant_access_token;
+}
+
+/**
+ * Resolve the parent folder token:
+ * - If a URL was passed as argv[3], extract token from it.
+ * - Otherwise, call the Lark API to get the user's own Drive root folder token.
+ */
+async function resolveParentToken(accessToken) {
+  if (PARENT_URL) {
+    const token = PARENT_URL.split('?')[0].split('/').pop();
+    console.log(`Using specified parent folder token: ${token}`);
+    return token;
+  }
+
+  // No parent URL supplied → create vault in the user's Lark Drive root
+  console.log("No parent folder specified — fetching Lark Drive root folder...");
+  const res = await fetch("https://open.larksuite.com/open-apis/drive/explorer/v2/root_folder/meta", {
+    method: "GET",
+    headers: { "Authorization": `Bearer ${accessToken}` }
+  });
+  const data = await res.json();
+  if (data.code !== 0) throw new Error("Failed to get root folder: " + JSON.stringify(data));
+  const rootToken = data.data?.token;
+  if (!rootToken) throw new Error("Root folder token not found in response: " + JSON.stringify(data));
+  console.log(`Using Lark Drive root folder token: ${rootToken}`);
+  return rootToken;
 }
 
 async function createFolder(token, name, folderToken) {
@@ -180,8 +202,11 @@ async function main() {
   const { appId, appSecret } = await getCredentials();
   const token = await getTenantAccessToken(appId, appSecret);
 
+  // Resolve parent folder: user's Lark Drive root (default) or specified URL
+  const parentToken = await resolveParentToken(token);
+
   console.log(`Creating main vault folder: vault-${BRAND_SLUG}`);
-  const rootFolder = await createFolder(token, `vault-${BRAND_SLUG}`, PARENT_TOKEN);
+  const rootFolder = await createFolder(token, `vault-${BRAND_SLUG}`, parentToken);
 
   const templatesDir = path.join(process.cwd(), 'vault-templates');
   
