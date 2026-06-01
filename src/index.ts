@@ -12,7 +12,7 @@
  * - agent_end           → log Bootstrap / credential completion status
  *
  * Schedule registration:
- * - All 22 tasks from skills/operations/cron-jobs.md are registered programmatically
+ * - 20 tasks registered programmatically (Daily×8, Weekly×8, Monthly×4)
  * - Tasks are suspended automatically by OpenClaw when Bootstrap Mode is active
  * - api.registerSchedule() is idempotent — safe to call on every gateway_start
  */
@@ -27,7 +27,9 @@ const PLUGIN_ID = "git-plugin-amc";
 const SOUL_TEMPLATE_FILE = "SOUL.md.template";
 const ONBOARDING_FLOW_FILE = "bootstrap/onboarding-flow/SKILL.md";
 const KANBAN_SKILL_PATH = "skills/operations/kanban-integration/SKILL.md";
-const PLACEHOLDER_REGEX = /\{\{[A-Z_]+\}\}/g;
+// No /g flag: we only use .test() once per call, not exec() in a loop.
+// A global regex with .test() maintains lastIndex state which is error-prone.
+const PLACEHOLDER_REGEX = /\{\{[A-Z_]+\}\}/;
 
 // Mandatory runtime fallback rule appended to execution prompts.
 const FALLBACK_RULE_PROMPT =
@@ -54,6 +56,7 @@ function withFallback(prompt: string): string {
 // Cron format: minute hour dom month dow (standard 5-field, UTC)
 // Registered programmatically — no manual setup required.
 // api.registerSchedule() is idempotent: safe to call on every gateway_start.
+// Total: 20 tasks (Daily×8, Weekly×8, Monthly×4)
 // Note: three Monday-09:00 tasks are offset by 5 min to avoid collision.
 const SCHEDULE = [
   // ── Daily ──────────────────────────────────────────────────
@@ -250,10 +253,18 @@ function hasPluginBlock(soulContent: string): boolean {
 }
 
 function hasPlaceholders(soulContent: string): boolean {
-  const blockStart = soulContent.indexOf("PLUGIN · git-plugin-amc");
+  // Support both merge formats:
+  //   Markdown heading (our appendFileSync merge): "## PLUGIN · git-plugin-amc"
+  //   YAML key (OpenClaw native merge):            "plugins.git-plugin-amc:"
+  const markerMd   = soulContent.indexOf("PLUGIN · git-plugin-amc");
+  const markerYaml = soulContent.indexOf("plugins.git-plugin-amc:");
+  // Use whichever marker appears first (or either if only one is present)
+  const blockStart =
+    markerMd !== -1 && markerYaml !== -1
+      ? Math.min(markerMd, markerYaml)
+      : markerMd !== -1 ? markerMd : markerYaml;
   if (blockStart === -1) return false;
   const section = soulContent.slice(blockStart);
-  PLACEHOLDER_REGEX.lastIndex = 0;
   return PLACEHOLDER_REGEX.test(section);
 }
 
@@ -303,11 +314,16 @@ function mergeSoulTemplate(
 }
 
 function resolvePluginDir(_workspaceDir: string): string {
-  // Use __dirname-based path — this is always correct regardless of workspaceDir.
+  // Primary: __dirname-based path derived from the running module's location.
   // When OpenClaw loads dist/index.js, PLUGIN_ROOT resolves to the plugin install dir.
-  if (existsSync(PLUGIN_ROOT)) return PLUGIN_ROOT;
-  // Fallback: standard install path
-  return join(process.env.HOME || "/", ".openclaw", "extensions", PLUGIN_ID);
+  if (existsSync(PLUGIN_ROOT)) {
+    console.log(`[${PLUGIN_ID}] Plugin dir resolved via import.meta.url: ${PLUGIN_ROOT}`);
+    return PLUGIN_ROOT;
+  }
+  // Fallback: standard npm install path
+  const fallback = join(process.env.HOME || "/", ".openclaw", "extensions", PLUGIN_ID);
+  console.log(`[${PLUGIN_ID}] Plugin dir falling back to: ${fallback}`);
+  return fallback;
 }
 
 function loadOnboardingFlow(pluginDir: string): string | null {
@@ -371,16 +387,25 @@ export default definePluginEntry({
       }
 
       const soulPath = resolveSoulPath(workspaceDir);
-      const result = mergeSoulTemplate(soulPath, pluginDir);
-      console.log(`[${PLUGIN_ID}] SOUL.md merge: ${result.reason}`);
 
-      if (result.merged) {
-        console.log(
-          `[${PLUGIN_ID}] ✅ SOUL.md.template merged. Registering Bootstrap trigger cron.`
-        );
-        // Fresh install: register a one-shot cron 2 minutes from now to
-        // proactively wake the agent and start the onboarding interview.
-        // This fires even without a user message.
+      // Wrap in try/catch — extractPluginBlock can throw if template is missing
+      let mergeResult: { merged: boolean; reason: string };
+      try {
+        mergeResult = mergeSoulTemplate(soulPath, pluginDir);
+      } catch (err) {
+        console.error(`[${PLUGIN_ID}] ❌ SOUL.md merge failed:`, err);
+        mergeResult = { merged: false, reason: `merge error: ${String(err)}` };
+      }
+      console.log(`[${PLUGIN_ID}] SOUL.md merge: ${mergeResult.reason}`);
+
+      if (mergeResult.merged) {
+        console.log(`[${PLUGIN_ID}] ✅ SOUL.md.template merged. Registering Bootstrap trigger cron.`);
+        // Register a near-future cron to proactively wake the agent and start the
+        // onboarding interview without needing the user to send the first message.
+        //
+        // ⚠️  Standard cron has no "once" concept — this cron fires on the same
+        //     minute/hour/day/month every year. The prompt includes an idempotency
+        //     guard: the agent checks SOUL.md first and skips if already configured.
         const now = new Date();
         const t = new Date(now.getTime() + 2 * 60 * 1000);
         const bootstrapCron = `${t.getUTCMinutes()} ${t.getUTCHours()} ${t.getUTCDate()} ${t.getUTCMonth() + 1} *`;
@@ -389,25 +414,24 @@ export default definePluginEntry({
             cron: bootstrapCron,
             task: "bootstrap-first-run",
             prompt:
-              "❗ Bootstrap Mode: 插件刚安装，SOUL.md 尚未配置。\n" +
-              "立刻加载 bootstrap/onboarding-flow/SKILL.md，" +
+              // Idempotency guard: skip silently if Bootstrap is already done
+              "首先读取 SOUL.md 中的 plugins.git-plugin-amc 部分。\n" +
+              "如果不包含任何 {{PLACEHOLDER}}，说明配置已完成，直接结束本任务，不做任何事。\n" +
+              "如果包含 {{PLACEHOLDER}}（Bootstrap 未完成）：\n" +
+              "  立刻加载 bootstrap/onboarding-flow/SKILL.md，" +
               "通过 mcp.lark.message 发送 Opening Message，" +
-              "然后紧接发送 Q1，开始 14 问品牌访谈。\n" +
+              "紧接发送 Q1，开始 14 问品牌访谈。\n" +
               "这是当前唯一任务，不要做任何其他事。",
           },
         ]);
-        console.log(
-          `[${PLUGIN_ID}] ⏰ Bootstrap trigger cron registered: ${bootstrapCron} (UTC)`
-        );
+        console.log(`[${PLUGIN_ID}] ⏰ Bootstrap trigger cron registered: ${bootstrapCron} (UTC)`);
       }
 
-      // ── Register all 22 cron schedules ───────────────────────────────
+      // ── Register all 20 operational cron schedules ────────────────────
       // Idempotent — safe to call on every gateway_start.
       // OpenClaw suspends tasks automatically while Bootstrap Mode is active.
       api.registerSchedule([...SCHEDULE]);
-      console.log(
-        `[${PLUGIN_ID}] ✅ Registered ${SCHEDULE.length} scheduled tasks (daily/weekly/monthly)`
-      );
+      console.log(`[${PLUGIN_ID}] ✅ Registered ${SCHEDULE.length} scheduled tasks (daily/weekly/monthly)`);
     });
 
     // ── session_start: Detect Bootstrap Mode, inject immediate signal ──────
@@ -503,54 +527,54 @@ export default definePluginEntry({
     // Fired by OpenClaw after `openclaw plugins update` or `./update.sh` succeeds.
     // The event payload contains oldVersion / newVersion injected by OpenClaw.
     api.on("post_update", async (event: Record<string, unknown>, ctx) => {
-        const workspaceDir = ctx.workspaceDir || process.cwd();
-        const pluginDir = resolvePluginDir(workspaceDir);
+      const workspaceDir = ctx.workspaceDir || process.cwd();
+      const pluginDir = resolvePluginDir(workspaceDir);
 
-        const oldVersion = (event["oldVersion"] as string | undefined) ?? "previous";
-        const newVersion = (event["newVersion"] as string | undefined) ?? readPluginVersion(pluginDir);
-        const changelog  = (event["changelog"]  as string | undefined) ?? "";
+      const oldVersion = (event["oldVersion"] as string | undefined) ?? "previous";
+      const newVersion = (event["newVersion"] as string | undefined) ?? readPluginVersion(pluginDir);
+      const changelog  = (event["changelog"]  as string | undefined) ?? "";
 
-        console.log(`[${PLUGIN_ID}] ✅ Updated: ${oldVersion} → ${newVersion}`);
+      console.log(`[${PLUGIN_ID}] ✅ Updated: ${oldVersion} → ${newVersion}`);
 
-        // Write to vault log
-        const soulPath = resolveSoulPath(workspaceDir);
-        const soulContent = existsSync(soulPath) ? readFileSync(soulPath, "utf-8") : "";
-        const date = new Date().toISOString().split("T")[0];
-        logUpdateToVault(
-          workspaceDir,
-          soulContent,
-          `\n[${date}] Plugin updated: ${oldVersion} → ${newVersion}\n`
-        );
+      // Write to vault log
+      const soulPath = resolveSoulPath(workspaceDir);
+      const soulContent = existsSync(soulPath) ? readFileSync(soulPath, "utf-8") : "";
+      const date = new Date().toISOString().split("T")[0];
+      logUpdateToVault(
+        workspaceDir,
+        soulContent,
+        `\n[${date}] Plugin updated: ${oldVersion} → ${newVersion}\n`
+      );
 
-        // Inject Lark confirmation context for the agent to send
-        const changelogSection = changelog
-          ? `\n更新内容 / What's new:\n${changelog}\n`
-          : "";
+      // Inject Lark confirmation context for the agent to send
+      const changelogSection = changelog
+        ? `\n更新内容 / What's new:\n${changelog}\n`
+        : "";
 
-        return {
-          appendSystemContext: [
-            "## ✅ F&B Content Engine — Plugin Updated Successfully",
-            "",
-            `Plugin has been updated from **${oldVersion}** to **${newVersion}**.`,
-            "",
-            "Send the following confirmation message via `mcp.lark.message` immediately:",
-            "```",
-            `✅ 插件已成功更新 / Plugin updated successfully`,
-            ``,
-            `版本 / Version: ${oldVersion} → ${newVersion}`,
-            changelogSection,
-            `更新内容 / Updated: 技能文件、合规规则、平台策略、定时任务`,
-            `Skill files, compliance rules, platform policies, cron schedule`,
-            ``,
-            `🔒 品牌定制文件未变动 / Brand files untouched:`,
-            `   brand-voice · allergen-gate · bilingual-gate`,
-            ``,
-            `✅ 所有定时任务已恢复运行 / All scheduled tasks resumed`,
-            "```",
-            "",
-            "After sending: resume normal operations — no restart required.",
-          ].join("\n"),
-        };
+      return {
+        appendSystemContext: [
+          "## ✅ F&B Content Engine — Plugin Updated Successfully",
+          "",
+          `Plugin has been updated from **${oldVersion}** to **${newVersion}**.`,
+          "",
+          "Send the following confirmation message via `mcp.lark.message` immediately:",
+          "```",
+          `✅ 插件已成功更新 / Plugin updated successfully`,
+          ``,
+          `版本 / Version: ${oldVersion} → ${newVersion}`,
+          changelogSection,
+          `更新内容 / Updated: 技能文件、合规规则、平台策略、定时任务`,
+          `Skill files, compliance rules, platform policies, cron schedule`,
+          ``,
+          `🔒 品牌定制文件未变动 / Brand files untouched:`,
+          `   brand-voice · allergen-gate · bilingual-gate`,
+          ``,
+          `✅ 所有定时任务已恢复运行 / All scheduled tasks resumed`,
+          "```",
+          "",
+          "After sending: resume normal operations — no restart required.",
+        ].join("\n"),
+      };
     });
 
     // ── agent_end: Log Bootstrap status ──────────────────────────────────

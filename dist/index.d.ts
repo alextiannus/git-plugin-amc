@@ -12,7 +12,7 @@
  * - agent_end           → log Bootstrap / credential completion status
  *
  * Schedule registration:
- * - All 22 tasks from skills/operations/cron-jobs.md are registered programmatically
+ * - 20 tasks registered programmatically (Daily×8, Weekly×8, Monthly×4)
  * - Tasks are suspended automatically by OpenClaw when Bootstrap Mode is active
  * - api.registerSchedule() is idempotent — safe to call on every gateway_start
  */

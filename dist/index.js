@@ -12,7 +12,7 @@
  * - agent_end           → log Bootstrap / credential completion status
  *
  * Schedule registration:
- * - All 22 tasks from skills/operations/cron-jobs.md are registered programmatically
+ * - 20 tasks registered programmatically (Daily×8, Weekly×8, Monthly×4)
  * - Tasks are suspended automatically by OpenClaw when Bootstrap Mode is active
  * - api.registerSchedule() is idempotent — safe to call on every gateway_start
  */
@@ -25,7 +25,9 @@ const PLUGIN_ID = "git-plugin-amc";
 const SOUL_TEMPLATE_FILE = "SOUL.md.template";
 const ONBOARDING_FLOW_FILE = "bootstrap/onboarding-flow/SKILL.md";
 const KANBAN_SKILL_PATH = "skills/operations/kanban-integration/SKILL.md";
-const PLACEHOLDER_REGEX = /\{\{[A-Z_]+\}\}/g;
+// No /g flag: we only use .test() once per call, not exec() in a loop.
+// A global regex with .test() maintains lastIndex state which is error-prone.
+const PLACEHOLDER_REGEX = /\{\{[A-Z_]+\}\}/;
 // Mandatory runtime fallback rule appended to execution prompts.
 const FALLBACK_RULE_PROMPT = " 如遇 API 调用无法完成任务，必须立即调用 skills/operations/fallback-execution/SKILL.md，切换到其他 skill（含浏览器自动化/RPA）继续执行，并把失败原因、切换路径和结果证据写回 Kanban 任务。";
 // Keywords that trigger Bootstrap interview (works even when Bootstrap is already complete, for re-config)
@@ -45,6 +47,7 @@ function withFallback(prompt) {
 // Cron format: minute hour dom month dow (standard 5-field, UTC)
 // Registered programmatically — no manual setup required.
 // api.registerSchedule() is idempotent: safe to call on every gateway_start.
+// Total: 20 tasks (Daily×8, Weekly×8, Monthly×4)
 // Note: three Monday-09:00 tasks are offset by 5 min to avoid collision.
 const SCHEDULE = [
     // ── Daily ──────────────────────────────────────────────────
@@ -174,11 +177,18 @@ function hasPluginBlock(soulContent) {
         soulContent.includes("plugins.git-plugin-amc:"));
 }
 function hasPlaceholders(soulContent) {
-    const blockStart = soulContent.indexOf("PLUGIN · git-plugin-amc");
+    // Support both merge formats:
+    //   Markdown heading (our appendFileSync merge): "## PLUGIN · git-plugin-amc"
+    //   YAML key (OpenClaw native merge):            "plugins.git-plugin-amc:"
+    const markerMd = soulContent.indexOf("PLUGIN · git-plugin-amc");
+    const markerYaml = soulContent.indexOf("plugins.git-plugin-amc:");
+    // Use whichever marker appears first (or either if only one is present)
+    const blockStart = markerMd !== -1 && markerYaml !== -1
+        ? Math.min(markerMd, markerYaml)
+        : markerMd !== -1 ? markerMd : markerYaml;
     if (blockStart === -1)
         return false;
     const section = soulContent.slice(blockStart);
-    PLACEHOLDER_REGEX.lastIndex = 0;
     return PLACEHOLDER_REGEX.test(section);
 }
 function extractPluginBlock(pluginDir) {
@@ -212,12 +222,16 @@ function mergeSoulTemplate(soulPath, pluginDir) {
     return { merged: true, reason: "Plugin block merged into SOUL.md" };
 }
 function resolvePluginDir(_workspaceDir) {
-    // Use __dirname-based path — this is always correct regardless of workspaceDir.
+    // Primary: __dirname-based path derived from the running module's location.
     // When OpenClaw loads dist/index.js, PLUGIN_ROOT resolves to the plugin install dir.
-    if (existsSync(PLUGIN_ROOT))
+    if (existsSync(PLUGIN_ROOT)) {
+        console.log(`[${PLUGIN_ID}] Plugin dir resolved via import.meta.url: ${PLUGIN_ROOT}`);
         return PLUGIN_ROOT;
-    // Fallback: standard install path
-    return join(process.env.HOME || "/", ".openclaw", "extensions", PLUGIN_ID);
+    }
+    // Fallback: standard npm install path
+    const fallback = join(process.env.HOME || "/", ".openclaw", "extensions", PLUGIN_ID);
+    console.log(`[${PLUGIN_ID}] Plugin dir falling back to: ${fallback}`);
+    return fallback;
 }
 function loadOnboardingFlow(pluginDir) {
     const flowPath = join(pluginDir, ONBOARDING_FLOW_FILE);
@@ -274,13 +288,24 @@ export default definePluginEntry({
                 return;
             }
             const soulPath = resolveSoulPath(workspaceDir);
-            const result = mergeSoulTemplate(soulPath, pluginDir);
-            console.log(`[${PLUGIN_ID}] SOUL.md merge: ${result.reason}`);
-            if (result.merged) {
+            // Wrap in try/catch — extractPluginBlock can throw if template is missing
+            let mergeResult;
+            try {
+                mergeResult = mergeSoulTemplate(soulPath, pluginDir);
+            }
+            catch (err) {
+                console.error(`[${PLUGIN_ID}] ❌ SOUL.md merge failed:`, err);
+                mergeResult = { merged: false, reason: `merge error: ${String(err)}` };
+            }
+            console.log(`[${PLUGIN_ID}] SOUL.md merge: ${mergeResult.reason}`);
+            if (mergeResult.merged) {
                 console.log(`[${PLUGIN_ID}] ✅ SOUL.md.template merged. Registering Bootstrap trigger cron.`);
-                // Fresh install: register a one-shot cron 2 minutes from now to
-                // proactively wake the agent and start the onboarding interview.
-                // This fires even without a user message.
+                // Register a near-future cron to proactively wake the agent and start the
+                // onboarding interview without needing the user to send the first message.
+                //
+                // ⚠️  Standard cron has no "once" concept — this cron fires on the same
+                //     minute/hour/day/month every year. The prompt includes an idempotency
+                //     guard: the agent checks SOUL.md first and skips if already configured.
                 const now = new Date();
                 const t = new Date(now.getTime() + 2 * 60 * 1000);
                 const bootstrapCron = `${t.getUTCMinutes()} ${t.getUTCHours()} ${t.getUTCDate()} ${t.getUTCMonth() + 1} *`;
@@ -288,16 +313,20 @@ export default definePluginEntry({
                     {
                         cron: bootstrapCron,
                         task: "bootstrap-first-run",
-                        prompt: "❗ Bootstrap Mode: 插件刚安装，SOUL.md 尚未配置。\n" +
-                            "立刻加载 bootstrap/onboarding-flow/SKILL.md，" +
+                        prompt: 
+                        // Idempotency guard: skip silently if Bootstrap is already done
+                        "首先读取 SOUL.md 中的 plugins.git-plugin-amc 部分。\n" +
+                            "如果不包含任何 {{PLACEHOLDER}}，说明配置已完成，直接结束本任务，不做任何事。\n" +
+                            "如果包含 {{PLACEHOLDER}}（Bootstrap 未完成）：\n" +
+                            "  立刻加载 bootstrap/onboarding-flow/SKILL.md，" +
                             "通过 mcp.lark.message 发送 Opening Message，" +
-                            "然后紧接发送 Q1，开始 14 问品牌访谈。\n" +
+                            "紧接发送 Q1，开始 14 问品牌访谈。\n" +
                             "这是当前唯一任务，不要做任何其他事。",
                     },
                 ]);
                 console.log(`[${PLUGIN_ID}] ⏰ Bootstrap trigger cron registered: ${bootstrapCron} (UTC)`);
             }
-            // ── Register all 22 cron schedules ───────────────────────────────
+            // ── Register all 20 operational cron schedules ────────────────────
             // Idempotent — safe to call on every gateway_start.
             // OpenClaw suspends tasks automatically while Bootstrap Mode is active.
             api.registerSchedule([...SCHEDULE]);
