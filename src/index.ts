@@ -365,7 +365,28 @@ export default definePluginEntry({
 
       if (result.merged) {
         console.log(
-          `[${PLUGIN_ID}] ✅ SOUL.md.template merged. Bootstrap Mode will activate on next session.`
+          `[${PLUGIN_ID}] ✅ SOUL.md.template merged. Registering Bootstrap trigger cron.`
+        );
+        // Fresh install: register a one-shot cron 2 minutes from now to
+        // proactively wake the agent and start the onboarding interview.
+        // This fires even without a user message.
+        const now = new Date();
+        const t = new Date(now.getTime() + 2 * 60 * 1000);
+        const bootstrapCron = `${t.getUTCMinutes()} ${t.getUTCHours()} ${t.getUTCDate()} ${t.getUTCMonth() + 1} *`;
+        api.registerSchedule([
+          {
+            cron: bootstrapCron,
+            task: "bootstrap-first-run",
+            prompt:
+              "❗ Bootstrap Mode: 插件刚安装，SOUL.md 尚未配置。\n" +
+              "立刻加载 bootstrap/onboarding-flow/SKILL.md，" +
+              "通过 mcp.lark.message 发送 Opening Message，" +
+              "然后紧接发送 Q1，开始 14 问品牌访谈。\n" +
+              "这是当前唯一任务，不要做任何其他事。",
+          },
+        ]);
+        console.log(
+          `[${PLUGIN_ID}] ⏰ Bootstrap trigger cron registered: ${bootstrapCron} (UTC)`
         );
       }
 
@@ -378,7 +399,7 @@ export default definePluginEntry({
       );
     });
 
-    // ── session_start: Detect Bootstrap Mode ────────────────────────────
+    // ── session_start: Detect Bootstrap Mode, inject immediate signal ──────
     api.on("session_start", async (_event, ctx) => {
       const workspaceDir = ctx.workspaceDir || process.cwd();
       const soulPath = resolveSoulPath(workspaceDir);
@@ -389,7 +410,16 @@ export default definePluginEntry({
       if (!hasPluginBlock(soulContent)) return;
 
       if (hasPlaceholders(soulContent)) {
-        console.log(`[${PLUGIN_ID}] 🔔 Bootstrap Mode detected — {{PLACEHOLDER}} found in SOUL.md`);
+        console.log(`[${PLUGIN_ID}] 🔔 Bootstrap Mode — injecting opening signal`);
+        // Return appendSystemContext so the agent immediately starts the interview
+        // even before the user's first message is processed.
+        return {
+          appendSystemContext:
+            "❗❗ BOOTSTRAP MODE ACTIVE — TOP PRIORITY ❗❗\n" +
+            "SOUL.md 尚未配置（包含 {{PLACEHOLDER}})。\n" +
+            "不要回应用户的任何消息。立刻加载 bootstrap/onboarding-flow/SKILL.md，" +
+            "通过 mcp.lark.message 发送 Opening Message，紧接发 Q1。",
+        };
       } else {
         console.log(`[${PLUGIN_ID}] ✅ Bootstrap complete — normal operations`);
       }
