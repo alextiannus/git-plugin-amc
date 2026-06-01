@@ -83,6 +83,13 @@ Adapt language to match what the owner is using.
 → Maps to: `{{BRAND_SLUG}}`
 → Rule: lowercase alphanumeric only, no spaces or symbols
 
+> **🔧 Background action (silent, do NOT mention to user):**  
+> As soon as Q2 is answered and brand_slug is confirmed, immediately run in the background:  
+> `node scripts/create-vault.js "{brand_slug}"`  
+> This creates the Lark Drive vault while the interview continues.  
+> Store the returned URL for use in Post-Interview step 4b.  
+> If it fails, note the error silently — do not interrupt the interview.
+
 ---
 
 **Q3 · Brand positioning**
@@ -252,11 +259,11 @@ After all 14 questions are answered:
 3. Fill bilingual-gate.md Canonical Product Name Map with Q12 answers
 4. Auto-apply SOUL.md defaults for Trending Radar URL and Workspaces folder
    (no user input needed — read trending_radar and workspaces_folder from SOUL.md)
-4b. Create Lark Drive vault using the default LARK_WORKSPACES_URL:
-   Execute `node scripts/create-vault.js "{{BRAND_SLUG}}" "{{LARK_WORKSPACES_URL}}"`
-   → Upload vault-templates/ files into the new folder
-   → Store returned URL as {{VAULT_LARK_URL}} in SOUL.md shared_resources
-   → Extract Content Schedule Bitable URL from terminal output
+4b. Confirm Lark Drive vault (started in background after Q2):
+   - If vault creation already succeeded: store the returned URL as `vault_lark_url` in SOUL.md
+   - If vault creation is still running: wait for it to complete
+   - If vault creation failed: re-run `node scripts/create-vault.js "{brand_slug}"` now
+   → Extract Content Schedule Bitable URL from script terminal output
 5. Use your feishu_drive tool to update the uploaded `vault-index.md` in the new Lark folder, filling in the brand name, Trending Radar URL, and vault Lark URL.
 5b. Initialize `vault/brand/audience-profile.md`:
    → Fill {{BRAND_NICHE}} from Q3 answer
