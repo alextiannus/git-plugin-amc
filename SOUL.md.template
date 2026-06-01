@@ -39,6 +39,13 @@
 
 **如果 Bootstrap 中途中断（重启、断连）：重新检测到 `{{PLACEHOLDER}}` → 主动重新发 Opening Message，说明"我们继续之前中断的配置"，从上次回答的问题继续，不要从头开始。**
 
+**关键词触发（任何时候生效，无论 Bootstrap 是否完成）：**
+收到以下任何关键词，立刻加载 `bootstrap/onboarding-flow/SKILL.md` 并执行 Case 5 流程：
+- 中文：品牌访问、品牌调查、品牌访谈、品牌配置、开始配置、重新配置、开始品牌访谈
+- 英文：brand interview、brand survey、brand setup、onboarding、/bootstrap、reconfigure
+→ SOUL.md 有 `{{PLACEHOLDER}}` → 开始或继续访谈
+→ SOUL.md 无 `{{PLACEHOLDER}}` → 回复配置摘要（品牌名 + 已开通平台）
+
 **Plugin 执行守卫（任何时候）：**
 在执行任何定时任务或内容操作之前，先扫描 SOUL.md 的 `plugins.git-plugin-amc` 是否还有 `{{PLACEHOLDER}}`。
 有就立刻中止该任务，补发 Bootstrap 开场消息（每 2 小时最多一次），直到配置完成。

@@ -28,6 +28,15 @@ const KANBAN_SKILL_PATH = "skills/operations/kanban-integration/SKILL.md";
 const PLACEHOLDER_REGEX = /\{\{[A-Z_]+\}\}/g;
 // Mandatory runtime fallback rule appended to execution prompts.
 const FALLBACK_RULE_PROMPT = " 如遇 API 调用无法完成任务，必须立即调用 skills/operations/fallback-execution/SKILL.md，切换到其他 skill（含浏览器自动化/RPA）继续执行，并把失败原因、切换路径和结果证据写回 Kanban 任务。";
+// Keywords that trigger Bootstrap interview (works even when Bootstrap is already complete, for re-config)
+const BOOTSTRAP_KEYWORDS = [
+    "品牌访问", "品牌调查", "品牌访谈", "品牌配置", "开始配置", "重新配置", "开始品牌访谈",
+    "brand interview", "brand survey", "brand setup", "onboarding", "/bootstrap", "reconfigure",
+];
+function hasBootstrapKeyword(message) {
+    const lower = message.toLowerCase();
+    return BOOTSTRAP_KEYWORDS.some(kw => lower.includes(kw.toLowerCase()));
+}
 function withFallback(prompt) {
     return prompt + FALLBACK_RULE_PROMPT;
 }
@@ -319,7 +328,7 @@ export default definePluginEntry({
             }
         });
         // ── before_prompt_build: Inject context for Bootstrap OR normal ops ───
-        api.on("before_prompt_build", async (_event, ctx) => {
+        api.on("before_prompt_build", async (event, ctx) => {
             const workspaceDir = ctx.workspaceDir || process.cwd();
             const soulPath = resolveSoulPath(workspaceDir);
             if (!existsSync(soulPath))
@@ -327,17 +336,31 @@ export default definePluginEntry({
             const soulContent = readFileSync(soulPath, "utf-8");
             if (!hasPluginBlock(soulContent))
                 return;
+            // Extract user message from event — OpenClaw may use different field names
+            const userMessage = String(event["userMessage"] ??
+                event["message"] ??
+                event["text"] ??
+                event["content"] ??
+                event["prompt"] ??
+                "");
+            const keywordTriggered = hasBootstrapKeyword(userMessage);
             // ── Path A: Bootstrap Mode ──────────────────────────────────────────
-            if (hasPlaceholders(soulContent)) {
+            // Triggered by: unfilled SOUL.md placeholders OR user sent a Bootstrap keyword
+            if (hasPlaceholders(soulContent) || keywordTriggered) {
                 const pluginDir = resolvePluginDir(workspaceDir);
                 const onboardingFlow = loadOnboardingFlow(pluginDir);
                 if (!onboardingFlow)
                     return;
+                const reason = hasPlaceholders(soulContent)
+                    ? "SOUL.md contains unfilled {{PLACEHOLDER}} values"
+                    : `Bootstrap keyword detected: "${userMessage.slice(0, 60)}"`;
+                console.log(`[${PLUGIN_ID}] 🔔 Bootstrap Mode: ${reason}`);
                 return {
                     appendSystemContext: [
                         "## 🔔 F&B Content Engine — Bootstrap Mode Active",
                         "",
-                        "The SOUL.md contains unfilled {{PLACEHOLDER}} values. You MUST conduct the onboarding interview NOW.",
+                        `Reason: ${reason}`,
+                        "You MUST conduct the onboarding interview NOW.",
                         "Follow the onboarding flow script below EXACTLY. Send the Opening Message + Q1 immediately.",
                         "Do NOT summarize the plugin or explain what it does — just start the interview.",
                         "",
