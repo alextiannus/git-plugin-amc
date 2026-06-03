@@ -3,7 +3,7 @@
 
 A complete social media operations plugin for F&B brands.  
 Manages content from idea to publish across 7 platforms, with bilingual support,  
-compliance gates, owner escalation, and automated reporting.
+compliance gates, and owner escalation.
 
 ---
 
@@ -105,7 +105,7 @@ openclaw plugins update git-plugin-amc
 *(如果你需要强制触发更新并重载，可以使用项目根目录下的 `./update.sh`)*
 
 **更新策略：**
-- ✅ 自动更新：22 个通用技能文件、合规规则、平台策略、cron 计划
+- ✅ 自动更新：20 个通用技能文件、合规规则、平台策略、cron 计划
 - 🔒 永不覆盖：`brand-voice.md`、`allergen-gate.md`、`bilingual-gate.md`（品牌定制内容）
 - 🔒 永不覆盖：Lark Drive vault 里的所有运营记录
 - ✅ 更新完成：`post_update` hook 自动发 Lark 通知，无需重启，无需确认
@@ -120,12 +120,12 @@ git-plugin-amc/
 ├── SOUL.md.template         ← 品牌配置薄层（复制后填写 8 个参数即可）
 ├── update.sh                ← 手动更新脚本（备用；OpenClaw 原生更新优先）
 │
-├── skills/                  ← 23 个技能模块（OpenClaw plugin install 后自动就位）
+├── skills/                  ← 20 个技能模块（OpenClaw plugin install 后自动就位）
 │   ├── core/                   repurpose-chain, hook-engine, scheduling, content-types
 │   ├── compliance/             fda-ftc-rules, allergen-gate*, platform-policies, image-rights
 │   ├── localization/           brand-voice*, bilingual-gate*
 │   ├── platforms/              instagram, tiktok, rednote, facebook, youtube, googlemap, x
-│   └── operations/             owner-approval, feedback-loop, vault-manager, cron-jobs, reporting
+│   └── operations/             kanban-integration, fallback-execution, owner-approval, feedback-loop, vault-manager, cron-jobs, update-plugin
 │                            (* = brand-customized by Bootstrap Mode, never auto-updated)
 │
 ├── bootstrap/               ← Bootstrap Mode：13问访谈脚本 + 配置逻辑
@@ -169,7 +169,7 @@ Bootstrap Mode 访谈结束后，3 个文件会被品牌信息自动填写：
 | `skills/compliance/allergen-gate.md` | 菜品过敏原对照表 | 访谈 Q12 |
 | `skills/localization/bilingual-gate.md` | 中英文菜单词典 | 访谈 Q11 |
 
-其余 20 个技能文件为通用内容，Plugin 更新时自动覆盖。
+其余 17 个技能文件为通用内容，Plugin 更新时自动覆盖。
 
 ---
 

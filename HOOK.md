@@ -194,7 +194,7 @@ monthly:
 ./skills/compliance/    → fda-ftc-rules, allergen-gate, platform-policies, image-rights
 ./skills/localization/  → brand-voice, bilingual-gate
 ./skills/platforms/     → instagram, tiktok, rednote, facebook, youtube, googlemap, x
-./skills/operations/    → owner-approval, feedback-loop, vault-manager, cron-jobs, reporting
+./skills/operations/    → kanban-integration, fallback-execution, owner-approval, feedback-loop, vault-manager, cron-jobs, update-plugin
 ./bootstrap/            → onboarding-flow
 ```
 

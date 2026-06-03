@@ -57,14 +57,11 @@ skills:
 
   operations:
     - kanban-integration  # AMC Kanban system-level operating contract
-    - mcp-setup           # credential/bootstrap setup for Kanban + GBP paths
     - fallback-execution  # mandatory API failure fallback via browser/RPA/manual paths
     - owner-approval      # crisis protocol + compliance hard stops (no approval gate for regular posts)
     - feedback-loop       # team feedback collection, weekly self-assessment, self-improvement
     - vault-manager       # vault file creation and maintenance
-    - vault-creator       # handles 'create vault' command to manually trigger create-vault.sh
     - cron-jobs           # daily 06:30-23:45 automation schedule
-    - reporting           # daily snapshot, weekly, monthly reports
     - update-plugin       # handles 'update plugin' command to manually trigger bash update.sh
 
   bootstrap:

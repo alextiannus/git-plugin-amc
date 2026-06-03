@@ -55,14 +55,11 @@ Each skill lives in its own subdirectory with a `SKILL.md` file containing YAML 
 | Skill | Directory | Description |
 |---|---|---|
 | `kanban-integration` | skills/operations/kanban-integration/ | AMC Kanban system-level operating contract |
-| `mcp-setup` | skills/operations/mcp-setup/ | Credential setup and runtime missing-config recovery |
 | `fallback-execution` | skills/operations/fallback-execution/ | Mandatory API-failure fallback via browser/RPA/manual paths |
 | `owner-approval` | skills/operations/owner-approval/ | Crisis protocol + compliance hard stops |
 | `feedback-loop` | skills/operations/feedback-loop/ | Team feedback collection + weekly self-improvement |
 | `vault-manager` | skills/operations/vault-manager/ | Vault file creation and maintenance |
-| `vault-creator` | skills/operations/vault-creator/ | Manual trigger path for vault creation workflow |
 | `cron-jobs` | skills/operations/cron-jobs/ | Daily 06:30–23:45 automation schedule |
-| `reporting` | skills/operations/reporting/ | Daily digest, weekly, monthly reports |
 | `update-plugin` | skills/operations/update-plugin/ | Manual trigger path for plugin update workflow |
 
 ### Bootstrap (1 skill)

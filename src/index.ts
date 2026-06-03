@@ -373,7 +373,7 @@ export default definePluginEntry({
   id: PLUGIN_ID,
   name: "F&B Content Engine",
   description:
-    "Social media operations plugin for F&B brands — 7 platforms, bilingual, compliance gates, automated reporting, self-configuring onboarding.",
+    "Social media operations plugin for F&B brands — 7 platforms, bilingual, compliance gates, and self-configuring onboarding.",
 
   register(api) {
     // ── gateway_start: Merge SOUL.md.template on first startup ──────────
