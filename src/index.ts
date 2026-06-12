@@ -331,8 +331,12 @@ export default definePluginEntry({
       console.log(`[${PLUGIN_ID}] SOUL.md merge: ${mergeResult.reason}`);
 
       // ── Register all 20 operational cron schedules ────────────────────
-      api.registerSchedule([...SCHEDULE]);
-      console.log(`[${PLUGIN_ID}] ✅ Registered ${SCHEDULE.length} scheduled tasks (daily/weekly/monthly)`);
+      if (typeof (api as any).registerSchedule === "function") {
+        (api as any).registerSchedule([...SCHEDULE]);
+        console.log(`[${PLUGIN_ID}] ✅ Registered ${SCHEDULE.length} scheduled tasks (daily/weekly/monthly)`);
+      } else {
+        console.warn(`[${PLUGIN_ID}] api.registerSchedule is not a function; schedules are loaded from plugin.yaml`);
+      }
     });
 
     // ── before_prompt_build: Check API key & Inject kanban-integration skills ───
