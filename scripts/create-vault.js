@@ -208,14 +208,14 @@ async function main() {
   console.log(`Creating main vault folder: vault-${BRAND_SLUG}`);
   const rootFolder = await createFolder(token, `vault-${BRAND_SLUG}`, parentToken);
 
-  const templatesDir = path.join(process.cwd(), 'vault-templates');
+  const templatesDir = path.join(process.cwd(), 'vault');
   
   let hasTemplates = false;
   try {
     await fs.access(templatesDir);
     hasTemplates = true;
   } catch (err) {
-    console.log("No vault-templates directory found, skipping template upload.");
+    console.log("No vault directory found, skipping template upload.");
   }
 
   if (hasTemplates) {

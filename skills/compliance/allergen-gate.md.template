@@ -95,4 +95,4 @@ Update this file immediately when:
 - A recipe changes (new ingredient or supplier)
 - A customer reports an allergic reaction (treat as urgent, notify owner)
 
-Every update → append entry to `vault-{{BRAND_SLUG}}/brand/ownerreview.md`
+Every update → append entry to `vault-{{BRAND_SLUG}}/brandcontext.md` change log

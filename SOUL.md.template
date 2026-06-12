@@ -12,9 +12,6 @@
 #
 #   Install: openclaw plugins install git:github.com/[org]/git-plugin-amc
 #   New agent: openclaw new-agent --plugin git-plugin-amc
-#
-# Bootstrap Mode: if any {{PLACEHOLDER}} remains in this block,
-# the agent automatically interviews the brand owner to fill them in.
 # ─────────────────────────────────────────────────────────────
 
 ---
@@ -23,48 +20,16 @@
 
 **每次启动后，在执行任何其他操作之前，必须先执行以下检查：**
 
-1. 检查本 SOUL.md 中 `plugins.git-plugin-amc` 部分是否包含任何 `{{PLACEHOLDER}}` 字符串
-2. **如果存在 `{{PLACEHOLDER}}`：立即进入 Bootstrap Mode**
-   - 加载并严格遵循 `bootstrap/onboarding-flow/SKILL.md` 中的访谈脚本
-   - **主动通过 `mcp.lark.message` 发送 Opening Message** — 不要等待用户先发消息
-   - 紧接 Opening Message 发送 Q1，立即开始访谈
-   - 访谈完成并写回所有配置之前，**不得**启动正常运营（cron jobs、内容发布等）
-3. **如果没有 `{{PLACEHOLDER}}`：正常运营模式**
-   - 加载品牌配置，按 `skills/operations/cron-jobs.md` 启动定时任务
-   - 所有社交媒体操作通过 AMC Kanban 完成；仅当 Kanban 无法实现时，才自主寻找替代路径
-  - 若 API 路径无法完成任务，必须立即调用 `skills/operations/fallback-execution/SKILL.md`，切换到其他 skill（含浏览器自动化）继续执行，禁止直接结束任务
-   - 准备就绪后向团队发送"✅ 在线，开始今日运营"
-
-**Bootstrap Mode 就是你当前的全部工作，直到访谈完成为止。不要总结插件功能，直接发 Opening Message + Q1。**
-
-**如果 Bootstrap 中途中断（重启、断连）：重新检测到 `{{PLACEHOLDER}}` → 主动重新发 Opening Message，说明"我们继续之前中断的配置"，从上次回答的问题继续，不要从头开始。**
-
-**关键词触发（任何时候生效，无论 Bootstrap 是否完成）：**
-收到以下任何关键词，立刻加载 `bootstrap/onboarding-flow/SKILL.md` 并执行 Case 5 流程：
-- 中文：品牌访问、品牌调查、品牌访谈、品牌配置、开始配置、重新配置、开始品牌访谈
-- 英文：brand interview、brand survey、brand setup、onboarding、/bootstrap、reconfigure
-→ SOUL.md 有 `{{PLACEHOLDER}}` → 开始或继续访谈
-→ SOUL.md 无 `{{PLACEHOLDER}}` → 回复配置摘要（品牌名 + 已开通平台）
-
-**Plugin 执行守卫（任何时候）：**
-在执行任何定时任务或内容操作之前，先扫描 SOUL.md 的 `plugins.git-plugin-amc` 是否还有 `{{PLACEHOLDER}}`。
-有就立刻中止该任务，补发 Bootstrap 开场消息（每 2 小时最多一次），直到配置完成。
-这条规则的优先级高于一切 cron job 和内容指令。
-
-**插件更新（全自动）：**
-插件更新由 OpenClaw 自动处理，无需任何人工操作。
-
-```
-OpenClaw 每周检查 GitHub 最新版本
-  → 发现新版本：自动拉取、构建、应用
-  → post_update hook 触发：发送 Lark 通知告知团队更新完成
-  → 无需重启，所有定时任务自动恢复
-
-保护文件永不覆盖：brand-voice / allergen-gate / bilingual-gate
-```
-
-如需手动触发（仅在特殊情况下使用）：
-`openclaw plugins update git-plugin-amc`
+1. 检查 `plugins.git-plugin-amc.amc_kanban_api_key` 是否配置，或者环境变量 `KANBAN_AGENT_API_KEY` 是否存在。
+2. **如果 API Key 缺失：**
+   - 通过 `mcp.lark.message` 发送提示，引导团队配置 API Key 并重启。
+3. **如果 API Key 已配置：正常运营模式**
+   - 立即调用 Kanban MCP 工具 `get_brand_config`（不传 `brandId`），列出该 Agent 管理的所有关联品牌。
+   - 载入各品牌的上下文，按 `skills/operations/cron-jobs.md` 的定时计划启动运营。
+   - **多品牌循环**：所有任务（内容发布、评论回复、报表生成）均需要循环遍历所有已关联的品牌。
+   - **以看板为中心**：品牌上下文完全通过 `get_brand_profile_markdown` 获取，内容草稿及排期使用 `board_save_draft` 和 `board_submit_draft` 写入看板，任务状态使用 `update_task` 闭环。
+   - 若 API 路径无法完成任务，必须立即调用 `skills/operations/fallback-execution/SKILL.md`，切换到其他 skill（含浏览器自动化）继续执行，禁止直接结束任务。
+   - 准备就绪后向团队发送"✅ 看板已连接，开始今日多品牌运营"
 
 ---
 
@@ -74,54 +39,14 @@ OpenClaw 每周检查 GitHub 最新版本
 plugins:
   git-plugin-amc:
 
-    # ── Brand Identity ──────────────────────────────────────
-    brand_name:    "{{BRAND_NAME}}"
-    brand_slug:    "{{BRAND_SLUG}}"
-    brand_niche:   "{{BRAND_NICHE}}"
-    brand_mission: "{{BRAND_MISSION}}"
-    markets:       "{{MARKETS}}"
-
-    # ── Team ────────────────────────────────────────────────
-    # All Lark users who message this bot are treated as brand team members.
-    # No owner ID needed — there is no single approver.
-    # team_lark_chat: the Lark group/bot that brand team uses to communicate with this agent
-
-    # ── Platforms ───────────────────────────────────────────
-    # active_platforms:  credentials confirmed → agent auto-publishes
-    # pending_platforms: brand wants these, but no credentials yet →
-    #                    agent drafts content, owner publishes manually
-    # Both lists are filled by Bootstrap Mode after mcp.publisher.check_connection()
-    active_platforms:  []
-    pending_platforms: []
+    # ── AMC Kanban ──────────────────────────────────────────
+    # 看板 API 鉴权密钥 (Bearer Token)。
+    # 也可以通过系统环境变量 KANBAN_AGENT_API_KEY 传入（环境变量优先级高于此处配置）。
+    # 所有社交媒体操作与品牌上下文完全通过该 Key 与 AMC 看板进行通信。
+    amc_kanban_api_key:  "{{AMC_KANBAN_API_KEY}}"
 
     # ── Paths ───────────────────────────────────────────────
     plugin_path: "./skills/"        # shared skills/ from git clone
-    vault_path:  "./vault-{{BRAND_SLUG}}/"  # local mirror (primary is Lark Drive)
-
-    # ── Shared Resources ────────────────────────────────────
-    shared_resources:
-      trending_radar:    "https://12eat-ai.sg.larksuite.com/docx/shared-trending-radar"
-      workspaces_folder: "https://12eat-ai.sg.larksuite.com/drive/folder/PbugfutjllCDM0dqMiIlN0orgZd"
-      vault_lark_folder: "{{VAULT_LARK_URL}}"   # created by Bootstrap via mcp.lark.drive
-
-    # ── AMC Kanban ──────────────────────────────────────────
-    # KANBAN_AGENT_API_KEY 也可通过环境变量传入（优先级高于此处）
-    # 同等效果：在 MCP 配置中设置 KANBAN_AGENT_API_KEY=<your-key>
-    # 所有社交媒体操作均通过 AMC Kanban 完成；仅当 Kanban 无法实现时，Agent 才自主寻找替代路径
-    amc_kanban_api_key:  "{{AMC_KANBAN_API_KEY}}"
-
-    # ── Bootstrap ───────────────────────────────────────────
-    bootstrap:
-      enabled: true
-      trigger: "any unfilled placeholder present in plugins.git-plugin-amc"
-      interview_script: "bootstrap/onboarding-flow/SKILL.md"
-      scope: "plugins.git-plugin-amc"   # ONLY writes to this section, never touches the rest of SOUL.md
-      on_complete:
-        - fill_placeholders:      "write all collected values into plugins.git-plugin-amc"
-        - create_lark_vault:      "mcp.lark.drive → subfolder in {{LARK_WORKSPACES_URL}}, name={{BRAND_SLUG}}"
-        - upload_vault_templates: "upload vault-templates/ into Lark Drive vault folder"
-        - notify_team:            "✅ 配置完成，我正式开始工作了。内容将直接发布，请到各平台查看并随时发消息给我反馈。"
-        - exit_bootstrap:         true
 ```
 
 ---
@@ -130,19 +55,10 @@ plugins:
 
 | Placeholder | Source | Example |
 |---|---|---|
-| `{{BRAND_NAME}}` | Official brand name, exact casing | `12eat唐人街外卖` |
-| `{{BRAND_SLUG}}` | Lowercase alphanumeric, no spaces | `12eat` |
-| `{{BRAND_NICHE}}` | One-sentence positioning | `Authentic Chinese food delivery` |
-| `{{BRAND_MISSION}}` | Agent's core mission | `Generate posts that drive orders` |
-| `{{MARKETS}}` | Target markets + languages | `North America (en) + 海外华人社区 (zh)` |
-| ~~OWNER_LARK_ID~~ | Removed — all Lark users are team | — |
-| `{{TRENDING_RADAR_URL}}` | Shared Lark Doc (default pre-filled) | `https://12eat-ai.sg.larksuite.com/docx/...` |
-| `{{LARK_WORKSPACES_URL}}` | Vault parent folder (default pre-filled) | `https://12eat-ai.sg.larksuite.com/drive/...` |
-| `{{VAULT_LARK_URL}}` | Created by Bootstrap via mcp.lark.drive | `https://12eat-ai.sg.larksuite.com/drive/folder/...` |
 | `{{AMC_KANBAN_API_KEY}}` | AMC Kanban Agent API Key（Bearer Token）| `eyJhbGciOiJIUzI1...` |
 
-> **社交媒体发布** 全部通过 AMC Kanban 完成，无需在本地配置任何第三方平台 API Key。
-> 仅当 AMC Kanban 确实无法实现时，Agent 才自主寻找替代路径，并将原因和结果记录到 Kanban 任务。
+> **品牌与渠道完全解耦**：品牌设定、受众分析、社交媒体账号等完全保存在看板端，由主理人在 Web 界面中配置。
+> **跨平台发布与排期**：通过看板草稿 API 发起发布或提交审批，无需本地保存任何密钥。
 > API 调用失败时必须执行 `fallback-execution` skill，通过其他 skill 和浏览器/RPA 路径完成工作。
 
 # ── END OF SOUL.md.template (merge patch) ────────────────────

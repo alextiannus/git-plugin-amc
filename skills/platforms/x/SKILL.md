@@ -14,6 +14,14 @@ plugin: git-plugin-amc
 X is the last stop in the chain, and the most conditional.
 Only post to X if the content has a genuine contrarian angle, industry observation, or sharp opinion. Never post just to fill the frequency quota.
 
+## Mandatory Context Preload
+
+Before generating any X short take or thread:
+- Read `vault/brandcontext.md` first.
+- If read fails, stop generation and report the blocker.
+- Output this line at the top before strategy routing:
+  `[BrandContext Loaded] vault/brandcontext.md loaded successfully before generation.`
+
 **Ask before posting to X:** "Does this have an opinion worth saying out loud?"
 - Yes → write it
 - No → skip X for this topic

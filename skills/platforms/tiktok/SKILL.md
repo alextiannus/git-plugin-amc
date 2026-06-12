@@ -13,6 +13,14 @@ plugin: git-plugin-amc
 **Step 2.** Take the Instagram concept and make it move.
 Raw and unpolished beats over-produced every time on TikTok.
 
+## Mandatory Context Preload
+
+Before generating any TikTok script, shot list, or caption:
+- Read `vault/brandcontext.md` first.
+- If read fails, stop generation and report the blocker.
+- Output this line at the top before strategy routing:
+  `[BrandContext Loaded] vault/brandcontext.md loaded successfully before generation.`
+
 ---
 
 ## Posting Specs

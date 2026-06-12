@@ -109,7 +109,7 @@ plugin: git-plugin-amc
 
 ## 平台受众默认画像
 
-> **重要：** 这是统计层面的默认值，非绝对规律。品牌实际受众以 `audience-profile.md` 数据为准。
+> **重要：** 这是统计层面的默认值，非绝对规律。品牌实际受众以 `vault/brandcontext.md` 中的受众数据为准。
 
 | 平台 | 年龄主力 | 语言 | 消费决策特征 | 受众关系层 | 内容目标 |
 |---|---|---|---|---|---|
@@ -172,7 +172,7 @@ Regular + Advocate（留存/激活）：50%
 - primary_signal: [saves|shares|comments|reach]
 - inferred_audience: [Discoverer|Considerer|Regular|Advocate]
 
-写入 performance-log.md 对应记录
+写入对应的 vault/post/YYYYMMDD-post.md 记录
 若连续 3 条内容 primary_signal = saves：
   → 推断 Discoverer 层级受众活跃
   → 在下周 08:00 topic discovery 中增加 Discoverer 定向内容
@@ -225,7 +225,7 @@ Month 4+:    实测受众信号主导内容决策，画像趋于准确
 - 若 Facebook 点赞主要来自 35+ → 确认社区老客画像
 - 若小红书保存率异常高 → Discoverer 层大量进入
 
-每月第一天：performance-learning 更新 audience-profile.md 的
+每月第一天：performance-learning 更新 vault/brandcontext.md 的
 "实测受众信号"字段，并与假设对比，标注偏差
 ```
 
@@ -234,7 +234,7 @@ Month 4+:    实测受众信号主导内容决策，画像趋于准确
 ## 与其他系统集成
 
 ### → Repurpose Chain（每次创作）
-- Step 0 读取 `audience-profile.md` 获取当前受众假设
+- Step 0 读取 `vault/brandcontext.md` 获取当前受众假设
 - 在 Decision Output 中声明目标受众层级
 - 各平台内容使用对应层级的写法框架
 

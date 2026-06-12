@@ -1,241 +1,91 @@
 ---
 name: cron-jobs
-description: "Daily 06:30–23:45 automation schedule"
+description: "跨品牌自动化日常运营时间表及多租户处理规范"
 plugin: git-plugin-amc
+version: 3.0.0
 ---
 
-# Skill · Cron Jobs
-# F&B Content Engine · operations/cron-jobs.md
-# ──────────────────────────────────────────────
+# Skill · 定时任务与跨品牌自动化规范
 
-## Purpose
-
-Define the automated daily, weekly, and monthly task schedule.
-These jobs run on the times specified below, every day including weekends,
-unless the agent is in Crisis Mode (all jobs paused until owner clears).
+本技能定义了 AI 内容官的每日、每周及每月自动化任务日程表。所有定时任务都是跨品牌的，AI 在运行时必须首先拉取已连接的品牌列表，然后通过循环处理每个品牌的相关运营工作。
 
 ---
 
-## PRE-FLIGHT CHECK (runs before EVERY job)
+## 任务执行前置检查 (Pre-Flight Check)
 
-Before executing any scheduled or on-demand job, check:
+在执行任何定时任务或即时操作之前，**必须**执行以下步骤：
 
 ```
-1. Scan SOUL.md → plugins.git-plugin-amc section for any {{PLACEHOLDER}} string
-2. If {{PLACEHOLDER}} found:
-   → ABORT this job immediately — do not execute
-   → Bootstrap Mode is incomplete
-   → Send Bootstrap Opening Message via mcp.lark.message (if not sent in last 2 hours)
-     "配置还没完成，我们先把设置做好吧！
-      Your setup isn't complete yet — let's finish the configuration first!"
-   → Resume Bootstrap interview from the last answered question (check ownerreview Lark Doc)
-   → Log: "[YYYY-MM-DD HH:MM] Job '{job_name}' skipped — Bootstrap incomplete"
-3. If no {{PLACEHOLDER}} found:
-   → Proceed with job normally
-   → **Kanban Logging**: You MUST create a task in the AMC Kanban system (status: `in_progress`) for this specific cron job. (e.g., "11:00 Lunch Publish Window"). See `kanban-integration.md`.
+1. 检查环境变量 KANBAN_AGENT_API_KEY 或 SOUL.md 中的 amc_kanban_api_key 是否存在。
+2. 如果未配置 API Key：
+   → 立即中止所有任务。
+   → 通过 Lark 发送警报通知品牌团队配置看板 API Key。
+3. 如果 API Key 存在，正常执行：
+   → 调用 get_brand_config 获取关联的所有品牌对象。
+   → 在 Kanban 中为当前正在执行的定时任务创建对应的子任务或日志任务（状态为 in_progress），标注品牌与任务名称（例如 "[Brand] 11:00 午餐时段发布"）。
 ```
-
-This check is the single source of truth. If SOUL.md is clean, all jobs run.
-If any placeholder remains, no operational work executes — period.
 
 ---
 
-## Daily Automation Schedule
+## 跨品牌日常自动化日程表
 
-| Time | Job | Reads | Writes |
+| 触发时间 (UTC) | 定时任务名称 | 读取数据 | 写入数据 |
 |---|---|---|---|
-| 07:00 | Daily Kanban Sync | Content Schedule Bitable | AMC Kanban (status=todo) |
-| 08:00 | Topic discovery | Trending radar cache + Media Index Bitable | Content Schedule Bitable (status=draft) |
-| 10:00 | Google Maps actions | Content Schedule Bitable + GMB API | Post records + reply log |
-| 11:00 | Lunch publish window | Content Schedule Bitable (status=ready) | Post records (status=published) |
-| 13:00 | Lunch window close + snapshot | Platform Insights APIs | Post records + daily-metrics log |
-| 17:00 | Dinner publish window | Content Schedule Bitable (status=ready) | Post records (status=published) |
-| 19:00 | Dinner window close + snapshot | Platform Insights APIs | Post records |
-| 20:00 | Comment & DM batch reply | Platform Insights APIs + post records | Post records + ownerreview Lark Doc (escalations) |
-| 23:30 | Daily metrics snapshot (PAUSED) | Platform Insights APIs | report/analytics/daily-YYYY-MM-DD.md |
+| 07:00 | 每日看板同步 (Daily Kanban Sync) | 看板任务列表 | 更新 AI 代理当日需处理任务的 assignee 状态 |
+| 08:00 | 今日话题发现 (Topic Discovery) | 热点雷达 (`board_list_topics`) | 存入看板热点话题 (`board_save_topic`) |
+| 10:00 | 谷歌地图互动 (Google Maps Actions) | 看板关联的 GBP 评论 | 自动回复评论并更新看板任务状态 |
+| 11:00 | 午餐时段发布 (Lunch Publish Window) | 看板排期草稿 (`board_list_drafts`) | 执行发布，状态置为 published / done |
+| 13:00 | 午餐数据回采 (Lunch Snapshot) | 社交媒体 Insights 数据 | 将帖子表现写入看板草稿元数据中 |
+| 17:00 | 晚餐时段发布 (Dinner Publish Window) | 看板排期草稿 (`board_list_drafts`) | 执行发布，状态置为 published / done |
+| 19:00 | 晚餐数据回采 (Dinner Snapshot) | 社交媒体 Insights 数据 | 将帖子表现写入看板草稿元数据中 |
+| 20:00 | 粉丝互动与私信回复 (Comment/DM Reply) | 社交媒体评论与私信接口 | 执行回复动作，无法处理的转为 Pending 任务 |
 
 ---
 
-## Job Details
+## 核心任务逻辑与多品牌循环实现指导
 
-**Important Kanban Requirement:** For every single job listed below, you must log your execution progress to the AMC Kanban. Create the task at the start, update the description as you progress through the steps, and mark it `done` when the job completes.
+在编写或执行定时任务时，应按照以下程序逻辑循环处理：
 
-### 06:30 · Trending Radar Refresh (Mon/Thu)
-
-```
-1. Fetch Common Vault Lark Doc (trending-radar URL from SOUL.md config)
-2. Cache locally for the day's topic discovery
-3. Flag any food-adjacent trends that could become Trending-Radar Riff content
-   (see [[core/content-types]] Type 7)
-4. If Lark Doc is unreachable: log error, use yesterday's cache, alert owner (Tier 3)
-```
-
----
-
-### 07:00 · Daily Kanban Sync
+### 08:00 · 话题发现与内容预创 (Topic Discovery)
 
 ```
-1. Read Content Schedule Bitable for all items scheduled for today.
-2. For each item, create a task in the AMC Kanban system assigned to your agentId.
-3. Set the task title to the post topic/slug and status to `todo`.
-4. This ensures the human team has full visibility of your planned daily output.
+对获取到的每一个 Brand：
+1. 调用 get_brand_profile_markdown 获取最新品牌定位、受众画像及推广策略。
+2. 调用 board_list_topics 获取今日热点话题雷达推荐。
+3. 结合品牌 Content Pillars 分析目前发帖比例，挑选最需要的题材。
+4. 使用核心创作技能生成内容主题与大纲。
+5. 调用 board_save_draft 为该品牌保存内容草稿（状态设为 draft）。
+6. 更新对应的 Kanban 任务为 done。
 ```
 
----
-
-### 08:00 · Topic Discovery & Content Creation
+### 11:00 / 17:00 · 午餐/晚餐时段发布 (Publish Window)
 
 ```
-1. Read cached trending radar
-2. Read Media Index Bitable for any new raw media uploaded by owner
-3. [content-pillars] Read vault/brand/content-pillars.md:
-   - Calculate this week's actual pillar distribution (from published + scheduled content)
-   - Identify gap pillars (actual% < target% by >5%)
-   - Prioritise idea generation for gap pillars first
-4. Cross-reference with Content Schedule Bitable for gaps in the coming 3 days
-5. Propose 1-3 new content ideas, each labelled with its pillar:
-   "[Pillar: Brand Story] 幕后故事: 师傅手拉面的 30 年..."
-6. Create full content drafts (not just ideas) in Content Schedule Bitable (status=ready)
-7. Run Compliance Gate → Bilingual Gate on each draft
-8. Schedule for next available publishing window
-   → No approval needed. Content publishes automatically per cron schedule.
-   → If Compliance Gate RED or allergen unconfirmed: hold + Lark alert (see owner-approval.md)
-9. Update vault/brand/content-pillars.md weekly health summary
+对获取到的每一个 Brand：
+1. 对应的 Kanban 任务状态更新为 in_progress。
+2. 调用 board_list_drafts(status: 'scheduled' / 'draft') 获取该时段预备发布的内容。
+3. 对于符合发布条件的内容：
+   - 使用看板的发布接口 publish / board_publish_content 提交发布。
+   - 若发布成功，更新 Kanban 任务为 done，并在 description 中记录帖子最终 URL。
+   - 若发布失败，立即执行 fallback-execution 技能（通过平台直接 API 或浏览器自动化进行发布），并将最终成功/失败日志记录回 Kanban 任务。
+```
+
+### 20:00 · 粉丝互动与私信回复 (Comment/DM Reply)
+
+```
+对获取到的每一个 Brand：
+1. 调用 board_list_social_accounts 获取关联的所有社媒平台账号。
+2. 使用 google_get_reviews 等工具获取最新的未回复评论/私信。
+3. 按照品牌 brand-voice 中规定的语气与双语规范起草回复内容。
+4. 调用 google_reply_review 或 execute_brand_action 提交回复。
+5. 遇到差评或敏感投诉，自动在看板中创建 status='pending' 的任务，并说明需要人类处理。
 ```
 
 ---
 
-### 10:00 · Google Maps Actions
+## 每周与每月触发器
 
-```
-1. If Google Maps is in pending_platforms: SKIP. Weekly reminder only.
-2. Check GMB API for new reviews since last check
-3. For each new review:
-   - Positive / Neutral → draft response, auto-publish
-   - Negative           → draft empathetic response, auto-publish after 30-min delay
-   - Crisis keywords (illness / poisoning / 食物中毒 / 异物)
-                        → trigger full Crisis Mode, do NOT auto-reply
-4. Check for new Q&A questions → draft responses, auto-publish
-5. Log all actions in post records + ownerreview Lark Doc
-```
-
----
-
-### 11:00 · Lunch Publish Window
-
-```
-1. Read Content Schedule Bitable for items with time=11:00 and status=ready
-2. For each ready item:
-   - Update its corresponding AMC Kanban task status to `in_progress`
-   - Verify Compliance Gate + Bilingual Gate still pass (content may have aged)
-   - Publish via AMC Kanban (primary path — covers all major platforms)
-     or mcp.gbp (Google Business Profile posts)
-     or push draft to Lark for manual publish (RedNote + any pending_platforms)
-   - If AMC Kanban publish fails: autonomously attempt the next available path
-     (platform direct API → browser automation → Lark manual draft)
-     and log the reason + method used in the Kanban task description
-   - Update post record status to "published"
-   - Update the AMC Kanban task status to `done`
-   - Log publish timestamp and URL
-3. If Compliance Gate RED or allergen unverified at publish time:
-   - Hold item, move to status=hold
-   - Send Lark alert to team (see owner-approval.md Compliance Hard Stops)
-```
-
----
-
-### 13:00 · Lunch Window Close + Snapshot
-
-```
-1. Capture engagement metrics for all posts published in the 11:00 window
-2. Log to post records (likes, comments, shares, views, saves — per platform)
-3. Detect anomalies: if engagement is >50% below average for similar posts → flag in ownerreview Lark Doc
-4. Update daily-metrics log
-5. [performance-learning] For any post now at 24h age:
-   → Write metrics_24h fields to vault/analytics/performance-log.md
-6. [performance-learning] For any post now at 48h age:
-   → Write metrics_48h.engagement_rate
-   → Calculate score vs. brand baseline
-   → If score ≥ 3 (Winner): trigger winner extraction + Lark notify
-   → If score = 0 (Poor): write failure analysis to what_didnt field
-```
-
----
-
-### 17:00 · Dinner Publish Window
-
-Same as 11:00 Lunch Publish Window. Publish items with time=17:00 and status=ready.
-
----
-
-### 19:00 · Dinner Window Close + Snapshot
-
-Same as 13:00 Lunch Window Close. Capture metrics for 17:00 posts.
-Also includes performance-learning 24h/48h scoring for dinner-window posts.
-
----
-
-### 20:00 · Comment & DM Batch Reply
-
-```
-1. Fetch all new comments and DMs since last check (across all active_platforms only)
-   - **Fallback Protocol:** If the AMC Kanban comment/DM API is unavailable or rate-limited, you MUST automatically use your Browser Control tool to log in to the platform and simulate a real human to fetch and reply to comments. Log the reason in the Kanban task.
-2. For each comment/DM:
-   - Classify: question / compliment / complaint / spam / crisis keyword
-   - Draft reply in customer's language ([[localization/bilingual-gate]])
-   - Compliment / question → auto-reply
-   - Complaint → auto-reply with empathetic tone; if crisis keyword detected → Crisis Mode
-   - Spam → flag for deletion, do not reply
-3. Log all replies in post records
-4. Log any crisis triggers in ownerreview Lark Doc
-```
-
----
-
-### 23:30 · Daily Metrics Snapshot
-
-```
-1. Pull final engagement metrics for ALL posts published today
-2. Compare to 7-day rolling average per platform
-3. Flag any platform with >30% drop week-over-week → Tier 3 alert to owner
-4. Write raw data to report/analytics/daily-YYYY-MM-DD.md
-```
-
-
-
----
-
-## Weekly Triggers
-
-| Day/Time | Job | Output |
-|---|---|---|
-| Mon/Thu 06:30 | Trending radar refresh | Local cache |
-| Monday 08:00 | Self-improvement report | Send weekly feedback summary & self-assessment to team (merges human feedback + performance-learning data insights) |
-| Monday 08:00 | **7d metrics batch update** | Read performance-log.md, fetch 7d data for all posts ≥7 days old, update metrics_7d fields, refresh winner-library.md platform rankings |
-| Monday 09:00 | Plugin version check | Check latest version; if update available → send Lark prompt; apply on team reply "更新插件" |
-| Monday 09:00 | Pending platform reminder | For each platform in pending_platforms: notify team "[Platform] 尚未连接账号，连接后即可开始自动运营" |
-| Monday 09:00 | Allergen pending check | Scan allergen-gate.md for [?PENDING] entries; if any found → Lark alert: "[菜品名] 过敏原信息未确认，涉及该菜品的帖子将暂停发布直到补全" |
-| Monday 10:00 | Weekly report generation | report/weekly/YYYY-Www.md + Lark notification to team |
-| Sunday evening | Weekly content batch | Propose 2-3 themes → run repurpose chain → fill next week's postschedule |
-| Friday (any time) | Weekly performance review | Analyze engagement data → update hook-engine.md or scheduling.md if patterns found |
-
----
-
-## Monthly Triggers
-
-| Day/Time | Job | Output |
-|---|---|---|
-| 1st of month, 10:00 | Monthly report generation | report/monthly/YYYY-MM.md + Lark Doc notification |
-| 1st of month | Compliance review | Review platform-policies.md for any updates; update if needed |
-| 1st of month | Voice drift check | Compare a random sample of 5 posts against brand-voice.md; flag drift to owner |
-| 1st of month | KPI reset | Reset 30-day baseline metrics in report-rules.md |
-
----
-
-## Crisis Mode Override
-
-If Crisis Mode is active ([[operations/owner-approval]] Crisis section):
-- ALL cron jobs are paused except:
-  - 06:30 Trending Radar (continue reading, do not act)
-  - 10:00 Google Maps (crisis keyword check only, no auto-replies)
-- Resume all jobs only after owner sends "CRISIS-CLEAR"
+每周一及每月 1 号，需要执行数据聚合与审计任务：
+- **每周自我评估 (Self-improvement report)**：遍历各品牌，分析上周帖子表现，更新品牌在看板中的 metrics 属性，并将总结日志上传到品牌的 Lark Drive。
+- **每周合规与过敏原审查 (Allergen & Compliance Check)**：检查合规策略，识别任何在看板中标记为需要二次确认的菜品或宣传文案。
+- **每月运营月报 (Monthly report)**：遍历品牌，自动汇总看板的 ContentDraft 状态，统计发布数与互动率，自动排版为 markdown 报告，调用 `lark_upload_file` 存入品牌云盘。

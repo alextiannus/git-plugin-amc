@@ -6,14 +6,12 @@
  * approach with programmatic hooks that OpenClaw can actually execute.
  *
  * Key hooks:
- * - gateway_start       → merge SOUL.md.template + register all 22 cron schedules
- * - session_start       → detect {{PLACEHOLDER}} → trigger Bootstrap onboarding interview
- * - before_prompt_build → inject onboarding context (Bootstrap) OR credential check (normal ops)
- * - agent_end           → log Bootstrap / credential completion status
+ * - gateway_start       → merge SOUL.md.template + register all 20 cron schedules
+ * - before_prompt_build → check Kanban API key & inject kanban-integration skills
+ * - post_update         → send update notification via Lark
  *
  * Schedule registration:
  * - 20 tasks registered programmatically (Daily×8, Weekly×8, Monthly×4)
- * - Tasks are suspended automatically by OpenClaw when Bootstrap Mode is active
  * - api.registerSchedule() is idempotent — safe to call on every gateway_start
  */
 declare const _default: unknown;

@@ -13,6 +13,14 @@ plugin: git-plugin-amc
 **Step 5 — IF APPLICABLE.**
 Not every content idea needs YouTube. Only produce YouTube content when the idea genuinely benefits from longer treatment. Skip and move to Step 6 if it doesn't.
 
+## Mandatory Context Preload
+
+Before generating any YouTube title/outline/description:
+- Read `vault/brandcontext.md` first.
+- If read fails, stop generation and report the blocker.
+- Output this line at the top before any draft:
+	`[BrandContext Loaded] vault/brandcontext.md loaded successfully before generation.`
+
 **Qualifying topics:** recipes, kitchen tours, chef stories, dish origin stories, "how it's made", ordering guides, cultural explainers
 **Skip for:** deal alerts, lunch specials, single-dish promos, anything under 5 min of real substance
 

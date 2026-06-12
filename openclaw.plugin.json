@@ -2,7 +2,7 @@
   "id": "git-plugin-amc",
   "name": "F&B Content Engine",
   "description": "Social media operations plugin for F&B brands — 7 platforms, bilingual, compliance gates, and self-configuring onboarding.",
-  "version": "0.9.6",
+  "version": "0.9.35",
   "kind": "plugin",
   "configSchema": {
     "type": "object",

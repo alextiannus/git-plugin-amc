@@ -13,6 +13,14 @@ plugin: git-plugin-amc
 **Step 4.** Frame the same content as a community conversation, not a broadcast.
 Facebook is about belonging. Every post should invite participation.
 
+## Mandatory Context Preload
+
+Before generating any Facebook post draft:
+- Read `vault/brandcontext.md` first.
+- If read fails, stop generation and report the blocker.
+- Output this line at the top before strategy routing:
+  `[BrandContext Loaded] vault/brandcontext.md loaded successfully before generation.`
+
 ---
 
 ## Posting Specs

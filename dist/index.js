@@ -6,39 +6,25 @@
  * approach with programmatic hooks that OpenClaw can actually execute.
  *
  * Key hooks:
- * - gateway_start       → merge SOUL.md.template + register all 22 cron schedules
- * - session_start       → detect {{PLACEHOLDER}} → trigger Bootstrap onboarding interview
- * - before_prompt_build → inject onboarding context (Bootstrap) OR credential check (normal ops)
- * - agent_end           → log Bootstrap / credential completion status
+ * - gateway_start       → merge SOUL.md.template + register all 20 cron schedules
+ * - before_prompt_build → check Kanban API key & inject kanban-integration skills
+ * - post_update         → send update notification via Lark
  *
  * Schedule registration:
  * - 20 tasks registered programmatically (Daily×8, Weekly×8, Monthly×4)
- * - Tasks are suspended automatically by OpenClaw when Bootstrap Mode is active
  * - api.registerSchedule() is idempotent — safe to call on every gateway_start
  */
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
 import { readFileSync, writeFileSync, existsSync, appendFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-// ── Constants ──────────────────────────────────────────────────
+// ── Constants ──────────────────────────────────
 const PLUGIN_ID = "git-plugin-amc";
 const SOUL_TEMPLATE_FILE = "SOUL.md.template";
-const ONBOARDING_FLOW_FILE = "bootstrap/onboarding-flow/SKILL.md";
 const KANBAN_SKILL_PATH = "skills/operations/kanban-integration/SKILL.md";
-// No /g flag: we only use .test() once per call, not exec() in a loop.
-// A global regex with .test() maintains lastIndex state which is error-prone.
-const PLACEHOLDER_REGEX = /\{\{[A-Z_]+\}\}/;
+const API_KEY_PLACEHOLDER = "{{AMC_KANBAN_API_KEY}}";
 // Mandatory runtime fallback rule appended to execution prompts.
 const FALLBACK_RULE_PROMPT = " 如遇 API 调用无法完成任务，必须立即调用 skills/operations/fallback-execution/SKILL.md，切换到其他 skill（含浏览器自动化/RPA）继续执行，并把失败原因、切换路径和结果证据写回 Kanban 任务。";
-// Keywords that trigger Bootstrap interview (works even when Bootstrap is already complete, for re-config)
-const BOOTSTRAP_KEYWORDS = [
-    "品牌访问", "品牌调查", "品牌访谈", "品牌配置", "开始配置", "重新配置", "开始品牌访谈",
-    "brand interview", "brand survey", "brand setup", "onboarding", "/bootstrap", "reconfigure",
-];
-function hasBootstrapKeyword(message) {
-    const lower = message.toLowerCase();
-    return BOOTSTRAP_KEYWORDS.some(kw => lower.includes(kw.toLowerCase()));
-}
 function withFallback(prompt) {
     return prompt + FALLBACK_RULE_PROMPT;
 }
@@ -46,116 +32,112 @@ function withFallback(prompt) {
 // Source of truth: skills/operations/cron-jobs.md
 // Cron format: minute hour dom month dow (standard 5-field, UTC)
 // Registered programmatically — no manual setup required.
-// api.registerSchedule() is idempotent: safe to call on every gateway_start.
 // Total: 20 tasks (Daily×8, Weekly×8, Monthly×4)
-// Note: three Monday-09:00 tasks are offset by 5 min to avoid collision.
 const SCHEDULE = [
     // ── Daily ──────────────────────────────────────────────────
     {
         cron: "0 7 * * *",
         task: "daily-kanban-sync",
-        prompt: withFallback("执行 daily-kanban-sync：读取 Content Schedule Bitable 中今天计划发布的所有帖子，在 AMC Kanban 中为每一个帖子创建一条对应的任务，状态设为 todo。"),
+        prompt: withFallback("执行 daily-kanban-sync：首先调用 get_brand_config 获取关联的所有品牌。对每个品牌，调用 list_tasks(status: 'todo', assignedToMe: true) 获取指派给你的当日任务，梳理今日工作流程，并在对应的 Kanban 任务中更新状态为 in_progress。"),
     },
     {
         cron: "0 8 * * *",
         task: "topic-discovery",
-        prompt: withFallback("执行 topic-discovery：基于今日 Trending Radar 结果，为品牌选出 1–2 个最契合的话题，起草今日内容创作方向，记录到 Content Schedule Bitable。"),
+        prompt: withFallback("执行 topic-discovery：遍历所有关联品牌，获取其定位与上下文。调用 board_list_topics 获取今日热点话题推荐，并为每个品牌选出最契合的话题方向，调用 board_save_topic 保存话题，起草内容大纲并保存为看板草稿。"),
     },
     {
         cron: "0 10 * * *",
         task: "google-maps-actions",
-        prompt: withFallback("执行 google-maps-actions：检查 Google Business Profile 新评论，按品牌 voice 回复所有未回复评论（24h SLA），发布今日 GBP 帖子（如有排期）。"),
+        prompt: withFallback("执行 google-maps-actions：遍历所有品牌，调用 google_get_reviews 获取最新的 Google 评论，按品牌 voice 回复所有未回复的评论。如遇恶意/紧急差评，在看板中创建待办任务并标记为 pending 状态。"),
     },
     {
         cron: "0 11 * * *",
         task: "lunch-publish-window",
-        prompt: withFallback("执行 lunch-publish-window：发布今日午餐时段内容。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。确认发布成功后，记录到 Content Schedule Bitable 并将 Kanban 任务状态更新为 done。"),
+        prompt: withFallback("执行 lunch-publish-window：发布今日午餐时段内容。遍历关联品牌，调用 board_list_drafts 获取当前时段已排期的草稿。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。调用 publish / board_publish_content 提交发布。确认发布成功后，将对应的 Kanban 任务状态更新为 done。"),
     },
     {
         cron: "0 13 * * *",
         task: "lunch-snapshot",
-        prompt: withFallback("执行 lunch-snapshot：抓取今日午餐帖子发布后 2 小时的初始数据（likes、reach、comments），记录到 vault report 文件夹。"),
+        prompt: withFallback("执行 lunch-snapshot：回采集度数据。遍历所有品牌，抓取今日午餐帖子发布后 2 小时的初始数据（likes、reach、comments），并更新到看板内容草稿对应的指标记录中。"),
     },
     {
         cron: "0 17 * * *",
         task: "dinner-publish-window",
-        prompt: withFallback("执行 dinner-publish-window：发布今日晚餐时段内容。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。确认发布成功后，记录到 Content Schedule Bitable 并将 Kanban 任务状态更新为 done。"),
+        prompt: withFallback("执行 dinner-publish-window：发布今日晚餐时段内容。遍历关联品牌，调用 board_list_drafts 获取当前时段已排期的草稿。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。调用 publish / board_publish_content 提交发布。确认发布成功后，将对应的 Kanban 任务状态更新为 done。"),
     },
     {
         cron: "0 19 * * *",
         task: "dinner-snapshot",
-        prompt: withFallback("执行 dinner-snapshot：抓取今日晚餐帖子发布后 2 小时的初始数据，记录到 vault report 文件夹。"),
+        prompt: withFallback("执行 dinner-snapshot：回采集度数据。遍历所有品牌，抓取今日晚餐帖子发布后 2 小时的初始数据，更新至看板指标元数据。"),
     },
     {
         cron: "0 20 * * *",
         task: "comment-dm-reply",
-        prompt: withFallback("执行 comment-dm-reply：检查所有平台的新评论和私信，按品牌 voice 回复，重点处理带问题或投诉的评论，记录无法处理的问题到 ownerreview Lark Doc。"),
+        prompt: withFallback("执行 comment-dm-reply：遍历所有品牌账号，检查各平台的新评论和私信，按品牌 voice 回复。重点处理带问题或投诉的评论，如无法处理则自动在看板创建待人类介入的 pending 任务。"),
     },
     // ── Weekly ─────────────────────────────────────────────────
     {
         cron: "30 6 * * 1,4",
         task: "trending-radar-refresh",
-        prompt: withFallback("执行 trending-radar-refresh：打开共享 Trending Radar 文档，搜索近期热门话题（美食、餐厅、本地生活），更新 Top 5 趋势条目，为内容生产做好素材准备。"),
+        prompt: withFallback("执行 trending-radar-refresh：遍历所有品牌，通过 board_list_topics 搜索行业近期热门话题（美食、餐厅、本地生活），为内容生产和话题雷达做好素材积累。"),
     },
     {
         cron: "0 8 * * 1",
         task: "self-improvement-report",
-        prompt: withFallback("执行 self-improvement-report：回顾上周内容表现，并对本周 AI 运营质量做自我评估（准时率、内容质量、合规情况），总结学习点，更新 feedback-loop 文件，提出下周内容优化建议和改进行动项。"),
+        prompt: withFallback("执行 self-improvement-report：遍历所有品牌，回顾上周内容表现，并对本周 AI 运营质量做自我评估，总结学习点，撰写自我评估总结并上传至该品牌 Lark 云盘下的 report 文件夹。"),
     },
     {
         cron: "0 9 * * 1",
         task: "plugin-version-check",
-        prompt: withFallback("执行 plugin-version-check：检查 git-plugin-amc 是否有新版本可用（openclaw plugins check git-plugin-amc），如有新版本通过 Lark 通知品牌团队。"),
+        prompt: withFallback("执行 plugin-version-check：检查 git-plugin-amc 是否有新版本可用（openclaw plugins check git-plugin-amc），如有新版本通过 Lark 通知各品牌团队。"),
     },
     {
         cron: "5 9 * * 1",
         task: "pending-platform-reminder",
-        prompt: withFallback("执行 pending-platform-reminder：检查 SOUL.md 中的 pending_platforms 列表，如非空则通过 Lark 提醒品牌团队连接剩余平台账号。"),
+        prompt: withFallback("执行 pending-platform-reminder：遍历所有品牌，检查其账号列表中尚未授权/连接的渠道。通过 Lark 发送卡片提醒品牌团队连接剩余平台账号。"),
     },
     {
         cron: "10 9 * * 1",
         task: "allergen-pending-check",
-        prompt: withFallback("执行 allergen-pending-check：检查 allergen-gate.md 中是否有标记为 PENDING 的菜品，如有则通过 Lark 请品牌确认过敏原信息。"),
+        prompt: withFallback("执行 allergen-pending-check：检查各品牌在看板里的过敏原对照清单，如果存在未确认的菜品，通过 Lark 请品牌所有者予以确认。"),
     },
     {
         cron: "0 10 * * 1",
         task: "weekly-report",
-        prompt: withFallback("执行 weekly-report：生成上周完整运营报告（内容数量、互动率、最佳帖子、平台对比、下周计划），保存到 vault report 文件夹，通过 Lark 发送给品牌团队。"),
+        prompt: withFallback("执行 weekly-report：遍历所有品牌，汇总上周运营表现数据，自动排版为周报 markdown 报告，调用 lark_upload_file 保存到品牌的 Lark Drive，并通过 Lark 消息通知各团队。"),
     },
     {
         cron: "0 18 * * 5",
         task: "weekly-performance-review",
-        prompt: withFallback("执行 weekly-performance-review：对本周所有帖子做绩效复盘，找出 Top 3 和 Bottom 3，分析原因，更新内容策略建议。"),
+        prompt: withFallback("执行 weekly-performance-review：遍历所有品牌，复盘本周所有帖子的绩效指标，提取 Top 与 Bottom 案例，将结果总结存入看板归档。"),
     },
     {
         cron: "0 20 * * 0",
         task: "weekly-content-batch",
-        prompt: withFallback("执行 weekly-content-batch：为下一周生成内容批次草稿（7天内容日历，涵盖所有 active 平台），存入 Content Schedule Bitable，通过 Lark 通知品牌团队审阅。"),
+        prompt: withFallback("执行 weekly-content-batch：遍历所有品牌，为其生成下一周的内容草稿批次（7天内容日历，涵盖所有 active 平台）。调用 board_save_draft 保存为草稿并调用 board_submit_draft 提交，然后通过 Lark 通知各品牌团队进行审阅。"),
     },
     // ── Monthly ────────────────────────────────────────────────
     {
         cron: "0 10 1 * *",
         task: "monthly-report",
-        prompt: withFallback("执行 monthly-report：生成上月完整运营月报（KPI 达成、内容总量、各平台表现、粉丝增长、最佳内容精选），保存到 vault report，通过 Lark 发送给品牌团队。"),
+        prompt: withFallback("执行 monthly-report：遍历所有品牌，生成上月完整运营月报（包括各平台表现、最佳内容分析），排版为报告文档并调用 lark_upload_file 保存到品牌云盘，并发送 Lark 消息给各团队。"),
     },
     {
         cron: "5 10 1 * *",
         task: "compliance-review",
-        prompt: withFallback("执行 compliance-review：审查上月所有发布内容是否符合 fda-ftc-rules 和平台政策，记录任何合规风险，建议下月注意事项。"),
+        prompt: withFallback("执行 compliance-review：遍历品牌，审查上月所有发布的内容是否出现合规漏洞或侵权指控风险，整理合规报告保存至品牌云盘。"),
     },
     {
         cron: "10 10 1 * *",
         task: "voice-drift-check",
-        prompt: withFallback("执行 voice-drift-check：随机抽取 5 篇上月内容，对比 brand-voice.md 定义的品牌声音，检测是否出现语气漂移，提出校正建议，更新品牌声音记录。"),
+        prompt: withFallback("执行 voice-drift-check：遍历品牌，抽取部分已发布内容比对看板中定义的 brand-voice，检测是否偏离品牌调性，形成月度语气漂移分析并记录。"),
     },
     {
         cron: "15 10 1 * *",
         task: "kpi-reset",
-        prompt: withFallback("执行 kpi-reset：重置本月 KPI 追踪计数器，在 vault report 文件夹创建新月份报告文件，确认本月内容日历和发布计划就位。"),
+        prompt: withFallback("执行 kpi-reset：遍历所有品牌，重置本月的 KPI 基础追踪指标，准备新月份的数据分析与跟踪框架。"),
     },
 ];
-// Plugin root = one level above dist/ where this file compiles to
-// e.g. ~/.openclaw/extensions/git-plugin-amc/dist/index.js → plugin root is ../
 const PLUGIN_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 // ── Helpers ────────────────────────────────────────────────────
 function resolveSoulPath(workspaceDir) {
@@ -176,20 +158,8 @@ function hasPluginBlock(soulContent) {
     return (soulContent.includes("PLUGIN · git-plugin-amc") ||
         soulContent.includes("plugins.git-plugin-amc:"));
 }
-function hasPlaceholders(soulContent) {
-    // Support both merge formats:
-    //   Markdown heading (our appendFileSync merge): "## PLUGIN · git-plugin-amc"
-    //   YAML key (OpenClaw native merge):            "plugins.git-plugin-amc:"
-    const markerMd = soulContent.indexOf("PLUGIN · git-plugin-amc");
-    const markerYaml = soulContent.indexOf("plugins.git-plugin-amc:");
-    // Use whichever marker appears first (or either if only one is present)
-    const blockStart = markerMd !== -1 && markerYaml !== -1
-        ? Math.min(markerMd, markerYaml)
-        : markerMd !== -1 ? markerMd : markerYaml;
-    if (blockStart === -1)
-        return false;
-    const section = soulContent.slice(blockStart);
-    return PLACEHOLDER_REGEX.test(section);
+function hasUnconfiguredApiKey(soulContent) {
+    return soulContent.includes(API_KEY_PLACEHOLDER);
 }
 function extractPluginBlock(pluginDir) {
     const templatePath = join(pluginDir, SOUL_TEMPLATE_FILE);
@@ -204,7 +174,6 @@ function extractPluginBlock(pluginDir) {
     if (blockStart === -1) {
         throw new Error("SOUL.md.template missing '## PLUGIN · git-plugin-amc' section");
     }
-    // Include STARTUP BEHAVIOR section if it comes before the block
     const extractFrom = startupStart !== -1 && startupStart < blockStart ? startupStart : blockStart;
     return template.slice(extractFrom);
 }
@@ -222,22 +191,11 @@ function mergeSoulTemplate(soulPath, pluginDir) {
     return { merged: true, reason: "Plugin block merged into SOUL.md" };
 }
 function resolvePluginDir(_workspaceDir) {
-    // Primary: __dirname-based path derived from the running module's location.
-    // When OpenClaw loads dist/index.js, PLUGIN_ROOT resolves to the plugin install dir.
     if (existsSync(PLUGIN_ROOT)) {
-        console.log(`[${PLUGIN_ID}] Plugin dir resolved via import.meta.url: ${PLUGIN_ROOT}`);
         return PLUGIN_ROOT;
     }
-    // Fallback: standard npm install path
     const fallback = join(process.env.HOME || "/", ".openclaw", "extensions", PLUGIN_ID);
-    console.log(`[${PLUGIN_ID}] Plugin dir falling back to: ${fallback}`);
     return fallback;
-}
-function loadOnboardingFlow(pluginDir) {
-    const flowPath = join(pluginDir, ONBOARDING_FLOW_FILE);
-    if (!existsSync(flowPath))
-        return null;
-    return readFileSync(flowPath, "utf-8");
 }
 function loadKanbanSkill(pluginDir) {
     const skillPath = join(pluginDir, KANBAN_SKILL_PATH);
@@ -253,33 +211,13 @@ function readPluginVersion(pluginDir) {
     const match = content.match(/^version:\s*"?([^"\n]+)"?/m);
     return match ? match[1].trim() : "unknown";
 }
-function extractBrandSlug(soulContent) {
-    const match = soulContent.match(/brand_slug:\s*"?([^"\n]+)"?/);
-    return match ? match[1].trim().replace(/["']/g, "") : "brand";
-}
-function logUpdateToVault(workspaceDir, soulContent, entry) {
-    const brandSlug = extractBrandSlug(soulContent);
-    const candidates = [
-        join(workspaceDir, `vault-${brandSlug}`, "brand", "ownerreview.md"),
-        join(workspaceDir, "vault", "brand", "ownerreview.md"),
-    ];
-    for (const p of candidates) {
-        if (existsSync(p)) {
-            appendFileSync(p, entry, "utf-8");
-            return;
-        }
-    }
-    // If vault doesn't exist locally yet, log to workspace root as fallback
-    const fallback = join(workspaceDir, "plugin-update.log");
-    appendFileSync(fallback, entry, "utf-8");
-}
 // ── Plugin Entry ───────────────────────────────────────────────
 export default definePluginEntry({
     id: PLUGIN_ID,
     name: "F&B Content Engine",
-    description: "Social media operations plugin for F&B brands — 7 platforms, bilingual, compliance gates, and self-configuring onboarding.",
+    description: "Social media operations plugin for F&B brands — multi-brand dynamic kanban-centric integration.",
     register(api) {
-        // ── gateway_start: Merge SOUL.md.template on first startup ──────────
+        // ── gateway_start: Merge SOUL.md.template on startup ──────────
         api.on("gateway_start", async (_event, ctx) => {
             const workspaceDir = ctx.workspaceDir || process.cwd();
             const pluginDir = resolvePluginDir(workspaceDir);
@@ -288,7 +226,6 @@ export default definePluginEntry({
                 return;
             }
             const soulPath = resolveSoulPath(workspaceDir);
-            // Wrap in try/catch — extractPluginBlock can throw if template is missing
             let mergeResult;
             try {
                 mergeResult = mergeSoulTemplate(soulPath, pluginDir);
@@ -298,65 +235,11 @@ export default definePluginEntry({
                 mergeResult = { merged: false, reason: `merge error: ${String(err)}` };
             }
             console.log(`[${PLUGIN_ID}] SOUL.md merge: ${mergeResult.reason}`);
-            if (mergeResult.merged) {
-                console.log(`[${PLUGIN_ID}] ✅ SOUL.md.template merged. Registering Bootstrap trigger cron.`);
-                // Register a near-future cron to proactively wake the agent and start the
-                // onboarding interview without needing the user to send the first message.
-                //
-                // ⚠️  Standard cron has no "once" concept — this cron fires on the same
-                //     minute/hour/day/month every year. The prompt includes an idempotency
-                //     guard: the agent checks SOUL.md first and skips if already configured.
-                const now = new Date();
-                const t = new Date(now.getTime() + 2 * 60 * 1000);
-                const bootstrapCron = `${t.getUTCMinutes()} ${t.getUTCHours()} ${t.getUTCDate()} ${t.getUTCMonth() + 1} *`;
-                api.registerSchedule([
-                    {
-                        cron: bootstrapCron,
-                        task: "bootstrap-first-run",
-                        prompt: 
-                        // Idempotency guard: skip silently if Bootstrap is already done
-                        "首先读取 SOUL.md 中的 plugins.git-plugin-amc 部分。\n" +
-                            "如果不包含任何 {{PLACEHOLDER}}，说明配置已完成，直接结束本任务，不做任何事。\n" +
-                            "如果包含 {{PLACEHOLDER}}（Bootstrap 未完成）：\n" +
-                            "  立刻加载 bootstrap/onboarding-flow/SKILL.md，" +
-                            "通过 mcp.lark.message 发送 Opening Message，" +
-                            "紧接发送 Q1，开始 14 问品牌访谈。\n" +
-                            "这是当前唯一任务，不要做任何其他事。",
-                    },
-                ]);
-                console.log(`[${PLUGIN_ID}] ⏰ Bootstrap trigger cron registered: ${bootstrapCron} (UTC)`);
-            }
             // ── Register all 20 operational cron schedules ────────────────────
-            // Idempotent — safe to call on every gateway_start.
-            // OpenClaw suspends tasks automatically while Bootstrap Mode is active.
             api.registerSchedule([...SCHEDULE]);
             console.log(`[${PLUGIN_ID}] ✅ Registered ${SCHEDULE.length} scheduled tasks (daily/weekly/monthly)`);
         });
-        // ── session_start: Detect Bootstrap Mode, inject immediate signal ──────
-        api.on("session_start", async (_event, ctx) => {
-            const workspaceDir = ctx.workspaceDir || process.cwd();
-            const soulPath = resolveSoulPath(workspaceDir);
-            if (!existsSync(soulPath))
-                return;
-            const soulContent = readFileSync(soulPath, "utf-8");
-            if (!hasPluginBlock(soulContent))
-                return;
-            if (hasPlaceholders(soulContent)) {
-                console.log(`[${PLUGIN_ID}] 🔔 Bootstrap Mode — injecting opening signal`);
-                // Return appendSystemContext so the agent immediately starts the interview
-                // even before the user's first message is processed.
-                return {
-                    appendSystemContext: "❗❗ BOOTSTRAP MODE ACTIVE — TOP PRIORITY ❗❗\n" +
-                        "SOUL.md 尚未配置（包含 {{PLACEHOLDER}})。\n" +
-                        "不要回应用户的任何消息。立刻加载 bootstrap/onboarding-flow/SKILL.md，" +
-                        "通过 mcp.lark.message 发送 Opening Message，紧接发 Q1。",
-                };
-            }
-            else {
-                console.log(`[${PLUGIN_ID}] ✅ Bootstrap complete — normal operations`);
-            }
-        });
-        // ── before_prompt_build: Inject context for Bootstrap OR normal ops ───
+        // ── before_prompt_build: Check API key & Inject kanban-integration skills ───
         api.on("before_prompt_build", async (event, ctx) => {
             const workspaceDir = ctx.workspaceDir || process.cwd();
             const soulPath = resolveSoulPath(workspaceDir);
@@ -365,55 +248,34 @@ export default definePluginEntry({
             const soulContent = readFileSync(soulPath, "utf-8");
             if (!hasPluginBlock(soulContent))
                 return;
-            // Extract user message from event — OpenClaw may use different field names
-            const userMessage = String(event["userMessage"] ??
-                event["message"] ??
-                event["text"] ??
-                event["content"] ??
-                event["prompt"] ??
-                "");
-            const keywordTriggered = hasBootstrapKeyword(userMessage);
-            // ── Path A: Bootstrap Mode ──────────────────────────────────────────
-            // Triggered by: unfilled SOUL.md placeholders OR user sent a Bootstrap keyword
-            if (hasPlaceholders(soulContent) || keywordTriggered) {
-                const pluginDir = resolvePluginDir(workspaceDir);
-                const onboardingFlow = loadOnboardingFlow(pluginDir);
-                if (!onboardingFlow)
-                    return;
-                const reason = hasPlaceholders(soulContent)
-                    ? "SOUL.md contains unfilled {{PLACEHOLDER}} values"
-                    : `Bootstrap keyword detected: "${userMessage.slice(0, 60)}"`;
-                console.log(`[${PLUGIN_ID}] 🔔 Bootstrap Mode: ${reason}`);
+            const kanbanKeyEnv = process.env.KANBAN_AGENT_API_KEY;
+            const keyIsPlaceholder = hasUnconfiguredApiKey(soulContent);
+            // If API key is missing both in env and in SOUL.md configuration:
+            if (!kanbanKeyEnv && keyIsPlaceholder) {
                 return {
                     appendSystemContext: [
-                        "## 🔔 F&B Content Engine — Bootstrap Mode Active",
+                        "## ⚠️ AMC Content Engine — Config Required ⚠️",
                         "",
-                        `Reason: ${reason}`,
-                        "You MUST conduct the onboarding interview NOW.",
-                        "Follow the onboarding flow script below EXACTLY. Send the Opening Message + Q1 immediately.",
-                        "Do NOT summarize the plugin or explain what it does — just start the interview.",
-                        "",
-                        "### Onboarding Flow Script",
-                        onboardingFlow,
+                        "你目前尚未配置 `amc_kanban_api_key`！",
+                        "无法使用任何 MCP 工具或进行多品牌内容运营。",
+                        "请立即通过 Lark 消息告知用户：“我需要配置 AMC 看板 API 密钥，请在 SOUL.md 的 amc_kanban_api_key 处填入您的密钥，或者在运行环境中配置 KANBAN_AGENT_API_KEY 环境变量，之后重启网关。”",
+                        "在收到配置前，拒绝执行任何创作任务。",
                     ].join("\n"),
                 };
             }
-            // ── Path B: Normal Ops — inject AMC Kanban directive ────────────────
             const pluginDir = resolvePluginDir(workspaceDir);
             const kanbanSkill = loadKanbanSkill(pluginDir);
             return {
                 appendSystemContext: [
-                    "## 🧠 AMC Content Engine — Core Directive",
+                    "## 🧠 AMC Content Engine — Kanban-Centric Multi-Brand Operating Directives",
                     "",
-                    "所有社交媒体发布、调度、评论、互动任务，必须通过 AMC Kanban 执行。具体方法参见 amc-kanban skill。",
+                    "所有社交媒体的定位、受众、发布、调度、评论及互动任务，必须通过 AMC 看板执行，且支持同时管理多个品牌。具体工作流与工具使用请严格遵循以下 kanban-integration 技能规范：",
                     "",
                     kanbanSkill ?? "See: skills/operations/kanban-integration/SKILL.md",
                 ].join("\n"),
             };
         });
-        // ── post_update: Confirm update via Lark + log to vault ──────────────
-        // Fired by OpenClaw after `openclaw plugins update` or `./update.sh` succeeds.
-        // The event payload contains oldVersion / newVersion injected by OpenClaw.
+        // ── post_update: Confirm update via Lark ──────────────
         api.on("post_update", async (event, ctx) => {
             const workspaceDir = ctx.workspaceDir || process.cwd();
             const pluginDir = resolvePluginDir(workspaceDir);
@@ -421,12 +283,6 @@ export default definePluginEntry({
             const newVersion = event["newVersion"] ?? readPluginVersion(pluginDir);
             const changelog = event["changelog"] ?? "";
             console.log(`[${PLUGIN_ID}] ✅ Updated: ${oldVersion} → ${newVersion}`);
-            // Write to vault log
-            const soulPath = resolveSoulPath(workspaceDir);
-            const soulContent = existsSync(soulPath) ? readFileSync(soulPath, "utf-8") : "";
-            const date = new Date().toISOString().split("T")[0];
-            logUpdateToVault(workspaceDir, soulContent, `\n[${date}] Plugin updated: ${oldVersion} → ${newVersion}\n`);
-            // Inject Lark confirmation context for the agent to send
             const changelogSection = changelog
                 ? `\n更新内容 / What's new:\n${changelog}\n`
                 : "";
@@ -436,40 +292,21 @@ export default definePluginEntry({
                     "",
                     `Plugin has been updated from **${oldVersion}** to **${newVersion}**.`,
                     "",
-                    "Send the following confirmation message via `mcp.lark.message` immediately:",
+                    "Send the following confirmation message via `mcp.lark.message` to all active brand channels:",
                     "```",
-                    `✅ 插件已成功更新 / Plugin updated successfully`,
+                    `✅ 插件已成功更新至看板直连多品牌版 / Plugin updated successfully`,
                     ``,
                     `版本 / Version: ${oldVersion} → ${newVersion}`,
                     changelogSection,
-                    `更新内容 / Updated: 技能文件、合规规则、平台策略、定时任务`,
-                    `Skill files, compliance rules, platform policies, cron schedule`,
+                    `更新内容 / Updated: 技能文件、平台策略、定时任务已全部调整为以 AMC Kanban 为中心的跨品牌运营模式`,
+                    `All skills and crons updated to Kanban-centric multi-brand operations.`,
                     ``,
-                    `🔒 品牌定制文件未变动 / Brand files untouched:`,
-                    `   brand-voice · allergen-gate · bilingual-gate`,
-                    ``,
-                    `✅ 所有定时任务已恢复运行 / All scheduled tasks resumed`,
+                    `🔒 品牌所有上下文与排期发布均已交由看板托管管理 / All brand context & scheduling managed on Kanban`,
                     "```",
                     "",
                     "After sending: resume normal operations — no restart required.",
                 ].join("\n"),
             };
-        });
-        // ── agent_end: Log Bootstrap status ──────────────────────────────────
-        api.on("agent_end", async (_event, ctx) => {
-            const workspaceDir = ctx.workspaceDir || process.cwd();
-            const soulPath = resolveSoulPath(workspaceDir);
-            if (!existsSync(soulPath))
-                return;
-            const soulContent = readFileSync(soulPath, "utf-8");
-            if (!hasPluginBlock(soulContent))
-                return;
-            if (hasPlaceholders(soulContent)) {
-                console.log(`[${PLUGIN_ID}] ⚠️ Session ended — Bootstrap still incomplete`);
-            }
-            else {
-                console.log(`[${PLUGIN_ID}] ✅ Session complete`);
-            }
         });
     },
 });

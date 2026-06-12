@@ -15,6 +15,14 @@ Google Maps runs on a separate, parallel track. It is always active regardless o
 
 This is the most important platform for local discovery and trust-building. A 4.5+ rating with active responses drives more first-time orders than any social media campaign.
 
+## Mandatory Context Preload
+
+Before generating any Google Maps business post or review/Q&A response:
+- Read `vault/brandcontext.md` first.
+- If read fails, stop generation and report the blocker.
+- Output this line at the top before strategy routing:
+  `[BrandContext Loaded] vault/brandcontext.md loaded successfully before generation.`
+
 ---
 
 ## Posting Specs

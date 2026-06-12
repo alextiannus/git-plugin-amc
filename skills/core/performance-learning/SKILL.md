@@ -25,7 +25,7 @@ Layer 1 · 数据采集
   发布时打标签 → 24h/48h/7d 采集指标 → 计算得分
 
 Layer 2 · 模式识别
-  得分 ≥ 3 → 提炼赢家模式 → 存入 winner-library.md
+   得分 ≥ 3 → 提炼赢家模式 → 存入 vault/brandcontext.md（赢家模式区）
   得分 = 0 → 记录失败原因 → 避免重蹈覆辙
 
 Layer 3 · 自我更新
@@ -40,7 +40,7 @@ Layer 3 · 自我更新
 
 ### 1A · 发布时打标签（每次发布必做）
 
-每条内容发布到 AMC Kanban 后，**同时**在 `vault/analytics/performance-log.md`
+每条内容发布到 AMC Kanban 后，**同时**在对应 `vault/post/YYYYMMDD-post.md`
 追加一条记录，填写所有内容属性字段：
 
 ```
@@ -88,7 +88,7 @@ Layer 3 · 自我更新
 
 ```python
 # 伪代码
-brand_avg = read_brand_baseline(platform)  # 从 performance-log.md 品牌基准均值
+brand_avg = read_brand_baseline(platform)  # 从 vault/brandcontext.md 品牌基准均值
 post_er = metrics_48h.engagement_rate
 
 ratio = post_er / brand_avg
@@ -99,7 +99,7 @@ elif ratio < 2.5:  score = 2  # Good
 elif ratio < 4.0:  score = 3  # Winner
 else:              score = 4  # Viral
 
-# 写入 performance-log.md 对应记录
+# 写入对应 post record
 update_post_record(post_id, score=score, vs_brand_avg=f"+{(ratio-1)*100:.0f}%")
 
 # 同时记录受众信号（audience-intelligence 集成）
@@ -126,7 +126,7 @@ update_post_record(post_id, primary_signal=primary_signal, inferred_audience=inf
 
 **Score 0 · Poor**
 ```
-→ 在 performance-log.md 的 what_didnt 字段写入失败分析：
+→ 在对应 post record 的 Issues/Notes 区写入失败分析：
   "hook_type=[X] 在 [platform] 表现低于均值 [N]%，
    可能原因：[分析：格式/语调/时机/产品类型]"
 → 在 Kanban 对应任务追加备注："Low performer — 下次同类内容避免此写法"
@@ -135,8 +135,8 @@ update_post_record(post_id, primary_signal=primary_signal, inferred_audience=inf
 
 **Score 2 · Good**
 ```
-→ 在 performance-log.md 的 what_worked 字段记录成功要素
-→ 若同一 hook_type 本月第 2 次 Good：写入 winner-library.md 候选区
+→ 在对应 post record 的 Issues/Notes 区记录成功要素
+→ 若同一 hook_type 本月第 2 次 Good：写入 vault/brandcontext.md 赢家候选区
 ```
 
 **Score 3 · Winner**
@@ -160,7 +160,7 @@ update_post_record(post_id, primary_signal=primary_signal, inferred_audience=inf
 
 ```
 1. 读取该帖子的所有内容属性标签
-2. 在 winner-library.md 检索是否有同平台 + 同 hook_type 的现有模式
+2. 在 vault/brandcontext.md 的赢家模式区检索是否有同平台 + 同 hook_type 的现有模式
    A. 有现有模式 → 将本帖 post_id 追加到 supporting_posts
                 → 更新 avg_engagement_lift（取平均）
                 → 更新 last_used 和 times_used
@@ -168,7 +168,7 @@ update_post_record(post_id, primary_signal=primary_signal, inferred_audience=inf
                 → 标注"需要第 2 条支撑帖才正式激活"
 
 3. 正式激活条件：supporting_posts ≥ 2 条 Winner 记录
-4. 激活后：更新 winner-library.md 平台赢家排行
+4. 激活后：更新 vault/brandcontext.md 的平台赢家排行
 ```
 
 ### 2D · 深度归因分析（仅 Viral 触发）
@@ -191,8 +191,8 @@ update_post_record(post_id, primary_signal=primary_signal, inferred_audience=inf
    - 这个产品之前的历史表现
 
 分析结果写入：
-- performance-log.md 对应记录的 what_worked 字段（详细版）
-- winner-library.md 对应模式的 pattern_summary（补充细节）
+- 对应 post record 的 Issues/Notes 字段（详细版）
+- vault/brandcontext.md 对应模式的 pattern_summary（补充细节）
 ```
 
 ---
@@ -235,15 +235,15 @@ update_post_record(post_id, primary_signal=primary_signal, inferred_audience=inf
 ### 3C · 每月基准均值 + 受众信号更新（每月第一天自动执行）
 
 ```
-1. 读取 performance-log.md 过去 30 天的所有 metrics_48h.engagement_rate
+1. 读取 vault/post 过去 30 天的所有 metrics_48h.engagement_rate
 2. 按平台分组，计算算术平均
-3. 更新 performance-log.md 的“品牌基准均值”表
+3. 更新 vault/brandcontext.md 的“品牌基准均值”表
 4. 如某平台均值环比下跌 >20%：
    → Lark 警告："[平台] 整体互动率下降 [N]%，可能原因：算法变化/内容老化/竞争加剧"
 
 5. [audience-intelligence] 分析过去 30 天 primary_signal 分布：
    - 统计 saves/shares/comments/reach 各占比
-   - 写入 vault/brand/audience-profile.md 受众信号追踪表
+   - 写入 vault/brandcontext.md 受众信号追踪表
    - 若连续 2 个月 primary_signal = saves（Discoverer 主导）
      → 自动将拉新内容比例建议上调至 60%
      → Lark 通知："受众以新粉为主，建议增加 Discoverer 定向内容"
@@ -261,7 +261,7 @@ update_post_record(post_id, primary_signal=primary_signal, inferred_audience=inf
 在 Step 0 Asset Check 之后：
 
 ```
-读取 vault/analytics/winner-library.md
+读取 vault/brandcontext.md 的赢家模式区
 → 找出匹配当前 [platform] + [product_category] 的激活模式
 → 在 Decision Output 中报告：
   "[Winner Pattern] 找到 N 个赢家模式可参考：

@@ -67,6 +67,10 @@ Step 1 · Read Trending Radar
   Check [[common_vault/trending-radar]] for this week's hot topics.
   Note any food-adjacent trends worth riffing on.
 
+Step 1.5 · Load Brand Context (mandatory)
+  Read `vault/brandcontext.md` before selecting themes or drafting.
+  If read fails, stop generation and report blocker.
+
 Step 2 · Pick 2-3 themes
   Choose from: menu items, seasonal specials, deal alerts, BTS content,
   customer stories, cultural moments, or trend riffs.

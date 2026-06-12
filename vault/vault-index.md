@@ -26,11 +26,9 @@
 
 | File | Purpose |
 |---|---|
-| `brand/ownerreview.md` | Owner feedback ledger + escalation log |
-| `brand/owner-profile.md` | Owner contact, SLA, preferences |
+| `brandcontext.md` | Brand setup + platform strategy + current promotion strategy |
 | `media/media-index.md` | All media assets index |
-| `post/postschedule.md` | Master content calendar |
-| `report/report-rules.md` | KPI definitions + reporting standards |
+| `post/YYYYMMDD-post.md` | Per-topic post record template |
 
 ---
 
@@ -45,12 +43,11 @@
 
 ---
 
-## Latest Reports
+## Strategy Context
 
-| Type | File | Generated |
+| Type | File | Updated |
 |---|---|---|
-| Weekly | report/weekly/ — | — |
-| Monthly | report/monthly/ — | — |
+| Brand + Platform + Promotion Context | brandcontext.md | — |
 
 ---
 

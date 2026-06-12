@@ -13,6 +13,14 @@ plugin: git-plugin-amc
 Define the exact format specifications for each content type.
 Every post must conform to one of these types before publishing.
 
+## Mandatory Context Preload
+
+Before generating content in any type below:
+- Read `vault/brandcontext.md` first.
+- If read fails, stop generation and report the blocker.
+- Start output with:
+  `[BrandContext Loaded] vault/brandcontext.md loaded successfully before generation.`
+
 ---
 
 ## Type 1 · Carousel / Slide Post

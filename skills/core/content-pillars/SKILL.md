@@ -149,7 +149,7 @@ Promotional:         8%
 ```
 若某支柱内容的平均互动率连续 4 周高于其他支柱 >30%：
 → 将该支柱比例上调 5%，从最低比例支柱扣除
-→ 更新 vault/brand/content-pillars.md 中的实际比例
+→ 更新 vault/brandcontext.md 中的内容支柱比例
 → Lark 通知："[支柱名] 内容表现持续领先，已自动上调比例至 [N]%"
 ```
 
@@ -262,7 +262,7 @@ Agent 收到后：
 每月支柱比例分析：
 
 ```
-对比各支柱平均互动率 → 自动调整比例 → 更新 content-pillars.md
+对比各支柱平均互动率 → 自动调整比例 → 更新 vault/brandcontext.md（内容支柱章节）
 ```
 
 ### → Weekly Report

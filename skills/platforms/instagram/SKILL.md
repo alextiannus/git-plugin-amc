@@ -13,6 +13,14 @@ plugin: git-plugin-amc
 **PRIMARY platform.** Write Instagram first. Every content idea starts here.
 The visual constraint forces you to find the story before anything else.
 
+## Mandatory Context Preload
+
+Before generating any Instagram draft, caption, or slide outline:
+- Read `vault/brandcontext.md` first.
+- If read fails, stop generation and report the blocker.
+- Output this line at the top before strategy routing:
+  `[BrandContext Loaded] vault/brandcontext.md loaded successfully before generation.`
+
 ---
 
 ## Posting Specs

@@ -13,6 +13,14 @@ plugin: git-plugin-amc
 **Step 3.** Expand the Instagram concept with richer personal storytelling.
 More detail, more honesty, more personal experience. RedNote readers want depth.
 
+## Mandatory Context Preload
+
+Before generating any RedNote title/body/hashtag draft:
+- Read `vault/brandcontext.md` first.
+- If read fails, stop generation and report the blocker.
+- Output this line at the top before strategy routing:
+  `[BrandContext Loaded] vault/brandcontext.md loaded successfully before generation.`
+
 ---
 
 ## Posting Specs

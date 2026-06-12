@@ -20,12 +20,15 @@ Never copy-paste. Each platform version must feel native to that platform.
 ### Step 0 · Context, Memory & External Skills Injection
 Before drafting ANY content, you MUST complete this preparation step to ensure long-term learning and leverage all your capabilities.
 
-**1. Memory Check:** Silently read the **local files** `vault/brand/brand-voice.md` and `vault/brand/owner-profile.md` from the local file system to recall your consolidated core memory, brand positioning, and absorbed feedback. (Do NOT use `mcp.lark.drive` or `mcp.lark.docs` to read these; read the local copies directly. Do NOT read the raw `ownerreview.md` log — rely on what has been distilled into `brand-voice.md`).
+**Hard requirement:** `vault/brandcontext.md` must be loaded before any draft lines are written. If it cannot be read, stop generation and report the blocker.
+
+**1. Memory Check:** Silently read the **local file** `vault/brandcontext.md` from the local file system to recall brand positioning, audience defaults, platform strategy, and current promotion context. (Do NOT use `mcp.lark.drive` or `mcp.lark.docs` to read this; read the local copy directly.)
 **2. Asset Check:** Silently check `vault/media/media-index.md` for any existing approved assets that match the current content topic. Note which assets are available before drafting.
-**3. Audience Check:** Read `vault/brand/audience-profile.md`. Note the current audience layer distribution, new-vs-returning ratio, and platform-specific audience defaults. Decide which audience layer this content should target.
-**4. Winner Library Check:** Read `vault/analytics/winner-library.md`. Find any activated patterns matching the current platform(s) and product category. Note the recommended hook_type(s).
+**3. Audience Check:** Read the audience section in `vault/brandcontext.md`. Note the current audience layer distribution, new-vs-returning ratio, and platform-specific audience defaults. Decide which audience layer this content should target.
+**4. Winner Pattern Check:** Read the winner-pattern section in `vault/brandcontext.md`. Find any activated patterns matching the current platform(s) and product category. Note the recommended hook_type(s).
 **5. Cross-Skill Check:** Scan your active OpenClaw tools (e.g., `mcp.bash` for AMC Kanban publish calls) and any installed external Skill Packs (e.g., `marketing`, `video-creation`, `copywriting`).
 **6. Decision Output:** At the very top of your response, BEFORE any platform drafts, output your memory and skill routing:
+> `[BrandContext Loaded] vault/brandcontext.md loaded successfully before generation.`
 > `[Memory Loaded] I noted recent feedback: [Brief Summary]. I will apply it here.`
 > `[Assets Available] Matching assets: [filenames or 'none found'].`
 > `[Audience Target] Layer: [Discoverer|Considerer|Regular|Advocate] | New/Return ratio this week: [X%/X%] | Recent signal: [saves|shares|comments].`
