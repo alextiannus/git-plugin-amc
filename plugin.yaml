@@ -10,8 +10,8 @@ version: "0.9.35"
 description: >
   A complete social media operations plugin for F&B brands.
   Manages content from idea to publish across 7 platforms,
-  with bilingual support, compliance gates, owner escalation,
-  and automated daily/weekly/monthly reporting.
+    with bilingual support, compliance gates, owner escalation,
+    and automated content operations.
 author: "12eat AI Lab"
 license: MIT
 min_openclaw_version: "1.0.0"
@@ -194,11 +194,9 @@ schedule:
     - { cron: "0 9 * * 1",  task: plugin-version-check }
     - { cron: "5 9 * * 1",  task: pending-platform-reminder }
     - { cron: "10 9 * * 1", task: allergen-pending-check }
-    - { cron: "0 10 * * 1", task: weekly-report }
     - { cron: "0 18 * * 5", task: weekly-performance-review }
     - { cron: "0 20 * * 0", task: weekly-content-batch }
   monthly:
-    - { cron: "0 10 1 * *", task: monthly-report }
     - { cron: "5 10 1 * *", task: compliance-review }
     - { cron: "10 10 1 * *",task: voice-drift-check }
     - { cron: "15 10 1 * *",task: kpi-reset }

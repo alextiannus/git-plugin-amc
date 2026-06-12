@@ -70,7 +70,7 @@ const SCHEDULE = [
     task: "lunch-publish-window",
     prompt:
       withFallback(
-        "执行 lunch-publish-window：发布今日午餐时段内容。遍历关联品牌，调用 board_list_drafts 获取当前时段已排期的草稿。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。调用 publish / board_publish_content 提交发布。确认发布成功后，将对应的 Kanban 任务状态更新为 done。"
+        "执行 lunch-publish-window：发布今日午餐时段内容。遍历关联品牌，调用 board_list_drafts 获取当前时段已排期的草稿。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。调用 publish / board_publish_content 提交发布。确认发布成功后，将对应的 Kanban 任务状态更新为 done。如果执行中遇到平台接口报错或发布失败，必须捕获异常并调用 update_task 将该 Kanban 任务退回为 todo（以便重试）或 pending（提示错误并写明所需人工干预内容）。"
       ),
   },
   {
@@ -86,7 +86,7 @@ const SCHEDULE = [
     task: "dinner-publish-window",
     prompt:
       withFallback(
-        "执行 dinner-publish-window：发布今日晚餐时段内容。遍历关联品牌，调用 board_list_drafts 获取当前时段已排期的草稿。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。调用 publish / board_publish_content 提交发布。确认发布成功后，将对应的 Kanban 任务状态更新为 done。"
+        "执行 dinner-publish-window：发布今日晚餐时段内容。遍历关联品牌，调用 board_list_drafts 获取当前时段已排期的草稿。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。调用 publish / board_publish_content 提交发布。确认发布成功后，将对应的 Kanban 任务状态更新为 done。如果执行中遇到平台接口报错或发布失败，必须捕获异常并调用 update_task 将该 Kanban 任务退回为 todo（以便重试）或 pending（提示错误并写明所需人工干预内容）。"
       ),
   },
   {
@@ -146,14 +146,7 @@ const SCHEDULE = [
         "执行 allergen-pending-check：检查各品牌在看板里的过敏原对照清单，如果存在未确认的菜品，通过 Lark 请品牌所有者予以确认。"
       ),
   },
-  {
-    cron: "0 10 * * 1",
-    task: "weekly-report",
-    prompt:
-      withFallback(
-        "执行 weekly-report：遍历所有品牌，汇总上周运营表现数据，自动排版为周报 markdown 报告，调用 lark_upload_file 保存到品牌的 Lark Drive，并通过 Lark 消息通知各团队。"
-      ),
-  },
+
   {
     cron: "0 18 * * 5",
     task: "weekly-performance-review",
@@ -171,14 +164,7 @@ const SCHEDULE = [
       ),
   },
   // ── Monthly ────────────────────────────────────────────────
-  {
-    cron: "0 10 1 * *",
-    task: "monthly-report",
-    prompt:
-      withFallback(
-        "执行 monthly-report：遍历所有品牌，生成上月完整运营月报（包括各平台表现、最佳内容分析），排版为报告文档并调用 lark_upload_file 保存到品牌云盘，并发送 Lark 消息给各团队。"
-      ),
-  },
+
   {
     cron: "5 10 1 * *",
     task: "compliance-review",

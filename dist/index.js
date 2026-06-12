@@ -53,7 +53,7 @@ const SCHEDULE = [
     {
         cron: "0 11 * * *",
         task: "lunch-publish-window",
-        prompt: withFallback("执行 lunch-publish-window：发布今日午餐时段内容。遍历关联品牌，调用 board_list_drafts 获取当前时段已排期的草稿。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。调用 publish / board_publish_content 提交发布。确认发布成功后，将对应的 Kanban 任务状态更新为 done。"),
+        prompt: withFallback("执行 lunch-publish-window：发布今日午餐时段内容。遍历关联品牌，调用 board_list_drafts 获取当前时段已排期的草稿。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。调用 publish / board_publish_content 提交发布。确认发布成功后，将对应的 Kanban 任务状态更新为 done。如果执行中遇到平台接口报错或发布失败，必须捕获异常并调用 update_task 将该 Kanban 任务退回为 todo（以便重试）或 pending（提示错误并写明所需人工干预内容）。"),
     },
     {
         cron: "0 13 * * *",
@@ -63,7 +63,7 @@ const SCHEDULE = [
     {
         cron: "0 17 * * *",
         task: "dinner-publish-window",
-        prompt: withFallback("执行 dinner-publish-window：发布今日晚餐时段内容。遍历关联品牌，调用 board_list_drafts 获取当前时段已排期的草稿。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。调用 publish / board_publish_content 提交发布。确认发布成功后，将对应的 Kanban 任务状态更新为 done。"),
+        prompt: withFallback("执行 dinner-publish-window：发布今日晚餐时段内容。遍历关联品牌，调用 board_list_drafts 获取当前时段已排期的草稿。开始执行时，先将对应的 Kanban 任务状态更新为 in_progress。调用 publish / board_publish_content 提交发布。确认发布成功后，将对应的 Kanban 任务状态更新为 done。如果执行中遇到平台接口报错或发布失败，必须捕获异常并调用 update_task 将该 Kanban 任务退回为 todo（以便重试）或 pending（提示错误并写明所需人工干预内容）。"),
     },
     {
         cron: "0 19 * * *",
@@ -102,11 +102,6 @@ const SCHEDULE = [
         prompt: withFallback("执行 allergen-pending-check：检查各品牌在看板里的过敏原对照清单，如果存在未确认的菜品，通过 Lark 请品牌所有者予以确认。"),
     },
     {
-        cron: "0 10 * * 1",
-        task: "weekly-report",
-        prompt: withFallback("执行 weekly-report：遍历所有品牌，汇总上周运营表现数据，自动排版为周报 markdown 报告，调用 lark_upload_file 保存到品牌的 Lark Drive，并通过 Lark 消息通知各团队。"),
-    },
-    {
         cron: "0 18 * * 5",
         task: "weekly-performance-review",
         prompt: withFallback("执行 weekly-performance-review：遍历所有品牌，复盘本周所有帖子的绩效指标，提取 Top 与 Bottom 案例，将结果总结存入看板归档。"),
@@ -117,11 +112,6 @@ const SCHEDULE = [
         prompt: withFallback("执行 weekly-content-batch：遍历所有品牌，为其生成下一周的内容草稿批次（7天内容日历，涵盖所有 active 平台）。调用 board_save_draft 保存为草稿并调用 board_submit_draft 提交，然后通过 Lark 通知各品牌团队进行审阅。"),
     },
     // ── Monthly ────────────────────────────────────────────────
-    {
-        cron: "0 10 1 * *",
-        task: "monthly-report",
-        prompt: withFallback("执行 monthly-report：遍历所有品牌，生成上月完整运营月报（包括各平台表现、最佳内容分析），排版为报告文档并调用 lark_upload_file 保存到品牌云盘，并发送 Lark 消息给各团队。"),
-    },
     {
         cron: "5 10 1 * *",
         task: "compliance-review",
